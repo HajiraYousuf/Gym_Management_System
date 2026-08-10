@@ -1,0 +1,30 @@
+﻿# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build files
+bin/
+obj/
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Database files
+*.mdf
+*.ldf
+
+# Temporary files
+*.tmp
+*.temp
+
+# Publish files
+publish/
