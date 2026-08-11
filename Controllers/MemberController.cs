@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymManagementSystem.Controllers
 {
-    [Authorize(Roles = "Receptionist")]
-    public class MembersController : Controller
+    //[Authorize(Roles = "Receptionist")]
+    public class MemberController : Controller
     {
 
         private readonly ApplicationDbContext _context;
 
 
-        public MembersController(ApplicationDbContext context)
+        public MemberController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -21,7 +21,11 @@ namespace GymManagementSystem.Controllers
 
 
 
+        public async Task<IActionResult> Dashboard()
+        {
 
+            return View();
+        }
         // Display all members
         public async Task<IActionResult> Index()
         {

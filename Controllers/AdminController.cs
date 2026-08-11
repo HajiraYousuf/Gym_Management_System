@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymManagementSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,6 +28,11 @@ namespace GymManagementSystem.Controllers
         // ADMIN DASHBOARD
         // =========================================================
 
+        public IActionResult Dashboard()
+        {
+            
+            return View();
+        }
         public async Task<IActionResult> Index()
         {
             var totalMembers = await _context.Members.CountAsync();

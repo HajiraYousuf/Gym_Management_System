@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GymManagementSystem.Controllers
 {
-    [Authorize(Roles = "Trainer")]
+    //[Authorize(Roles = "Trainer")]
     public class TrainerController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Dashboard()
         {
             return View();
         }

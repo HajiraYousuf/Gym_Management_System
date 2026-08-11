@@ -1,0 +1,115 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - IronCore Gym</title>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black text-white antialiased selection:bg-[#a3e635] selection:text-black font-sans min-h-full flex flex-col justify-between">
+    <div>
+        <!-- NAVBAR SECTION -->
+        <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-neutral-800/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                
+                <!-- Logo -->
+                <a href="@Url.Action("Index", "Home")" class="flex items-center gap-2 group">
+                    <div class="p-2 bg-[#a3e635] rounded-lg text-black group-hover:scale-105 transition-transform">
+                        <i data-lucide="dumbbell" class="w-6 h-6 stroke-[2.5]"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-white">
+                        Iron<span class="text-[#a3e635]">Core</span>
+                    </span>
+                </a>
+
+                <!-- Navigation Links -->
+                <nav id="navMenu" class="hidden md:flex items-center gap-6 text-sm font-medium text-neutral-300">
+                    <a href="@Url.Action("Index", "Home")#home" class="hover:text-[#a3e635] transition-colors">Home</a>
+                    <a href="@Url.Action("Index", "Home")#about" class="hover:text-[#a3e635] transition-colors">About</a>
+                    <a href="@Url.Action("Index", "Home")#membership" class="hover:text-[#a3e635] transition-colors">Membership</a>
+                    <a href="@Url.Action("Index", "Home")#classes" class="hover:text-[#a3e635] transition-colors">Classes</a>
+                    <a href="@Url.Action("Index", "Home")#store" class="hover:text-[#a3e635] transition-colors">Store</a>
+                    <a href="@Url.Action("Index", "Home")#trainers" class="hover:text-[#a3e635] transition-colors">Trainers</a>
+                    <a href="@Url.Action("Index", "Home")#gallery" class="hover:text-[#a3e635] transition-colors">Gallery</a>
+                    <a href="@Url.Action("Index", "Home")#contact" class="hover:text-[#a3e635] transition-colors">Contact</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-3">
+                    <a href="@Url.Action("Cart", "Store")" class="px-4 py-2 text-sm font-semibold rounded-lg bg-neutral-900 border border-neutral-700 text-white hover:text-[#a3e635] transition-all flex items-center gap-2">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> Cart
+                    </a>
+                    <a href="@Url.Action("Login", "Account")" class="px-5 py-2 text-sm font-semibold rounded-lg bg-neutral-900 border border-neutral-700 text-white hover:bg-neutral-800 transition-all">
+                        Login
+                    </a>
+                    <a href="@Url.Action("Register", "Account")" class="px-5 py-2 text-sm font-bold rounded-lg bg-[#a3e635] text-black hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10">
+                        Join Now
+                    </a>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main>
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- STANDARD COMPACT FOOTER -->
+    <footer class="bg-black text-white py-6 px-4 sm:px-6 lg:px-8 border-t border-neutral-900 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            
+            <a href="@Url.Action("Index", "Home")" class="flex items-center gap-2">
+                <div class="p-1.5 bg-[#a3e635] rounded-lg text-black">
+                    <i data-lucide="dumbbell" class="w-5 h-5 stroke-[2.5]"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-white">
+                    Iron<span class="text-[#a3e635]">Core</span>
+                </span>
+            </a>
+
+            <p class="text-xs text-neutral-500 font-medium text-center">
+                &copy; @DateTime.Now.Year IronCore Gym. All rights reserved.
+            </p>
+
+            <div class="flex items-center gap-2">
+                <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-lg bg-neutral-950 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-[#a3e635] transition-all">
+                    <i class="fab fa-facebook-f text-xs"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-lg bg-neutral-950 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-[#a3e635] transition-all">
+                    <i class="fab fa-instagram text-xs"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="w-8 h-8 rounded-lg bg-neutral-950 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-[#a3e635] transition-all">
+                    <i class="fab fa-x-twitter text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

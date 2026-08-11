@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymManagementSystem.Controllers
 {
-    [Authorize(Roles = "Receptionist")]
+    //[Authorize(Roles = "Receptionist")]
     public class ReceptionistController : Controller
     {
 
@@ -23,7 +23,7 @@ namespace GymManagementSystem.Controllers
 
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Dashboard()
         {
             return View();
         }
