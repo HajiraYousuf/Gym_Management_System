@@ -1,0 +1,377 @@
+﻿@{
+    ViewData["Title"] = "Trainers Management";
+    Layout = "~/Views/Layouts/AdminMaster.cshtml";
+}
+
+<div class="space-y-6 min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 p-2 sm:p-4 transition-colors duration-300">
+      
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Trainers Management</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Manage gym instructors, view specialties, schedules, and assigned members.</p>
+        </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button type="button" class="flex-1 sm:flex-none justify-center bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 font-medium flex items-center gap-2 shadow-sm transition-all">
+                <i class="fas fa-file-export text-lime-600 dark:text-lime-400"></i> Export
+            </button>
+            <button type="button" onclick="openAddModal()" class="flex-1 sm:flex-none justify-center bg-lime-500 hover:bg-lime-600 text-gray-950 font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-lime-500/20 transition-all">
+                <i class="fas fa-plus text-xs"></i> Add Trainer
+            </button>
+        </div>
+    </div>
+
+    <!-- Top Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Total Trainers -->
+        <div class="group bg-lime-50/60 dark:bg-gray-900 border border-lime-200/80 dark:border-gray-800 rounded-2xl p-5 shadow-sm hover:border-lime-400 dark:hover:border-lime-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-lime-700 dark:text-lime-400 text-xs font-semibold uppercase tracking-wider">Total Trainers</p>
+                    <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">12</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-lime-200/60 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Available Today -->
+        <div class="group bg-emerald-50/60 dark:bg-gray-900 border border-emerald-200/80 dark:border-gray-800 rounded-2xl p-5 shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-emerald-700 dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider">Available Today</p>
+                    <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">8</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-200/60 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-user-check"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Busy Sessions -->
+        <div class="group bg-amber-50/60 dark:bg-gray-900 border border-amber-200/80 dark:border-gray-800 rounded-2xl p-5 shadow-sm hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider">Busy / In-Session</p>
+                    <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">3</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-200/60 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+            </div>
+        </div>
+        <!-- On Leave -->
+        <div class="group bg-rose-50/60 dark:bg-gray-900 border border-rose-200/80 dark:border-gray-800 rounded-2xl p-5 shadow-sm hover:border-rose-400 dark:hover:border-rose-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-rose-700 dark:text-rose-400 text-xs font-semibold uppercase tracking-wider">On Leave</p>
+                    <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">1</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-rose-200/60 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div class="relative w-full md:w-96">
+            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+            <input type="text" placeholder="Search by Trainer ID, Name, Specialty..." class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-lime-500 transition-all" />
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+            <select class="bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 text-gray-800 dark:text-gray-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-lime-500">
+                <option value="All">All Specialties</option>
+                <option value="Weight Training">Weight Training</option>
+                <option value="Yoga">Yoga & Flex</option>
+                <option value="Cardio">Cardio & HIIT</option>
+            </select>
+            <button type="button" class="bg-gray-900 dark:bg-lime-500 hover:bg-gray-800 dark:hover:bg-lime-600 text-white dark:text-gray-950 font-semibold px-5 py-2.5 rounded-xl shadow transition-all">
+                Filter
+            </button>
+        </div>
+    </div>
+
+    <!-- Trainers Table -->
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                <thead class="bg-gray-100 dark:bg-gray-950 text-gray-700 dark:text-gray-400 uppercase text-xs font-semibold tracking-wider border-b border-gray-200 dark:border-gray-800">
+                    <tr>
+                        <th class="px-6 py-4">ID</th>
+                        <th class="px-6 py-4">Photo</th>
+                        <th class="px-6 py-4">Full Name</th>
+                        <th class="px-6 py-4">Specialization</th>
+                        <th class="px-6 py-4">Email</th>
+                        <th class="px-6 py-4">Clients</th>
+                        <th class="px-6 py-4">Shift</th>
+                        <th class="px-6 py-4">Exp.</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                    <!-- Row 1 -->
+                    <tr class="hover:bg-lime-500/5 dark:hover:bg-gray-800/50 transition-colors">
+                        <td class="px-6 py-4 font-mono font-medium text-gray-900 dark:text-white">TRN-501</td>
+                        <td class="px-6 py-4">
+                            <div class="w-10 h-10 rounded-full bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 font-bold flex items-center justify-center border border-lime-300 dark:border-lime-500/30">AA</div>
+                        </td>
+                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">Captain Ahmed Hassan</td>
+                        <td class="px-6 py-4">
+                            <span class="text-lime-700 dark:text-lime-400 font-medium bg-lime-100 dark:bg-lime-500/10 px-2.5 py-1 rounded-md border border-lime-200 dark:border-lime-500/20">Weight Training</span>
+                        </td>
+                        <td class="px-6 py-4 font-mono text-gray-700 dark:text-gray-400">ahmed.trainer@gym.com</td>
+                        <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                            <span class="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-lg text-xs">
+                                <i class="fas fa-users text-lime-600 dark:text-lime-400"></i> 18 Members
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-xs font-medium text-gray-600 dark:text-gray-400">Morning Shift</td>
+                        <td class="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">5 Years</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                <button type="button" onclick="openDetailsModal()" class="p-2 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="p-2 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors" title="Edit Trainer">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Delete Trainer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ================= ADD TRAINER MODAL ================= -->
+<div id="addTrainerModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl my-auto landscape:my-4">
+        <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+            <div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Add New Trainer</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Register a new gym instructor and configure their system account.</p>
+            </div>
+            <button type="button" onclick="closeAddModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
+            <!-- Personal Information -->
+            <div>
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Personal Information</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name *</label>
+                        <input type="text" placeholder="e.g. Captain Ahmed Hassan" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Gender *</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                            <option>Select Gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Date of Birth</label>
+                        <input type="date" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number *</label>
+                        <input type="text" placeholder="+252 61XXXXXXX" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address *</label>
+                        <input type="email" placeholder="trainer@gym.com" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
+                        <input type="text" placeholder="District, City" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Details -->
+            <div class="border-t border-gray-200 dark:border-gray-800 pt-4">
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Professional Details</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Specialization *</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                            <option>Select Specialization</option>
+                            <option>Weight Training</option>
+                            <option>Yoga & Flex</option>
+                            <option>Cardio & HIIT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Experience (Years)</label>
+                        <input type="number" placeholder="e.g. 5" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Salary ($) *</label>
+                        <input type="number" placeholder="e.g. 650" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div class="sm:col-span-2 lg:col-span-3">
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Working Hours / Shift</label>
+                        <input type="text" placeholder="Morning Shift (06:00 AM - 12:00 PM)" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="border-t border-gray-200 dark:border-gray-800 pt-4">
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Account Info</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Username *</label>
+                        <input type="text" placeholder="e.g. ahmed_trainer" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password *</label>
+                        <input type="password" placeholder="••••••••" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password *</label>
+                        <input type="password" placeholder="••••••••" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end gap-3 px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+            <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">Cancel</button>
+            <button type="button" class="px-5 py-2 rounded-xl text-sm font-semibold bg-lime-500 hover:bg-lime-600 text-gray-950">Save Trainer</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TRAINER DETAILS MODAL ================= -->
+<div id="trainerDetailsModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl my-auto landscape:my-4">
+        <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-mono bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 border border-lime-300 dark:border-lime-500/30 px-2.5 py-1 rounded-md">TRN-501</span>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Captain Ahmed Hassan</h3>
+            </div>
+            <button type="button" onclick="closeDetailsModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
+            <!-- Bio / Info Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-gray-50 dark:bg-gray-950 p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                <div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block">Gender</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">Male</span>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block">Date of Birth</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">15 Aug 1995</span>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block">Phone</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">+252 61 7771122</span>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block">Email</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">ahmed.trainer@gym.com</span>
+                </div>
+                <div class="col-span-2">
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block">Address</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">Waberi, Mogadishu</span>
+                </div>
+            </div>
+
+            <!-- Professional Information -->
+            <div>
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-2.5">Professional Information</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-gray-50 dark:bg-gray-950 p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Specialization</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">Bodybuilding</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Experience</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">6 Years</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Salary</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">$750.00 / Mo</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Shift & Status</span>
+                        <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Morning (Active)</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Joining Date</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">10 January 2024</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity & Work Assignments -->
+            <div>
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-2.5">Activity & Work Assignments</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-gray-50 dark:bg-gray-950 p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Assigned Members</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">24 Trainees</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Assigned Classes</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">Morning Cardio, HIIT B</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Working Hours</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">06:00 AM - 12:00 PM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div>
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-2.5">Account Information</h4>
+                <div class="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-950 p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-800">
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">System Username</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white font-mono">ahmed_trainer</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 block">Account Access</span>
+                        <span class="text-sm font-semibold text-lime-600 dark:text-lime-400">Trainer Portal Enabled</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+            <div class="flex gap-2">
+                <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20"><i class="fas fa-edit mr-1"></i> Edit</button>
+                <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/20"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+            </div>
+            <button type="button" onclick="closeDetailsModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">Back to Trainers</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openAddModal() {
+        document.getElementById('addTrainerModal').classList.remove('hidden');
+    }
+    function closeAddModal() {
+        document.getElementById('addTrainerModal').classList.add('hidden');
+    }
+
+    function openDetailsModal() {
+        document.getElementById('trainerDetailsModal').classList.remove('hidden');
+    }
+    function closeDetailsModal() {
+        document.getElementById('trainerDetailsModal').classList.add('hidden');
+    }
+</script>

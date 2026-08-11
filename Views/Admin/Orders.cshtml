@@ -1,0 +1,377 @@
+﻿@{
+    ViewData["Title"] = "Orders Management";
+    Layout = "~/Views/layouts/AdminMaster.cshtml";
+}
+
+<div class="min-h-screen bg-zinc-50 dark:bg-[#050505] text-zinc-900 dark:text-zinc-100 p-4 md:p-8 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <!-- PAGE HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800/80">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20 shrink-0">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Orders Management</h1>
+                        <span class="px-2.5 py-0.5 rounded-full bg-lime-500 text-zinc-950 text-xs font-black">18</span>
+                    </div>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Track customer purchases, fulfillment status, and order details.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="button" class="hidden sm:inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white font-semibold text-sm transition-all cursor-pointer">
+                    <i data-lucide="download" class="w-4 h-4"></i> Export Orders
+                </button>
+            </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Orders</p>
+                        <h3 class="mt-2 text-3xl font-black text-zinc-900 dark:text-white">142</h3>
+                        <p class="mt-2 text-xs text-zinc-400 font-medium">
+                            <span class="text-lime-600 dark:text-lime-400 font-bold">+8.4%</span> vs last month
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Pending</p>
+                        <h3 class="mt-2 text-3xl font-black text-amber-600 dark:text-amber-400">12</h3>
+                        <p class="mt-2 text-xs text-amber-600 dark:text-amber-400 font-bold">Awaiting processing</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Completed</p>
+                        <h3 class="mt-2 text-3xl font-black text-zinc-900 dark:text-white">124</h3>
+                        <p class="mt-2 text-xs text-zinc-400 font-medium">
+                            <span class="text-emerald-600 dark:text-emerald-400 font-bold">91.5%</span> fulfillment rate
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Cancelled</p>
+                        <h3 class="mt-2 text-3xl font-black text-rose-600 dark:text-rose-400">6</h3>
+                        <p class="mt-2 text-xs text-rose-600 dark:text-rose-400 font-bold">Refunded / Voided</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-500/20">
+                        <i data-lucide="ban" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ORDERS CONTAINER -->
+        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl shadow-sm overflow-hidden">
+
+            <div class="p-5 sm:p-6 border-b border-zinc-200 dark:border-zinc-800">
+                <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Recent Orders</h2>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage transaction histories and customer delivery information.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative w-full sm:w-72">
+                            <i data-lucide="search" class="w-4 h-4 text-zinc-400 absolute left-4 top-3.5"></i>
+                            <input type="text" placeholder="Search orders..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:border-lime-500" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS TABLE (Waxaa lagu daray Column cusub oo ah "Payment Type") -->
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[1050px] text-left text-sm">
+                    <thead>
+                        <tr class="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                            <th class="px-6 py-4">Order ID</th>
+                            <th class="px-6 py-4">Customer</th>
+                            <th class="px-6 py-4">Date</th>
+                            <th class="px-6 py-4">Payment Type</th> <!-- Column-kii cusbaa -->
+                            <th class="px-6 py-4">Total Amount</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800/60 font-medium">
+
+                        <!-- ORDER 1 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-zinc-900 dark:text-white">#ORD-9021</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold text-xs">AM</div>
+                                    <div>
+                                        <div class="font-bold text-zinc-900 dark:text-white">Ahmed Mohamed</div>
+                                        <div class="text-xs text-zinc-400">ahmed@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-zinc-500 dark:text-zinc-400 text-xs font-mono">10 Aug 2026</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold">
+                                    <i data-lucide="credit-card" class="w-3.5 h-3.5 text-lime-500"></i> Credit Card
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 font-bold text-lime-600 dark:text-lime-400">$95.00</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span> Completed
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button type="button" class="view-order-btn p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer"
+                                        data-orderid="#ORD-9021"
+                                        data-name="Ahmed Mohamed"
+                                        data-email="ahmed@example.com"
+                                        data-phone="+252 63 1234567"
+                                        data-address="Hargeisa, 150 Road, Jigjiga Yar"
+                                        data-payment="Credit Card (Visa ending 4242)"
+                                        data-date="10 Aug 2026, 02:30 PM"
+                                        data-total="$95.00"
+                                        data-status="Completed"
+                                        data-items='[{"item":"Whey Protein Isolate 2kg","qty":1,"price":"$65.00"},{"item":"Gym Performance T-Shirt (L)","qty":1,"price":"$30.00"}]'>
+                                    <i data-lucide="eye" class="w-4 h-4 pointer-events-none"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- ORDER 2 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-zinc-900 dark:text-white">#ORD-9022</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">FA</div>
+                                    <div>
+                                        <div class="font-bold text-zinc-900 dark:text-white">Fadumo Ali</div>
+                                        <div class="text-xs text-zinc-400">fadumo@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-zinc-500 dark:text-zinc-400 text-xs font-mono">11 Aug 2026</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold">
+                                    <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-500"></i> Zaad Service
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 font-bold text-lime-600 dark:text-lime-400">$30.00</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pending
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button type="button" class="view-order-btn p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer"
+                                        data-orderid="#ORD-9022"
+                                        data-name="Fadumo Ali"
+                                        data-email="fadumo@example.com"
+                                        data-phone="+252 65 9876543"
+                                        data-address="Hargeisa, Shaab Area near Mosque"
+                                        data-payment="Zaad Service (Mobile Money)"
+                                        data-date="11 Aug 2026, 09:15 AM"
+                                        data-total="$30.00"
+                                        data-status="Pending"
+                                        data-items='[{"item":"Creatine Monohydrate 500g","qty":1,"price":"$30.00"}]'>
+                                    <i data-lucide="eye" class="w-4 h-4 pointer-events-none"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ORDER & CUSTOMER DETAILS POP-UP MODAL -->
+<div id="orderDetailsModal" style="display: none;" class="fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-2xl p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+        
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20">
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white" id="modalOrderId">Order #---</h3>
+                    <p class="text-xs text-zinc-400" id="modalOrderDate">Date: ---</p>
+                </div>
+            </div>
+            <button type="button" id="closeModalX" class="text-zinc-400 hover:text-rose-500 cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <!-- Modal Body Content -->
+        <div class="space-y-4 text-sm">
+            
+            <!-- Customer Details Block -->
+            <div class="bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800/80 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-lime-600 dark:text-lime-400 flex items-center gap-1.5">
+                    <i data-lucide="user" class="w-4 h-4"></i> Customer Information
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <span class="block text-zinc-400 font-medium">Full Name</span>
+                        <span class="font-bold text-zinc-900 dark:text-white text-sm" id="modalCustName">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-zinc-400 font-medium">Email Address</span>
+                        <span class="font-semibold text-zinc-700 dark:text-zinc-300" id="modalCustEmail">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-zinc-400 font-medium">Phone Number</span>
+                        <span class="font-semibold text-zinc-700 dark:text-zinc-300 font-mono" id="modalCustPhone">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-zinc-400 font-medium">Delivery Address</span>
+                        <span class="font-semibold text-zinc-700 dark:text-zinc-300" id="modalCustAddress">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment & Fulfillment Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-3.5 bg-zinc-50 dark:bg-zinc-900/30 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Payment Method</span>
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-200 text-xs" id="modalPaymentMethod">-</span>
+                </div>
+                <div class="p-3.5 bg-zinc-50 dark:bg-zinc-900/30 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Fulfillment Status</span>
+                    <span id="modalStatusBadge" class="inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold">-</span>
+                </div>
+            </div>
+
+            <!-- Ordered Items List -->
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-1.5">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Purchased Items
+                </h4>
+                <div class="border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 uppercase font-bold">
+                            <tr>
+                                <th class="p-3">Item Description</th>
+                                <th class="p-3 text-center">Qty</th>
+                                <th class="p-3 text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalItemsTableBody" class="divide-y divide-zinc-200 dark:divide-zinc-800 font-medium">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Order Total Summary -->
+            <div class="flex justify-between items-center bg-lime-500/5 border border-lime-500/20 p-4 rounded-xl">
+                <span class="font-bold text-zinc-900 dark:text-white">Total Amount Paid</span>
+                <span class="text-lg font-black text-lime-600 dark:text-lime-400" id="modalTotal">-</span>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end pt-3 border-t border-zinc-200 dark:border-zinc-800">
+            <button type="button" id="closeModalBtn" class="px-5 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-xs rounded-xl transition-all cursor-pointer">Close Details</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Logic -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        const modal = document.getElementById('orderDetailsModal');
+
+        document.querySelectorAll('.view-order-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                document.getElementById('modalOrderId').innerText = "Order " + this.getAttribute('data-orderid');
+                document.getElementById('modalOrderDate').innerText = "Date: " + this.getAttribute('data-date');
+                document.getElementById('modalCustName').innerText = this.getAttribute('data-name');
+                document.getElementById('modalCustEmail').innerText = this.getAttribute('data-email');
+                document.getElementById('modalCustPhone').innerText = this.getAttribute('data-phone');
+                document.getElementById('modalCustAddress').innerText = this.getAttribute('data-address');
+                document.getElementById('modalPaymentMethod').innerText = this.getAttribute('data-payment');
+                document.getElementById('modalTotal').innerText = this.getAttribute('data-total');
+
+                const status = this.getAttribute('data-status');
+                const badge = document.getElementById('modalStatusBadge');
+                if (status === 'Completed') {
+                    badge.className = "inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20";
+                    badge.innerText = "Completed";
+                } else if (status === 'Pending') {
+                    badge.className = "inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+                    badge.innerText = "Pending";
+                } else {
+                    badge.className = "inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+                    badge.innerText = "Cancelled";
+                }
+
+                const items = JSON.parse(this.getAttribute('data-items'));
+                const tbody = document.getElementById('modalItemsTableBody');
+                tbody.innerHTML = '';
+                items.forEach(i => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                            <td class="p-3 text-zinc-800 dark:text-zinc-200 font-bold">${i.item}</td>
+                            <td class="p-3 text-center text-zinc-600 dark:text-zinc-400">${i.qty}</td>
+                            <td class="p-3 text-right font-bold text-lime-600 dark:text-lime-400">${i.price}</td>
+                        </tr>
+                    `;
+                });
+
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('closeModalX').addEventListener('click', closeModal);
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    });
+</script>

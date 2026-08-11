@@ -1,0 +1,386 @@
+﻿@{
+    ViewData["Title"] = "Store Management";
+    Layout = "~/Views/layouts/AdminMaster.cshtml";
+}
+
+<!-- Lucide Icons CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<div class="min-h-screen bg-zinc-50 dark:bg-[#050505] text-zinc-900 dark:text-zinc-100 p-4 md:p-8 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto space-y-6">
+
+        <!-- PAGE HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800/80">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20 shrink-0">
+                    <i data-lucide="store" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Store Management</h1>
+                        <span class="px-2.5 py-0.5 rounded-full bg-lime-500 text-zinc-950 text-xs font-black">9</span>
+                    </div>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage your products, inventory, pricing and stock levels.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="button" class="hidden sm:inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white font-semibold text-sm transition-all cursor-pointer">
+                    <i data-lucide="download" class="w-4 h-4"></i> Export
+                </button>
+
+                <button type="button" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm shadow-lg shadow-lime-500/10 transition-all cursor-pointer">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Add New Product
+                </button>
+            </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            
+            <!-- TOTAL PRODUCTS -->
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm hover:border-lime-500/40 transition-all">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Products</p>
+                        <h3 class="mt-2 text-3xl font-black text-zinc-900 dark:text-white">45</h3>
+                        <p class="mt-2 text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1 font-medium">
+                            <span class="text-lime-600 dark:text-lime-400 font-bold flex items-center gap-0.5"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> 12%</span>
+                            <span>from last month</span>
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20">
+                        <i data-lucide="boxes" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IN STOCK -->
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm hover:border-emerald-500/40 transition-all">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">In Stock</p>
+                        <h3 class="mt-2 text-3xl font-black text-zinc-900 dark:text-white">38</h3>
+                        <p class="mt-2 text-xs text-zinc-400 dark:text-zinc-500 font-medium">
+                            <span class="text-emerald-600 dark:text-emerald-400 font-bold">84.4%</span>
+                            <span>inventory availability</span>
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOW STOCK -->
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition-all">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Low Stock</p>
+                        <h3 class="mt-2 text-3xl font-black text-amber-600 dark:text-amber-400">5</h3>
+                        <p class="mt-2 text-xs text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1">
+                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Attention needed
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUT OF STOCK -->
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm hover:border-rose-500/40 transition-all">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Out of Stock</p>
+                        <h3 class="mt-2 text-3xl font-black text-rose-600 dark:text-rose-400">2</h3>
+                        <p class="mt-2 text-xs text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Requires restock
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-500/20">
+                        <i data-lucide="x-circle" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- INVENTORY CONTAINER -->
+        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl shadow-sm overflow-hidden">
+
+            <!-- INVENTORY HEADER -->
+            <div class="p-5 sm:p-6 border-b border-zinc-200 dark:border-zinc-800">
+                <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Product Inventory</h2>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">View and manage all products available in your gym store.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative w-full sm:w-72">
+                            <i data-lucide="search" class="w-4 h-4 text-zinc-400 absolute left-4 top-3.5"></i>
+                            <input type="text" placeholder="Search products..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:border-lime-500 placeholder-zinc-400" />
+                        </div>
+
+                        <select class="w-full sm:w-48 bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
+                            <option value="All">All Categories</option>
+                            <option value="Supplements">Supplements</option>
+                            <option value="Apparel">Apparel</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCT TABLE -->
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[950px] text-left text-sm">
+                    <thead>
+                        <tr class="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                            <th class="px-6 py-4">Product</th>
+                            <th class="px-6 py-4">Category</th>
+                            <th class="px-6 py-4">Price</th>
+                            <th class="px-6 py-4">Stock</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800/60 font-medium">
+
+                        <!-- PRODUCT 1 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center text-lime-600 dark:text-lime-400 shrink-0">
+                                        <i data-lucide="milk" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-zinc-900 dark:text-white">Whey Protein Isolate 2kg</div>
+                                        <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 font-mono">SKU: SUP-001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">Supplements</td>
+                            <td class="px-6 py-4 font-bold text-lime-600 dark:text-lime-400">$65.00</td>
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-zinc-900 dark:text-white">24</span> <span class="text-xs text-zinc-400">units</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span> In Stock
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-1.5">
+                                    <!-- VIEW DETAILS BUTTON (Triggers Modal with Extra Info) -->
+                                    <button type="button" onclick="openDetailsModal('Whey Protein Isolate 2kg', 'SUP-001', 'Supplements', '$65.00', '24 units', 'In Stock', 'Premium grade cold-filtered whey protein isolate designed for fast muscle recovery and lean muscle growth.', 'Alpha Nutrition Inc.', '10 Aug 2026')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Product">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Product">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- PRODUCT 2 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                                        <i data-lucide="dumbbell" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-zinc-900 dark:text-white">Creatine Monohydrate 500g</div>
+                                        <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 font-mono">SKU: SUP-002</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">Supplements</td>
+                            <td class="px-6 py-4 font-bold text-lime-600 dark:text-lime-400">$30.00</td>
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-zinc-900 dark:text-white">4</span> <span class="text-xs text-zinc-400">units</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Low Stock
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-1.5">
+                                    <button type="button" onclick="openDetailsModal('Creatine Monohydrate 500g', 'SUP-002', 'Supplements', '$30.00', '4 units', 'Low Stock', '100% Micronized pure creatine powder for enhanced strength, power output, and cellular hydration.', 'ProFit Supplements', '08 Aug 2026')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Product">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Product">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- PRODUCT 3 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                                        <i data-lucide="shirt" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-zinc-900 dark:text-white">Gym Performance T-Shirt (L)</div>
+                                        <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 font-mono">SKU: APP-001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">Apparel</td>
+                            <td class="px-6 py-4 font-bold text-lime-600 dark:text-lime-400">$22.00</td>
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-zinc-900 dark:text-white">15</span> <span class="text-xs text-zinc-400">units</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span> In Stock
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-1.5">
+                                    <button type="button" onclick="openDetailsModal('Gym Performance T-Shirt (L)', 'APP-001', 'Apparel', '$22.00', '15 units', 'In Stock', 'Breathable, moisture-wicking athletic fit t-shirt built for intense gym workouts and everyday comfort.', 'IronGear Apparel', '05 Aug 2026')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Product">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Product">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- PRODUCT DETAILS MODAL (Pop-up displaying extra non-column information) -->
+<div id="productDetailsModal" class="fixed inset-0 z-50 hidden bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-6">
+        
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20">
+                    <i data-lucide="info" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Product Extended Details</h3>
+                    <p class="text-xs text-zinc-400 font-mono" id="modalSku">SKU: ---</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeDetailsModal()" class="text-zinc-400 hover:text-rose-500 cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <!-- Modal Body Content (Extra Info not shown directly as primary table columns) -->
+        <div class="space-y-4 text-sm">
+            <div class="grid grid-cols-2 gap-4 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800/80">
+                <div>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Product Name</span>
+                    <span class="font-bold text-zinc-900 dark:text-white" id="modalName">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Category & Price</span>
+                    <span class="font-semibold text-zinc-700 dark:text-zinc-300"><span id="modalCategory">-</span> (<span id="modalPrice" class="text-lime-600 dark:text-lime-400 font-bold">-</span>)</span>
+                </div>
+            </div>
+
+            <!-- Extra Information: Description -->
+            <div class="px-1">
+                <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Product Description / Notes</span>
+                <p class="text-zinc-600 dark:text-zinc-300 text-xs leading-relaxed bg-zinc-50 dark:bg-zinc-900/30 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800/80" id="modalDescription">-</p>
+            </div>
+
+            <!-- Extra Information: Supplier & Last Updated -->
+            <div class="grid grid-cols-2 gap-4 px-1 pt-1">
+                <div>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Supplier / Vendor</span>
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalSupplier">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Last Stock Update</span>
+                    <span class="font-mono text-xs text-zinc-600 dark:text-zinc-300" id="modalLastUpdated">-</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 px-1 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                <div>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Available Quantity</span>
+                    <span class="font-bold text-zinc-900 dark:text-white" id="modalStock">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Current Status</span>
+                    <span id="modalStatusBadge" class="inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <button type="button" onclick="closeDetailsModal()" class="px-5 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-xs rounded-xl transition-all cursor-pointer">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Open Details Modal and populate extra metadata
+    function openDetailsModal(name, sku, category, price, stock, status, description, supplier, lastUpdated) {
+        document.getElementById('modalName').innerText = name;
+        document.getElementById('modalSku').innerText = "SKU: " + sku;
+        document.getElementById('modalCategory').innerText = category;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalStock').innerText = stock;
+        document.getElementById('modalDescription').innerText = description;
+        document.getElementById('modalSupplier').innerText = supplier;
+        document.getElementById('modalLastUpdated').innerText = lastUpdated;
+
+        const badge = document.getElementById('modalStatusBadge');
+        if (status === 'In Stock') {
+            badge.className = "inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20";
+            badge.innerText = "In Stock";
+        } else if (status === 'Low Stock') {
+            badge.className = "inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+            badge.innerText = "Low Stock";
+        } else {
+            badge.className = "inline-flex px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+            badge.innerText = "Out of Stock";
+        }
+
+        document.getElementById('productDetailsModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close Details Modal
+    function closeDetailsModal() {
+        document.getElementById('productDetailsModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Initialize Lucide Icons
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+</script>
