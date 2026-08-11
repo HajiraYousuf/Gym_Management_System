@@ -1,0 +1,404 @@
+﻿@{
+    ViewData["Title"] = "Class Schedule & Booking Desk";
+    Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900/60 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="p-2.5 bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 rounded-xl border border-emerald-100 dark:border-lime-400/20">
+                <i class="fa-solid fa-calendar-days text-xl"></i>
+            </span>
+            <div>
+                <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Class Schedule & Booking Desk</h1>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">View today's active classes, monitor seating capacity, and process member bookings</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TODAY'S OVERVIEW STATS (LARGE ROWS/CARDS) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Card 1 -->
+        <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">Today's Sessions</span>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">6 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Classes</span></h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Scheduled Today</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-xs uppercase tracking-wider text-emerald-600 dark:text-lime-400 font-bold block">Total Bookings</span>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">84 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Registered</span></h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Active Members</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-users"></i>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-xs uppercase tracking-wider text-blue-600 dark:text-blue-400 font-bold block">Available Seats</span>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">28 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Open Spots</span></h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Ready for Registration</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-chair"></i>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-xs uppercase tracking-wider text-red-600 dark:text-red-400 font-bold block">Full Classes</span>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">2 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Full</span></h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">No Open Spots</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FILTER & SEARCH BAR -->
+    <div class="bg-white dark:bg-zinc-900/80 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <!-- Date Selector Filter -->
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <div class="relative w-full sm:w-48">
+                <select class="w-full h-11 px-3.5 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white text-xs font-semibold outline-none transition cursor-pointer appearance-none">
+                    <option value="today">Today (11 Aug 2026)</option>
+                    <option value="tomorrow">Tomorrow (12 Aug)</option>
+                    <option value="week">This Week</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+            </div>
+        </div>
+
+        <!-- Search Class or Trainer -->
+        <div class="relative w-full sm:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="txtClassSearch" onkeyup="filterClassTable()" placeholder="Search class or trainer..." 
+                class="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 text-xs font-medium outline-none transition shadow-inner" />
+        </div>
+    </div>
+
+    <!-- CLASS SCHEDULE TABLE CARD -->
+    <div class="bg-white dark:bg-zinc-900/80 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-600 dark:text-lime-400"></i>
+                Today's Class Schedule Sessions
+            </h3>
+            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-lime-400/10 dark:text-lime-400 font-bold">RECEPTION DESK VIEW</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse" id="classTable">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-zinc-950/60 text-[10px] uppercase tracking-wider text-slate-500 dark:text-zinc-400 border-b border-slate-200 dark:border-zinc-800 font-bold">
+                        <th class="py-3.5 px-6">Class Name</th>
+                        <th class="py-3.5 px-4">Trainer</th>
+                        <th class="py-3.5 px-4">Time</th>
+                        <th class="py-3.5 px-4 text-center">Capacity</th>
+                        <th class="py-3.5 px-4 text-center">Booked</th>
+                        <th class="py-3.5 px-4 text-center">Available</th>
+                        <th class="py-3.5 px-4 text-center">Status</th>
+                        <th class="py-3.5 px-6 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-zinc-800/80 text-xs font-medium text-slate-800 dark:text-zinc-200">
+                    
+                    <!-- Row 1: Open -->
+                    <tr class="class-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition">
+                        <td class="py-4 px-6 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-lime-400/10 text-emerald-600 dark:text-lime-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-dumbbell text-xs"></i>
+                            </span>
+                            Morning Aerobics
+                        </td>
+                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Hamda Ali</td>
+                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">07:00 AM</td>
+                        <td class="py-4 px-4 text-center font-mono">20</td>
+                        <td class="py-4 px-4 text-center font-mono text-emerald-600 dark:text-lime-400 font-bold">18</td>
+                        <td class="py-4 px-4 text-center font-mono font-bold">2</td>
+                        <td class="py-4 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Open</span>
+                        </td>
+                        <td class="py-4 px-6 text-right space-x-2">
+                            <button onclick="openViewModal('Morning Aerobics', 'Hamda Ali', '11 Aug 2026', '07:00 AM - 08:00 AM', 20, 18, 2)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">
+                                View
+                            </button>
+                            <button onclick="openBookingModal('Morning Aerobics', 'Hamda Ali', '11 Aug 2026', '07:00 AM', 2)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold rounded-lg transition shadow-sm cursor-pointer">
+                                Book
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2: Open -->
+                    <tr class="class-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition">
+                        <td class="py-4 px-6 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-lime-400/10 text-emerald-600 dark:text-lime-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-fire text-xs"></i>
+                            </span>
+                            CrossFit
+                        </td>
+                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Abdirahman</td>
+                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">04:30 PM</td>
+                        <td class="py-4 px-4 text-center font-mono">15</td>
+                        <td class="py-4 px-4 text-center font-mono text-emerald-600 dark:text-lime-400 font-bold">9</td>
+                        <td class="py-4 px-4 text-center font-mono font-bold">6</td>
+                        <td class="py-4 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Open</span>
+                        </td>
+                        <td class="py-4 px-6 text-right space-x-2">
+                            <button onclick="openViewModal('CrossFit', 'Abdirahman', '11 Aug 2026', '04:30 PM - 05:30 PM', 15, 9, 6)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">
+                                View
+                            </button>
+                            <button onclick="openBookingModal('CrossFit', 'Abdirahman', '11 Aug 2026', '04:30 PM', 6)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold rounded-lg transition shadow-sm cursor-pointer">
+                                Book
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3: Full -->
+                    <tr class="class-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition">
+                        <td class="py-4 px-6 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-hand-fist text-xs"></i>
+                            </span>
+                            Kickboxing
+                        </td>
+                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Bilal Khalid</td>
+                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">06:00 PM</td>
+                        <td class="py-4 px-4 text-center font-mono">12</td>
+                        <td class="py-4 px-4 text-center font-mono text-red-600 dark:text-red-400 font-bold">12</td>
+                        <td class="py-4 px-4 text-center font-mono font-bold">0</td>
+                        <td class="py-4 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400">Full</span>
+                        </td>
+                        <td class="py-4 px-6 text-right space-x-2">
+                            <button onclick="openViewModal('Kickboxing', 'Bilal Khalid', '11 Aug 2026', '06:00 PM - 07:00 PM', 12, 12, 0)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">
+                                View
+                            </button>
+                            <button disabled class="px-3 py-1.5 bg-slate-200 dark:bg-zinc-800 text-slate-400 dark:text-zinc-600 font-extrabold rounded-lg cursor-not-allowed">
+                                Book
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 4: Completed -->
+                    <tr class="class-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition opacity-75">
+                        <td class="py-4 px-6 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-person-running text-xs"></i>
+                            </span>
+                            Zumba
+                        </td>
+                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Hamda Ali</td>
+                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">08:30 AM</td>
+                        <td class="py-4 px-4 text-center font-mono">15</td>
+                        <td class="py-4 px-4 text-center font-mono">15</td>
+                        <td class="py-4 px-4 text-center font-mono">0</td>
+                        <td class="py-4 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-400">Completed</span>
+                        </td>
+                        <td class="py-4 px-6 text-right space-x-2">
+                            <button onclick="openViewModal('Zumba', 'Hamda Ali', '11 Aug 2026', '08:30 AM - 09:30 AM', 15, 15, 0)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">
+                                View
+                            </button>
+                            <button disabled class="px-3 py-1.5 bg-slate-200 dark:bg-zinc-800 text-slate-400 dark:text-zinc-600 font-extrabold rounded-lg cursor-not-allowed">
+                                Book
+                            </button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- BOOK MEMBER MODAL -->
+<div id="bookingModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-6 p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
+            <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-bookmark text-emerald-600 dark:text-lime-400"></i>
+                Book Member for Class
+            </h3>
+            <button onclick="closeBookingModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Class Quick Info Box -->
+        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-xs">
+            <div><span class="text-slate-500">Class:</span> <strong id="modalClassName" class="text-slate-900 dark:text-white block">Morning Aerobics</strong></div>
+            <div><span class="text-slate-500">Trainer:</span> <strong id="modalTrainerName" class="text-slate-900 dark:text-white block">Hamda Ali</strong></div>
+            <div><span class="text-slate-500">Date & Time:</span> <strong id="modalDateTime" class="text-emerald-600 dark:text-lime-400 block">11 Aug 2026 • 07:00 AM</strong></div>
+            <div><span class="text-slate-500">Available Seats:</span> <strong id="modalAvailableSeats" class="text-blue-600 dark:text-blue-400 block">2 Seats</strong></div>
+        </div>
+
+        <!-- Member Search Section -->
+        <div class="space-y-3">
+            <label class="block text-xs font-bold text-slate-700 dark:text-zinc-400 uppercase tracking-wider">Search Member</label>
+            <div class="flex gap-2">
+                <input type="text" id="txtMemberSearchInput" placeholder="Name / Phone / Member ID (e.g. MEM-9012)..." 
+                    class="w-full h-11 px-4 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white text-xs outline-none transition" />
+                <button type="button" onclick="simulateMemberSearch()" class="px-4 h-11 bg-slate-900 hover:bg-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white font-bold text-xs rounded-xl transition cursor-pointer">
+                    Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Selected Member Details Card (Hidden until searched) -->
+        <div id="foundMemberCard" class="hidden p-4 rounded-xl bg-emerald-50/50 dark:bg-zinc-950 border border-emerald-500/50 space-y-2">
+            <div class="flex items-center justify-between">
+                <h4 class="font-bold text-xs text-slate-900 dark:text-white" id="foundName">Farhiya Abdi</h4>
+                <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400" id="foundStatus">Active</span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-emerald-600 dark:text-lime-400" id="foundId">MEM-9012</span> | Membership: <span id="foundPlan" class="font-semibold text-slate-700 dark:text-zinc-300">Standard</span></p>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-200 dark:border-zinc-800">
+            <button type="button" onclick="closeBookingModal()" class="px-4 h-11 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold text-xs rounded-xl transition cursor-pointer">
+                Cancel
+            </button>
+            <button type="button" onclick="confirmBookingAction()" class="px-5 h-11 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer">
+                Confirm Booking
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW CLASS MODAL -->
+<div id="viewClassModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
+            <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-emerald-600 dark:text-lime-400"></i>
+                Class Details & Registrations
+            </h3>
+            <button onclick="closeViewModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Class Summary -->
+        <div class="space-y-1">
+            <h4 id="viewClassName" class="text-lg font-black text-slate-900 dark:text-white">Morning Aerobics</h4>
+            <p class="text-xs text-slate-500 dark:text-zinc-400">Trainer: <strong id="viewTrainerName" class="text-slate-700 dark:text-zinc-300">Hamda Ali</strong> | Date: <span id="viewDate">11 Aug 2026</span></p>
+            <p class="text-xs text-slate-500 dark:text-zinc-400">Time: <span id="viewTime" class="font-mono text-emerald-600 dark:text-lime-400">07:00–08:00 AM</span></p>
+        </div>
+
+        <!-- Capacity stats -->
+        <div class="grid grid-cols-3 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-center text-xs">
+            <div><span class="text-slate-500 block text-[10px] uppercase">Capacity</span> <strong id="viewCapacity" class="font-mono text-sm">20</strong></div>
+            <div><span class="text-slate-500 block text-[10px] uppercase">Booked</span> <strong id="viewBooked" class="font-mono text-sm text-emerald-600 dark:text-lime-400">18</strong></div>
+            <div><span class="text-slate-500 block text-[10px] uppercase">Available</span> <strong id="viewAvailable" class="font-mono text-sm text-blue-600 dark:text-blue-400">2</strong></div>
+        </div>
+
+        <!-- Registered Members List -->
+        <div class="space-y-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-zinc-400 uppercase tracking-wider block">Registered Members:</span>
+            <div class="max-h-40 overflow-y-auto space-y-1.5 pr-1 border border-slate-200 dark:border-zinc-800 rounded-xl p-2 bg-slate-50/50 dark:bg-zinc-950/50 text-xs">
+                <div class="flex items-center justify-between p-2 bg-white dark:bg-zinc-900 rounded-lg border border-slate-200 dark:border-zinc-800">
+                    <span class="font-bold text-slate-900 dark:text-white">1. Farhiya Abdi</span>
+                    <span class="font-mono text-[10px] text-slate-500">MEM-9012</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-white dark:bg-zinc-900 rounded-lg border border-slate-200 dark:border-zinc-800">
+                    <span class="font-bold text-slate-900 dark:text-white">2. Mohamed Ali</span>
+                    <span class="font-mono text-[10px] text-slate-500">MEM-8821</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-white dark:bg-zinc-900 rounded-lg border border-slate-200 dark:border-zinc-800">
+                    <span class="font-bold text-slate-900 dark:text-white">3. Kowsar Ahmed</span>
+                    <span class="font-mono text-[10px] text-slate-500">MEM-1044</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-2 border-t border-slate-200 dark:border-zinc-800">
+            <button type="button" onclick="closeViewModal()" class="px-5 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold text-xs rounded-xl transition cursor-pointer">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Table Search & Modal Actions -->
+<script>
+    function filterClassTable() {
+        const input = document.getElementById('txtClassSearch').value.toLowerCase();
+        const rows = document.querySelectorAll('.class-row');
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            if (text.includes(input)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Booking Modal Controls
+    function openBookingModal(className, trainer, date, time, available) {
+        document.getElementById('modalClassName').innerText = className;
+        document.getElementById('modalTrainerName').innerText = trainer;
+        document.getElementById('modalDateTime').innerText = date + ' • ' + time;
+        document.getElementById('modalAvailableSeats').innerText = available + ' Seats';
+        
+        document.getElementById('foundMemberCard').classList.add('hidden');
+        document.getElementById('txtMemberSearchInput').value = '';
+        document.getElementById('bookingModal').classList.remove('hidden');
+    }
+
+    function closeBookingModal() {
+        document.getElementById('bookingModal').classList.add('hidden');
+    }
+
+    function simulateMemberSearch() {
+        const val = document.getElementById('txtMemberSearchInput').value.trim();
+        if(val.length > 0) {
+            document.getElementById('foundMemberCard').classList.remove('hidden');
+        }
+    }
+
+    function confirmBookingAction() {
+        alert("Reservation successfully created! Redirecting to Reservations manager view.");
+        closeBookingModal();
+    }
+
+    // View Details Modal Controls
+    function openViewModal(className, trainer, date, time, capacity, booked, available) {
+        document.getElementById('viewClassName').innerText = className;
+        document.getElementById('viewTrainerName').innerText = trainer;
+        document.getElementById('viewDate').innerText = date;
+        document.getElementById('viewTime').innerText = time;
+        document.getElementById('viewCapacity').innerText = capacity;
+        document.getElementById('viewBooked').innerText = booked;
+        document.getElementById('viewAvailable').innerText = available;
+        
+        document.getElementById('viewClassModal').classList.remove('hidden');
+    }
+
+    function closeViewModal() {
+        document.getElementById('viewClassModal').classList.add('hidden');
+    }
+</script>

@@ -1,0 +1,518 @@
+﻿@{
+    ViewData["Title"] = "Membership Management & Subscriptions";
+    Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+
+    <!-- HEADER SECTION -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="p-3 bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 rounded-2xl border border-emerald-100 dark:border-lime-400/20">
+                <i class="fa-solid fa-id-badge text-2xl"></i>
+            </span>
+            <div>
+                <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Membership Plans & Subscriptions</h1>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Approve pending applications, renew subscriptions, and manage member profiles.</p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="@Url.Action("AddMember", "Receptionist")" 
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 text-xs font-black uppercase tracking-wider rounded-xl transition shadow-md">
+                <i class="fa-solid fa-user-plus text-sm"></i>
+                <span>New Registration</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- Total Active -->
+        <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Total Active</p>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white mt-1">1,248</h3>
+                <span class="text-[11px] text-emerald-600 dark:text-lime-400 font-semibold flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-circle text-[6px]"></i> Currently Valid
+                </span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-lime-400/10 text-emerald-600 dark:text-lime-400 flex items-center justify-center border border-emerald-100 dark:border-lime-400/20 text-xl">
+                <i class="fa-solid fa-users"></i>
+            </div>
+        </div>
+
+        <!-- Expiring This Week -->
+        <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Expiring This Week</p>
+                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">14</h3>
+                <span class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-clock text-xs"></i> Needs Renewal
+                </span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-100 dark:border-amber-400/20 text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+        </div>
+
+        <!-- Expired Memberships -->
+        <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Expired</p>
+                <h3 class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">32</h3>
+                <span class="text-[11px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-ban text-xs"></i> Access Suspended
+                </span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-400/10 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-400/20 text-xl">
+                <i class="fa-solid fa-user-xmark"></i>
+            </div>
+        </div>
+
+        <!-- Monthly Revenue -->
+        <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Monthly Revenue</p>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white mt-1">$4,850</h3>
+                <span class="text-[11px] text-emerald-600 dark:text-lime-400 font-semibold flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-arrow-trend-up text-xs"></i> August Collection
+                </span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-400/20 text-xl">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 3. AVAILABLE PACKAGES -->
+    <div class="space-y-4">
+        <h2 class="text-xs font-extrabold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-emerald-600 dark:text-lime-400"></i>
+            Available Packages
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-lg">1 Month</span>
+                    <h3 class="text-base font-extrabold text-zinc-900 dark:text-white mt-3">Standard Monthly</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Full access to gym floor & basic lockers.</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
+                    <span class="text-xl font-black text-zinc-900 dark:text-white">$30</span>
+                    <span class="text-[11px] font-bold text-zinc-400">Duration: 30 Days</span>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border-2 border-emerald-500 dark:border-lime-400 shadow-sm flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 bg-emerald-50 dark:bg-lime-400/10 text-emerald-600 dark:text-lime-400 rounded-lg">3 Months</span>
+                    <h3 class="text-base font-extrabold text-zinc-900 dark:text-white mt-3">Quarterly Saver</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Save 10% on quarterly registration.</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
+                    <span class="text-xl font-black text-zinc-900 dark:text-white">$80</span>
+                    <span class="text-[11px] font-bold text-zinc-400">Duration: 90 Days</span>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 bg-amber-50 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400 rounded-lg">6 Months</span>
+                    <h3 class="text-base font-extrabold text-zinc-900 dark:text-white mt-3">VIP Premium</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Full access with priority locker assignment.</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
+                    <span class="text-xl font-black text-zinc-900 dark:text-white">$150</span>
+                    <span class="text-[11px] font-bold text-zinc-400">Duration: 180 Days</span>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-zinc-900 p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 bg-indigo-50 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 rounded-lg">12 Months</span>
+                    <h3 class="text-base font-extrabold text-zinc-900 dark:text-white mt-3">Annual VIP Pass</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Full yearly pass with max savings.</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
+                    <span class="text-xl font-black text-zinc-900 dark:text-white">$280</span>
+                    <span class="text-[11px] font-bold text-zinc-400">Duration: 365 Days</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE SECTION -->
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden space-y-4 p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-sm font-extrabold uppercase tracking-wider text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emerald-600 dark:text-lime-400"></i>
+                    Memberships
+                </h2>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Manage active, expiring, expired, and pending requests.</p>
+            </div>
+
+            <!-- Search -->
+            <div class="relative w-full md:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-xs"></i>
+                <input type="text" placeholder="Search by name, phone or plan..." 
+                    class="w-full h-10 pl-9 pr-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 rounded-xl text-zinc-900 dark:text-white text-xs font-medium outline-none transition" />
+            </div>
+        </div>
+
+        <!-- Table Content -->
+        <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
+                        <th class="py-3.5 px-4">Member</th>
+                        <th class="py-3.5 px-4">Package</th>
+                        <th class="py-3.5 px-4">Start Date</th>
+                        <th class="py-3.5 px-4">Expiry Date</th>
+                        <th class="py-3.5 px-4 text-center">Status</th>
+                        <th class="py-3.5 px-4 text-center">Receipt</th>
+                        <th class="py-3.5 px-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                    
+                    <!-- Row 1: PENDING -->
+                    <tr class="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/30 transition">
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-400/20 dark:text-amber-400 flex items-center justify-center font-bold text-xs">MJ</div>
+                                <div>
+                                    <p class="font-bold text-zinc-900 dark:text-white">Mohamed Abdi Jama</p>
+                                    <p class="text-[10px] text-zinc-400">+252 61 555 1234</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-zinc-200">Quarterly Saver</td>
+                        <td class="py-3.5 px-4 text-zinc-400">—</td>
+                        <td class="py-3.5 px-4 text-zinc-400">—</td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-400/10 dark:text-amber-400 dark:border-amber-400/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-center text-zinc-400">—</td>
+                        <td class="py-3.5 px-4 text-right space-x-1">
+                            <button type="button" onclick="openDetailsModal('Mohamed Abdi Jama', '+252 61 555 1234', 'Quarterly Saver', '90 Days', '01 Jun 2026', '01 Sep 2026', '27', 'Active', '$80', 'Paid', 'Cash', '01 Jun 2026')" class="px-2.5 py-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg font-bold transition cursor-pointer">View</button>
+                            <button type="button" onclick="openApproveModal('Mohamed Abdi Jama', 'MEM-8821', 'Quarterly Saver', '$80')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 rounded-lg font-bold transition cursor-pointer">Approve</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2: Active / Expiring Soon -->
+                    <tr class="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/30 transition">
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 dark:bg-lime-400/20 dark:text-lime-400 flex items-center justify-center font-bold text-xs">FA</div>
+                                <div>
+                                    <p class="font-bold text-zinc-900 dark:text-white">Farhiya Ahmed Hassan</p>
+                                    <p class="text-[10px] text-zinc-400">+252 63 444 8899</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-zinc-200">Standard Monthly</td>
+                        <td class="py-3.5 px-4 text-zinc-400">10 Jul 2026</td>
+                        <td class="py-3.5 px-4 text-amber-600 dark:text-amber-400 font-bold">10 Aug 2026</td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-400/10 dark:text-amber-400 dark:border-amber-400/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Expiring Soon
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <button type="button" class="p-2 text-zinc-400 hover:text-emerald-600 dark:hover:text-lime-400 transition cursor-pointer" title="Print Receipt">
+                                <i class="fa-solid fa-print text-sm"></i>
+                            </button>
+                        </td>
+                        <td class="py-3.5 px-4 text-right space-x-1">
+                            <button type="button" onclick="openDetailsModal('Farhiya Ahmed Hassan', '+252 63 444 8899', 'Standard Monthly', '30 Days', '10 Jul 2026', '10 Aug 2026', '0', 'Expiring Soon', '$30', 'Paid', 'EVC Plus', '10 Jul 2026')" class="px-2.5 py-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg font-bold transition cursor-pointer">View</button>
+                            <button type="button" onclick="openRenewModal('Farhiya Ahmed Hassan', 'MEM-1012', 'Standard Monthly', '10 Aug 2026')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 rounded-lg font-bold transition cursor-pointer">Renew</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
+            <p class="text-zinc-500 dark:text-zinc-400 font-medium">
+                Showing <span class="font-bold text-zinc-900 dark:text-white">1</span> to <span class="font-bold text-zinc-900 dark:text-white">10</span> of <span class="font-bold text-zinc-900 dark:text-white">45</span> results
+            </p>
+
+            <div class="flex items-center gap-1.5">
+                <!-- Previous Button -->
+                <button type="button" class="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer disabled:opacity-55 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-left mr-1 text-[10px]"></i> Prev
+                </button>
+
+                <!-- Page Numbers -->
+                <button type="button" class="w-9 h-9 bg-emerald-600 dark:bg-lime-400 text-white dark:text-zinc-950 font-black rounded-xl shadow-sm transition cursor-pointer">1</button>
+                <button type="button" class="w-9 h-9 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">2</button>
+                <button type="button" class="w-9 h-9 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">3</button>
+                <span class="px-1 text-zinc-400 font-bold">...</span>
+                <button type="button" class="w-9 h-9 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">5</button>
+
+                <!-- Next Button -->
+                <button type="button" class="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">
+                    Next <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- 1. RENEW MEMBERSHIP POPUP MODAL            -->
+<!-- ========================================== -->
+<div id="renewModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
+        
+        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4">
+            <div class="flex items-center gap-3">
+                <span class="p-2.5 bg-amber-50 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400 rounded-2xl border border-amber-100 dark:border-amber-400/20">
+                    <i class="fa-solid fa-arrows-rotate text-lg"></i>
+                </span>
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900 dark:text-white">Renew Membership</h3>
+                    <p class="text-xs text-zinc-500">Extend subscription and update package details.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeRenewModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form asp-action="ConfirmRenewal" method="post" class="space-y-4 text-xs">
+            <input type="hidden" id="renewMemberId" name="MemberId" />
+
+            <!-- Member Info Card -->
+            <div class="bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-1">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Member</span>
+                <h4 class="font-extrabold text-zinc-900 dark:text-white text-sm" id="lblRenewName">-</h4>
+                <p class="text-zinc-500" id="lblRenewPhone">-</p>
+            </div>
+
+            <!-- Current Membership Card -->
+            <div class="bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-1">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Current Membership</span>
+                <p class="text-zinc-700 dark:text-zinc-300">Plan: <b class="text-zinc-900 dark:text-white" id="lblRenewCurrentPlan">-</b></p>
+                <p class="text-zinc-700 dark:text-zinc-300">Expires: <b class="text-zinc-900 dark:text-white" id="lblRenewExpires">-</b></p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">New Membership Plan *</label>
+                    <select name="NewPlan" required class="w-full h-11 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                        <option value="Standard Monthly">Standard Monthly</option>
+                        <option value="Quarterly Saver">Quarterly Saver</option>
+                        <option value="VIP Premium">VIP Premium</option>
+                        <option value="Annual VIP Pass">Annual VIP Pass</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">Renewal Duration *</label>
+                    <select name="Duration" required class="w-full h-11 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                        <option value="1 Month">1 Month</option>
+                        <option value="3 Months">3 Months</option>
+                        <option value="6 Months">6 Months</option>
+                        <option value="12 Months">12 Months</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">Start Date *</label>
+                    <input type="date" name="StartDate" required 
+                        class="w-full h-11 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">New Expiry Date</label>
+                    <input type="text" readonly value="Automatically calculated" 
+                        class="w-full h-11 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-400 text-[11px] font-medium outline-none cursor-not-allowed" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">Amount ($) *</label>
+                    <input type="number" step="0.01" name="Amount" required min="1" placeholder="80.00" 
+                        class="w-full h-11 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500 font-bold" />
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">Payment Method *</label>
+                    <select name="PaymentMethod" required class="w-full h-11 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                        <option value="Cash">Cash</option>
+                        <option value="ZAAD Service">ZAAD Service</option>
+                        <option value="EVC Plus">EVC Plus</option>
+                        <option value="Credit Card">Credit Card</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold uppercase text-zinc-500 mb-1">Payment Status *</label>
+                <select name="PaymentStatus" required class="w-full h-11 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-bold uppercase text-zinc-500 mb-1">Notes (Optional)</label>
+                <textarea name="Notes" rows="2" placeholder="Add any comments..." 
+                    class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                <button type="button" onclick="closeRenewModal()" class="px-5 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold rounded-xl shadow-md transition cursor-pointer">Confirm Renewal</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. MEMBERSHIP DETAILS POPUP MODAL          -->
+<!-- ========================================== -->
+<div id="detailsModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-6 my-8">
+        
+        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4">
+            <h3 class="text-base font-bold text-zinc-900 dark:text-white">Membership Details</h3>
+            <button type="button" onclick="closeDetailsModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+            <div class="bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-1">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Member</span>
+                <h4 class="font-extrabold text-zinc-900 dark:text-white text-sm" id="dtlName">-</h4>
+                <p class="text-zinc-500" id="dtlPhone">-</p>
+            </div>
+
+            <div class="bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-2">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Membership</span>
+                <div class="flex justify-between"><span class="text-zinc-400">Plan:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlPlan">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Duration:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlDuration">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Start Date:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlStart">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Expiry Date:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlExpiry">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Days Left:</span> <span class="font-bold text-emerald-600 dark:text-lime-400" id="dtlDaysLeft">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Status:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlStatus">-</span></div>
+            </div>
+
+            <div class="bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-2">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Payment</span>
+                <div class="flex justify-between"><span class="text-zinc-400">Amount:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlAmount">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Payment Status:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlPayStatus">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Payment Method:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlPayMethod">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Payment Date:</span> <span class="font-bold text-zinc-900 dark:text-white" id="dtlPayDate">-</span></div>
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <button type="button" onclick="closeDetailsModal()" class="px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl transition cursor-pointer">Close</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. APPROVE / REJECT POPUP MODAL            -->
+<!-- ========================================== -->
+<div id="approveModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-6 my-8">
+        
+        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4">
+            <div class="flex items-center gap-3">
+                <span class="p-2.5 bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 rounded-2xl border border-emerald-100 dark:border-lime-400/20">
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                </span>
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900 dark:text-white">Review Pending Request</h3>
+                    <p class="text-xs text-zinc-500">Approve or reject member registration.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeApproveModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form asp-action="ProcessPendingRequest" method="post" class="space-y-4 text-xs">
+            <input type="hidden" id="approveMemberId" name="MemberId" />
+
+            <div class="bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-2">
+                <div class="flex justify-between"><span class="text-zinc-400">Member Name:</span> <span class="font-bold text-zinc-900 dark:text-white" id="lblApproveName">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Package:</span> <span class="font-bold text-zinc-900 dark:text-white" id="lblApprovePackage">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-400">Total Due:</span> <span class="font-bold text-emerald-600 dark:text-lime-400" id="lblApproveAmount">-</span></div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                <button type="submit" name="actionType" value="Reject" class="px-5 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 font-bold rounded-xl transition cursor-pointer">Reject Request</button>
+                <button type="submit" name="actionType" value="Approve" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold rounded-xl shadow-md transition cursor-pointer">Approve Request</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- JavaScript Controls -->
+<script>
+    function openRenewModal(name, id, plan, expires) {
+        document.getElementById('renewMemberId').value = id;
+        document.getElementById('lblRenewName').innerText = name;
+        document.getElementById('lblRenewPhone').innerText = "+252 61 555 1234";
+        document.getElementById('lblRenewCurrentPlan').innerText = plan || "Quarterly Saver";
+        document.getElementById('lblRenewExpires').innerText = expires || "01 Sep 2026";
+        document.getElementById('renewModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeRenewModal() {
+        document.getElementById('renewModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openDetailsModal(name, phone, plan, duration, start, expiry, days, status, amount, payStatus, payMethod, payDate) {
+        document.getElementById('dtlName').innerText = name;
+        document.getElementById('dtlPhone').innerText = "Phone: " + phone;
+        document.getElementById('dtlPlan').innerText = plan;
+        document.getElementById('dtlDuration').innerText = duration;
+        document.getElementById('dtlStart').innerText = start;
+        document.getElementById('dtlExpiry').innerText = expiry;
+        document.getElementById('dtlDaysLeft').innerText = days + " Days";
+        document.getElementById('dtlStatus').innerText = status;
+        document.getElementById('dtlAmount').innerText = amount;
+        document.getElementById('dtlPayStatus').innerText = payStatus;
+        document.getElementById('dtlPayMethod').innerText = payMethod;
+        document.getElementById('dtlPayDate').innerText = payDate;
+        document.getElementById('detailsModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeDetailsModal() {
+        document.getElementById('detailsModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openApproveModal(name, id, pkg, amount) {
+        document.getElementById('approveMemberId').value = id;
+        document.getElementById('lblApproveName').innerText = name + " (" + id + ")";
+        document.getElementById('lblApprovePackage').innerText = pkg;
+        document.getElementById('lblApproveAmount').innerText = amount;
+        document.getElementById('approveModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeApproveModal() {
+        document.getElementById('approveModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+</script>

@@ -1,0 +1,397 @@
+﻿@{
+    ViewData["Title"] = "Members Directory";
+    Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Members Directory</h1>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Receptionist View • Manage gym members and subscription statuses.</p>
+        </div>
+        <button type="button" onclick="openAddMemberModal()" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-xs shadow-xl shadow-lime-500/15 transition-all cursor-pointer">
+            <i class="fa-solid fa-user-plus"></i> Add New Member
+        </button>
+    </div>
+
+    <!-- STAT CARDS (Weeyn oo leh Hover effects) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-zinc-400 dark:hover:border-zinc-700 transition-all">
+            <span class="text-xs font-bold uppercase tracking-wider text-zinc-400 block">Total Members</span>
+            <h2 class="text-4xl font-black text-zinc-900 dark:text-white mt-2">412</h2>
+        </div>
+        <div class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-emerald-500/40 transition-all">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">Active Members</span>
+            <h2 class="text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2">380</h2>
+        </div>
+        <div class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-red-500/40 transition-all">
+            <span class="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400 block">Expired Members</span>
+            <h2 class="text-4xl font-black text-red-600 dark:text-red-400 mt-2">32</h2>
+        </div>
+    </div>
+
+    <!-- CONTROLS BAR: SEARCH & FILTERS -->
+    <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="relative w-full md:w-96">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+            <input type="text" id="txtSearchMember" placeholder="Search by Name, ID, or Phone..." 
+                class="w-full h-11 pl-11 pr-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 rounded-xl text-zinc-900 dark:text-white placeholder-zinc-400 text-xs font-medium outline-none transition" />
+        </div>
+
+        <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-zinc-500 font-semibold">Status:</span>
+                <select id="ddlStatusFilter" class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-white text-xs font-semibold rounded-xl px-3 h-11 outline-none">
+                    <option value="All">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-zinc-500 font-semibold">Plan:</span>
+                <select id="ddlPlanFilter" class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-white text-xs font-semibold rounded-xl px-3 h-11 outline-none">
+                    <option value="All">All Plans</option>
+                    <option value="VIP">VIP Premium</option>
+                    <option value="Standard">Standard Monthly</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEMBERS DATA TABLE -->
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
+                        <th class="py-4 px-6">Member Profile</th>
+                        <th class="py-4 px-6">Current Plan</th>
+                        <th class="py-4 px-6">Contact Info</th>
+                        <th class="py-4 px-6">Status</th>
+                        <th class="py-4 px-6 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 text-xs">
+                    
+                    <!-- SAMPLE ROW -->
+                    <tr class="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/30 transition">
+                        <td class="py-4 px-6">
+                            <div class="flex items-center gap-3">
+                                <img src="https://i.pravatar.cc/150?img=33" alt="Member" class="w-11 h-11 rounded-xl object-cover border border-zinc-200 dark:border-zinc-700 shadow-sm" />
+                                <div>
+                                    <h3 class="font-bold text-zinc-900 dark:text-white text-sm">Ahmed Mohamed Hassan</h3>
+                                    <span class="text-[10px] font-mono text-emerald-600 dark:text-lime-400 bg-emerald-50 dark:bg-lime-400/10 px-2 py-0.5 rounded font-semibold">ID: MEM-8821</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span class="font-bold text-zinc-900 dark:text-white block">VIP Premium ($150)</span>
+                            <span class="text-[11px] text-zinc-400">Joined: 25 May, 2026</span>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span class="font-medium text-zinc-800 dark:text-zinc-200 block"><i class="fa-solid fa-phone text-[10px] text-zinc-400 mr-1.5"></i> +252 61 555 1234</span>
+                            <span class="text-[11px] text-zinc-400"><i class="fa-solid fa-envelope text-[10px] text-zinc-400 mr-1.5"></i> ahmed.m@email.com</span>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ACTIVE
+                            </span>
+                        </td>
+                        <td class="py-4 px-6 text-right">
+                            <button type="button" onclick="openDetailsModal('Ahmed Mohamed Hassan', 'MEM-8821', 'VIP Premium ($150 / 6 Months)', '+252 61 555 1234', 'ahmed.m@email.com', 'Male', 'Fatima M. (+252 61 111 2222)', 'Locker #14', 'ZAAD Service', 'Paid (Full)', '25 May, 2026', '25 Nov, 2026', 'https://i.pravatar.cc/150?img=33')" 
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-zinc-100 hover:bg-lime-400 hover:text-zinc-950 dark:bg-zinc-800 dark:hover:bg-lime-400 dark:hover:text-zinc-950 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl transition cursor-pointer shadow-sm">
+                                <i class="fa-regular fa-eye"></i> View Details
+                            </button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION BAR -->
+        <div class="p-4 bg-zinc-50 dark:bg-zinc-950/40 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <span class="text-zinc-500 font-medium">Showing <b class="text-zinc-900 dark:text-white">1 to 10</b> of <b class="text-zinc-900 dark:text-white">412</b> entries</span>
+            
+            <div class="flex items-center gap-1.5">
+                <button type="button" class="px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 font-bold transition disabled:opacity-40 cursor-pointer" disabled>Previous</button>
+                <button type="button" class="w-9 h-9 rounded-xl bg-lime-500 text-zinc-950 font-black shadow-sm flex items-center justify-center cursor-pointer">1</button>
+                <button type="button" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer">2</button>
+                <button type="button" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer">3</button>
+                <span class="text-zinc-400 px-1">...</span>
+                <button type="button" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer">42</button>
+                <button type="button" class="px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 font-bold transition cursor-pointer">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 1. ADD NEW MEMBER MODAL (LANDSCAPE 2-COL)  -->
+<!-- ========================================== -->
+<div id="addMemberModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-4xl p-8 shadow-2xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4 sticky top-0 bg-white dark:bg-zinc-900 z-10">
+            <div>
+                <h3 class="text-xl font-black text-zinc-900 dark:text-white">Register New Member</h3>
+                <p class="text-xs text-zinc-500 mt-0.5">Fill in personal details, membership package, and payment info.</p>
+            </div>
+            <button type="button" onclick="closeAddMemberModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+        </div>
+
+        <!-- Form 2-Columns Landscape Layout -->
+        <form asp-action="CreateMember" method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            
+            <!-- COLUMN 1: Personal Information -->
+            <div class="space-y-4 bg-zinc-50 dark:bg-zinc-950/50 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                <h4 class="font-extrabold uppercase tracking-wider text-lime-600 dark:text-lime-400 text-xs">1. Personal Information</h4>
+                
+                <div>
+                    <label class="block font-bold text-zinc-500 mb-1">Upload Member Photo</label>
+                    <input type="file" name="MemberPhoto" accept=".jpg, .png, .webp" 
+                        class="w-full text-zinc-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-lime-500/10 file:text-lime-600 dark:file:text-lime-400 hover:file:bg-lime-500/20 cursor-pointer" />
+                </div>
+
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">Full Name *</label>
+                    <input type="text" name="FullName" required placeholder="e.g. Mohamed Ali" 
+                        class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-zinc-500 mb-1">Phone Number *</label>
+                        <input type="text" name="Phone" required placeholder="+252 61..." 
+                            class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-zinc-500 mb-1">Gender *</label>
+                        <select name="Gender" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold uppercase text-zinc-500 mb-1">Email Address</label>
+                    <input type="email" name="Email" placeholder="member@email.com" 
+                        class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-zinc-500 mb-1">Emergency Name</label>
+                        <input type="text" name="EmergencyName" placeholder="Relative Name" 
+                            class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-zinc-500 mb-1">Emergency Phone</label>
+                        <input type="text" name="EmergencyPhone" placeholder="+252 63..." 
+                            class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: Membership Package & Payment -->
+            <div class="space-y-4 flex flex-col justify-between">
+                <div class="space-y-4 bg-zinc-50 dark:bg-zinc-950/50 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                    <h4 class="font-extrabold uppercase tracking-wider text-lime-600 dark:text-lime-400 text-xs">2. Package & Payment Details</h4>
+
+                    <div>
+                        <label class="block font-bold uppercase text-zinc-500 mb-1">Select Package *</label>
+                        <select name="Package" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                            <option value="">-- Choose Membership Plan --</option>
+                            <option value="Standard Monthly">Standard Monthly ($30 / 1 Month)</option>
+                            <option value="Quarterly Saver">Quarterly Saver ($80 / 3 Months)</option>
+                            <option value="VIP Premium">VIP Premium ($150 / 6 Months)</option>
+                            <option value="Annual VIP Pass">Annual VIP Pass ($280 / 12 Months)</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold uppercase text-zinc-500 mb-1">Start Date *</label>
+                            <input type="date" name="StartDate" required 
+                                class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                        </div>
+                        <div>
+                            <label class="block font-bold uppercase text-zinc-500 mb-1">Locker No.</label>
+                            <input type="text" name="LockerNo" placeholder="Optional" 
+                                class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold uppercase text-zinc-500 mb-1">Amount Paid ($) *</label>
+                            <input type="number" step="0.01" name="Amount" required placeholder="0.00" 
+                                class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500 font-bold" />
+                        </div>
+                        <div>
+                            <label class="block font-bold uppercase text-zinc-500 mb-1">Payment Method *</label>
+                            <select name="PaymentMethod" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                                <option value="">Select Method</option>
+                                <option value="ZAAD Service">ZAAD Service</option>
+                                <option value="EVC Plus">EVC Plus</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Credit Card">Credit Card</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold uppercase text-zinc-500 mb-1">Payment Status *</label>
+                        <select name="PaymentStatus" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
+                            <option value="Paid">Paid (Full)</option>
+                            <option value="Partial">Partial Payment</option>
+                            <option value="Pending">Pending / Unpaid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Footer Buttons inside Form -->
+                <div class="flex justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                    <button type="button" onclick="closeAddMemberModal()" class="px-6 py-3 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl transition cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-6 py-3 bg-lime-500 hover:bg-lime-400 text-zinc-950 font-extrabold rounded-xl shadow-lg transition cursor-pointer">Save Member</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. MEMBER DETAILS MODAL                    -->
+<!-- ========================================== -->
+<div id="memberDetailsModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
+        
+        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4">
+            <div class="flex items-center gap-3">
+                <img id="modalAvatar" src="" alt="Profile" class="w-14 h-14 rounded-2xl object-cover border border-zinc-200 dark:border-zinc-700 shadow-sm" />
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900 dark:text-white" id="modalName">---</h3>
+                    <p class="text-xs text-lime-600 dark:text-lime-400 font-mono font-bold" id="modalId">ID: ---</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeDetailsModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+            <div class="grid grid-cols-2 gap-4 bg-zinc-50 dark:bg-zinc-950/50 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Package / Plan</span>
+                    <span class="font-bold text-zinc-900 dark:text-white text-sm" id="modalPlan">-</span>
+                </div>
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Status</span>
+                    <span id="modalStatusBadge" class="inline-flex px-2.5 py-1 rounded-md font-extrabold">-</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 px-1">
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Phone Number</span>
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalPhone">-</span>
+                </div>
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Email Address</span>
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalEmail">-</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 px-1">
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Gender</span>
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalGender">-</span>
+                </div>
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Assigned Locker</span>
+                    <span class="font-semibold text-lime-600 dark:text-lime-400" id="modalLocker">-</span>
+                </div>
+            </div>
+
+            <div class="bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-2xl space-y-1">
+                <span class="block font-bold uppercase text-amber-600 dark:text-amber-400 text-[10px]">Emergency Contact Info</span>
+                <p class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalEmergency">-</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 px-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Payment Method</span>
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalPaymentMethod">-</span>
+                </div>
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Payment Status</span>
+                    <span class="font-semibold text-emerald-600 dark:text-emerald-400" id="modalPaymentStatus">-</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 px-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Joining Date</span>
+                    <span class="font-mono text-zinc-700 dark:text-zinc-300" id="modalJoined">-</span>
+                </div>
+                <div>
+                    <span class="block font-bold uppercase text-zinc-400 mb-1">Expiry Date</span>
+                    <span class="font-mono text-zinc-700 dark:text-zinc-300" id="modalExpiry">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <button type="button" onclick="closeDetailsModal()" class="px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl transition cursor-pointer">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Logic -->
+<script>
+    function openAddMemberModal() {
+        document.getElementById('addMemberModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeAddMemberModal() {
+        document.getElementById('addMemberModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openDetailsModal(name, id, plan, phone, email, gender, emergency, locker, payMethod, payStatus, joined, expiry, avatar) {
+        document.getElementById('modalName').innerText = name;
+        document.getElementById('modalId').innerText = "ID: " + id;
+        document.getElementById('modalPlan').innerText = plan;
+        document.getElementById('modalPhone').innerText = phone;
+        document.getElementById('modalEmail').innerText = email;
+        document.getElementById('modalGender').innerText = gender;
+        document.getElementById('modalEmergency').innerText = emergency;
+        document.getElementById('modalLocker').innerText = locker;
+        document.getElementById('modalPaymentMethod').innerText = payMethod;
+        document.getElementById('modalPaymentStatus').innerText = payStatus;
+        document.getElementById('modalJoined').innerText = joined;
+        document.getElementById('modalExpiry').innerText = expiry;
+        document.getElementById('modalAvatar').src = avatar;
+
+        const badge = document.getElementById('modalStatusBadge');
+        badge.className = "inline-flex px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20";
+        badge.innerText = "ACTIVE";
+
+        document.getElementById('memberDetailsModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeDetailsModal() {
+        document.getElementById('memberDetailsModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+</script>

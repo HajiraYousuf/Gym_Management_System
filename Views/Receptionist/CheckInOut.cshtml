@@ -1,0 +1,321 @@
+﻿@{
+    ViewData["Title"] = "Check-In & Check-Out Terminal";
+    Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+
+    <!-- PAGE HEADER & STATS BAR -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900/60 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="p-2.5 bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 rounded-xl border border-emerald-100 dark:border-lime-400/20">
+                    <i class="fa-solid fa-right-left text-xl"></i>
+                </span>
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Check-In & Check-Out Terminal</h1>
+                    <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Process gym entries, manage exits, and monitor active occupancy</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Live Counter Stats -->
+        <div class="flex items-center gap-4">
+            <div class="px-4 py-2.5 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-200 dark:border-zinc-800 text-right">
+                <span class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-zinc-500 font-semibold block">Today's Check-ins</span>
+                <span class="text-xl font-bold text-emerald-600 dark:text-lime-400">142</span>
+            </div>
+            <div class="px-4 py-2.5 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-200 dark:border-zinc-800 text-right">
+                <span class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-zinc-500 font-semibold block">Currently Inside</span>
+                <div class="flex items-center gap-1.5 justify-end">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400">38</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN TERMINAL GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- LEFT COLUMN: SEARCH & ACTION TERMINAL (7 COLS) -->
+        <div class="lg:col-span-7 space-y-6">
+
+            <!-- INTERACTIVE SEARCH & HIDDEN DROPDOWN CONTAINER -->
+            <div class="bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm relative space-y-4">
+                <label class="block text-xs font-bold text-slate-700 dark:text-zinc-400 uppercase tracking-wider">
+                    Search Member by Name, Phone or ID
+                </label>
+
+                <div class="relative flex items-center">
+                    <i class="fa-solid fa-barcode absolute left-4 text-emerald-600 dark:text-lime-400 text-lg"></i>
+                    <input type="text" id="txtMemberSearch" onkeyup="filterMembersList()" placeholder="Enter Member Name, ID or Phone..." 
+                        class="w-full h-14 pl-12 pr-36 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 text-sm font-medium outline-none transition shadow-inner" />
+                    
+                    <button type="button" 
+                        class="absolute right-2 h-10 px-5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-black font-extrabold text-xs uppercase tracking-wider rounded-lg transition shadow-sm cursor-pointer">
+                        FIND MEMBER
+                    </button>
+                </div>
+
+                <!-- SELECTABLE MEMBER RESULTS DROPDOWN (HIDDEN UNTIL TYPING) -->
+                <div id="memberSearchResults" class="hidden border border-slate-200 dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-black/90 max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800/80 shadow-xl">
+                    
+                    <!-- Result Item 1 -->
+                    <div class="member-item p-3.5 hover:bg-emerald-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" onclick="selectMember('Farhiya Ahmed Hassan', 'MEM-1021', '+252 63 444 1111', 'Standard', 'Active')">
+                        <div class="space-y-0.5">
+                            <h4 class="font-bold text-xs text-slate-900 dark:text-white">Farhiya Ahmed Hassan</h4>
+                            <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-emerald-600 dark:text-lime-400">MEM-1021</span> | Phone: +252 63 444 1111</p>
+                            <div class="flex items-center gap-2 pt-1">
+                                <span class="text-[9px] px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 rounded font-bold">Plan: Standard</span>
+                                <span class="text-[9px] px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400 rounded font-bold">Status: Active</span>
+                            </div>
+                        </div>
+                        <button type="button" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
+                            Select
+                        </button>
+                    </div>
+
+                    <!-- Result Item 2 -->
+                    <div class="member-item p-3.5 hover:bg-emerald-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" onclick="selectMember('Farhiya Abdi Jama', 'MEM-2045', '+252 61 555 2222', 'VIP Premium', 'Active')">
+                        <div class="space-y-0.5">
+                            <h4 class="font-bold text-xs text-slate-900 dark:text-white">Farhiya Abdi Jama</h4>
+                            <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-emerald-600 dark:text-lime-400">MEM-2045</span> | Phone: +252 61 555 2222</p>
+                            <div class="flex items-center gap-2 pt-1">
+                                <span class="text-[9px] px-2 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 rounded font-bold">Plan: VIP Premium</span>
+                                <span class="text-[9px] px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400 rounded font-bold">Status: Active</span>
+                            </div>
+                        </div>
+                        <button type="button" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
+                            Select
+                        </button>
+                    </div>
+
+                    <!-- Result Item 3 (Expired Demo) -->
+                    <div class="member-item p-3.5 hover:bg-red-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" onclick="selectExpiredMember('Mustafa Osman Ali', 'MEM-1029', '+252 61 444 8899', 'Basic Monthly', 'Expired')">
+                        <div class="space-y-0.5">
+                            <h4 class="font-bold text-xs text-slate-900 dark:text-white">Mustafa Osman Ali</h4>
+                            <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-red-600">MEM-1029</span> | Phone: +252 61 444 8899</p>
+                            <div class="flex items-center gap-2 pt-1">
+                                <span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 rounded font-bold">Plan: Basic Monthly</span>
+                                <span class="text-[9px] px-2 py-0.5 bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400 rounded font-bold">Status: Expired</span>
+                            </div>
+                        </div>
+                        <button type="button" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
+                            Select
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SELECTED MEMBER CONTROLLER BOX (HIDDEN BY DEFAULT UNTIL SELECTED) -->
+            <div id="selectedMemberCard" class="hidden bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-emerald-500/50 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-3">
+                    <span class="text-[11px] font-bold text-emerald-600 dark:text-lime-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i> Selected Member Terminal
+                    </span>
+                    <span id="lblSelectedStatus" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 font-bold">ACTIVE</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <div class="w-16 h-16 rounded-xl bg-emerald-100 dark:bg-lime-400/20 text-emerald-700 dark:text-lime-400 flex items-center justify-center font-black text-xl shrink-0" id="lblAvatarInitials">
+                        FH
+                    </div>
+                    <div class="space-y-1 text-center sm:text-left w-full">
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white" id="lblSelectedName">Farhiya Ahmed Hassan</h3>
+                        <p class="text-xs text-slate-500 dark:text-zinc-400">ID: <b id="lblSelectedId" class="text-slate-800 dark:text-zinc-200">MEM-1021</b> | Phone: <span id="lblSelectedPhone">+252 63 444 1111</span></p>
+                        <p class="text-xs text-slate-500 dark:text-zinc-400">Active Plan: <b id="lblSelectedPlan" class="text-emerald-600 dark:text-lime-400">Standard Plan</b></p>
+                    </div>
+                </div>
+
+                <!-- Active Terminal Buttons -->
+                <div id="activeActionButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <form asp-action="ProcessCheckIn" method="post">
+                        <input type="hidden" id="inputCheckInId" name="MemberId" value="MEM-1021" />
+                        <button type="submit" class="w-full h-12 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> Check In (Enter)
+                        </button>
+                    </form>
+
+                    <form asp-action="ProcessCheckOut" method="post">
+                        <input type="hidden" id="inputCheckOutId" name="MemberId" value="MEM-1021" />
+                        <button type="submit" class="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Check Out (Exit)
+                        </button>
+                    </form>
+                </div>
+
+                <!-- ACCESS DENIED SECTION (HIDDEN BY DEFAULT, SHOWN WHEN EXPIRED) -->
+                <div id="accessDeniedSection" class="hidden space-y-4 pt-2">
+                    <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-xmark text-2xl"></i>
+                        <div>
+                            <h4 class="font-bold text-xs">Access Denied: Membership Expired</h4>
+                            <p class="text-[11px] opacity-90">This member cannot enter until their subscription is renewed.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <a id="lnkRenewMembership" href="#" 
+                            class="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>Renew Membership Now</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: CURRENTLY INSIDE & RECENT EXITS LOG (5 COLS) -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <!-- CURRENTLY INSIDE QUICK LIST -->
+            <div class="bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-emerald-600 dark:text-lime-400"></i>
+                        Inside Gym Now (38)
+                    </h3>
+                    <span class="text-[10px] text-emerald-600 font-mono bg-emerald-50 dark:text-lime-400 dark:bg-lime-400/10 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                </div>
+
+                <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
+                    <!-- Inside Item 1 -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800">
+                        <div class="flex items-center gap-3">
+                            <img src="https://i.pravatar.cc/100?img=33" class="w-9 h-9 rounded-lg object-cover border border-emerald-500" />
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900 dark:text-white">Ahmed Mohamed</h4>
+                                <p class="text-[10px] text-slate-500">MEM-8821 • In: 09:15 AM</p>
+                            </div>
+                        </div>
+                        <form asp-action="ProcessCheckOut" method="post">
+                            <input type="hidden" name="MemberId" value="MEM-8821" />
+                            <button type="submit" class="px-2.5 py-1 bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] rounded-lg transition cursor-pointer">
+                                Exit
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Inside Item 2 -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800">
+                        <div class="flex items-center gap-3">
+                            <img src="https://i.pravatar.cc/100?img=12" class="w-9 h-9 rounded-lg object-cover border border-emerald-500" />
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900 dark:text-white">Farhiya Abdi</h4>
+                                <p class="text-[10px] text-slate-500">MEM-9012 • In: 10:10 AM</p>
+                            </div>
+                        </div>
+                        <form asp-action="ProcessCheckOut" method="post">
+                            <input type="hidden" name="MemberId" value="MEM-9012" />
+                            <button type="submit" class="px-2.5 py-1 bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] rounded-lg transition cursor-pointer">
+                                Exit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT LOGS -->
+            <div class="bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-orange-500"></i>
+                        Recent Exits Log
+                    </h3>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-slate-900 dark:text-white">Khalid Ali Jama</p>
+                            <span class="text-[10px] text-slate-500">Exited at 10:35 AM (1h 25m)</span>
+                        </div>
+                        <span class="text-[9px] bg-orange-100 text-orange-700 dark:bg-orange-400/10 dark:text-orange-400 px-2 py-0.5 rounded font-bold">Checked Out</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JavaScript for Hidden Dropdown & Access Denied Control -->
+<script>
+    function filterMembersList() {
+        const input = document.getElementById('txtMemberSearch').value.trim();
+        const resultsBox = document.getElementById('memberSearchResults');
+        
+        if (input.length === 0) {
+            resultsBox.classList.add('hidden');
+            return;
+        }
+
+        resultsBox.classList.remove('hidden');
+        const query = input.toLowerCase();
+        const items = resultsBox.querySelectorAll('.member-item');
+
+        items.forEach(item => {
+            const text = item.innerText.toLowerCase();
+            if (text.includes(query)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function selectMember(name, id, phone, plan, status) {
+        document.getElementById('lblSelectedName').innerText = name;
+        document.getElementById('lblSelectedId').innerText = id;
+        document.getElementById('lblSelectedPhone').innerText = phone;
+        document.getElementById('lblSelectedPlan').innerText = plan;
+        document.getElementById('inputCheckInId').value = id;
+        document.getElementById('inputCheckOutId').value = id;
+        
+        // Initials
+        const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        document.getElementById('lblAvatarInitials').innerText = initials;
+
+        const statusBadge = document.getElementById('lblSelectedStatus');
+        statusBadge.innerText = status.toUpperCase();
+        statusBadge.className = "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 font-bold";
+        
+        // Card styling & Sections visibility (Waxay ka saaraysaa hidden si ay u soo baxdo)
+        const selectedCard = document.getElementById('selectedMemberCard');
+        selectedCard.classList.remove('hidden');
+        selectedCard.className = "bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-emerald-500 shadow-sm space-y-4 transition-all";
+        
+        document.getElementById('activeActionButtons').classList.remove('hidden');
+        document.getElementById('accessDeniedSection').classList.add('hidden');
+
+        // Hide dropdown after selection
+        document.getElementById('memberSearchResults').classList.add('hidden');
+        document.getElementById('txtMemberSearch').value = '';
+    }
+
+    function selectExpiredMember(name, id, phone, plan, status) {
+        selectMember(name, id, phone, plan, status);
+        
+        const statusBadge = document.getElementById('lblSelectedStatus');
+        statusBadge.innerText = "EXPIRED";
+        statusBadge.className = "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400 font-bold";
+        
+        // Change card border to red and show Access Denied section, hide check-in/out buttons
+        const selectedCard = document.getElementById('selectedMemberCard');
+        selectedCard.classList.remove('hidden');
+        selectedCard.className = "bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-red-500 shadow-sm space-y-4 transition-all";
+        
+        document.getElementById('activeActionButtons').classList.add('hidden');
+        document.getElementById('accessDeniedSection').classList.remove('hidden');
+        
+        // Set renewal link URL
+        document.getElementById('lnkRenewMembership').href = '@Url.Action("Memberships", "Receptionist")?memberId=' + id;
+    }
+</script>
