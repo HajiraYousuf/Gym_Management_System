@@ -1,0 +1,383 @@
+﻿@{
+    ViewData["Title"] = "Class Attendance";
+    Layout = "~/Views/layouts/TrainerMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="space-y-6 min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 p-4 md:p-6 transition-colors duration-300">
+
+    <!-- 1. Header Section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-5">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-0.5">
+                <span>Trainer Module</span> • <span>Class Attendance</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Morning Strength Training</h1>
+            <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Today, Aug 12, 2026 · 08:00 AM – 09:00 AM • Trainer: Alex Morgan · Main Gym Floor</p>
+        </div>
+
+        <!-- Action Button -->
+        <div>
+            <button type="button" onclick="alert('Attendance saved successfully!')" class="bg-lime-400 hover:bg-lime-500 text-black font-extrabold px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-lime-500/20 transition-all w-full sm:w-auto cursor-pointer">
+                <i class="fas fa-save"></i> Save Attendance
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+
+        <!-- Total Members -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl bg-lime-100 dark:bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 flex items-center justify-center text-lg">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span class="text-xs font-mono font-bold text-zinc-400">Total</span>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">24</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Enrolled Members</p>
+        </div>
+
+        <!-- Checked In (Present + Late) -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center text-lg">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <span class="text-xs font-mono font-bold text-blue-500">Checked In</span>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">20/24</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">83% Attendance Rate</p>
+        </div>
+
+        <!-- Present -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center text-lg">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <span class="text-xs font-mono font-bold text-emerald-500">Present</span>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">18</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">On-time arrivals</p>
+        </div>
+
+        <!-- Absent -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center text-lg">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <span class="text-xs font-mono font-bold text-rose-500">Absent</span>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">4</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Unexcused or missing</p>
+        </div>
+
+        <!-- Late -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-lg">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <span class="text-xs font-mono font-bold text-amber-500">Late</span>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">2</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Arrived past schedule</p>
+        </div>
+
+    </div>
+
+    <!-- 3. Filters & Search Section -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        <div>
+            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 text-xs">Select Class</label>
+            <div class="relative">
+                <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-medium cursor-pointer appearance-none">
+                    <option value="strength">Morning Strength Training (08:00 AM)</option>
+                    <option value="cardio">Cardio Blast (10:00 AM)</option>
+                    <option value="hiit">HIIT Training (04:00 PM)</option>
+                    <option value="evening">Evening Fitness (06:30 PM)</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-xs"></i>
+            </div>
+        </div>
+
+        <div>
+            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 text-xs">Select Date</label>
+            <input type="date" value="2026-08-12" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-medium dark:[color-scheme:dark]" />
+        </div>
+
+        <div>
+            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 text-xs">Status Filter</label>
+            <div class="relative">
+                <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-800 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-medium cursor-pointer appearance-none">
+                    <option value="">All Statuses</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                    <option value="late">Late</option>
+                    <option value="excused">Excused</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Input Bar -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm flex items-center">
+        <div class="relative w-full md:w-96">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-400">
+                <i class="fas fa-search text-xs"></i>
+            </span>
+            <input type="text" placeholder="Search member name or ID..." class="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 transition-all font-medium" />
+        </div>
+    </div>
+
+    <!-- 4. Members Attendance Table -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden">
+
+        <!-- Bulk Actions Bar -->
+        <div class="p-4 bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-3">
+                <label class="flex items-center gap-2 font-bold cursor-pointer text-zinc-700 dark:text-zinc-300">
+                    <input type="checkbox" class="rounded border-zinc-300 dark:border-zinc-700 text-lime-500 focus:ring-lime-500 w-4 h-4 cursor-pointer" />
+                    <span>Select All</span>
+                </label>
+                <span class="text-zinc-400 font-mono">|</span>
+                <span class="text-zinc-500">24 members in class</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white font-bold transition cursor-pointer">
+                    <i class="fas fa-check mr-1"></i> Mark Present
+                </button>
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white font-bold transition cursor-pointer">
+                    <i class="fas fa-times mr-1"></i> Mark Absent
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-zinc-600 dark:text-zinc-300">
+                <thead class="bg-zinc-50 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                    <tr>
+                        <th class="p-4 w-10"></th>
+                        <th class="p-4">Member Name & ID</th>
+                        <th class="p-4">Check-in Time</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4">Attendance Note</th>
+                        <th class="p-4 text-right">Quick Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-xs font-medium">
+
+                    <!-- Row 1: Present (Has Note -> Edit Note) -->
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
+                        <td class="p-4">
+                            <input type="checkbox" class="rounded border-zinc-300 dark:border-zinc-700 text-lime-500 focus:ring-lime-500 w-4 h-4 cursor-pointer" />
+                        </td>
+                        <td class="p-4">
+                            <span class="font-bold text-zinc-900 dark:text-white block">Ahmed Ali</span>
+                            <span class="text-[11px] text-zinc-400 font-mono">#MEM-001</span>
+                        </td>
+                        <td class="p-4 font-mono font-semibold text-zinc-800 dark:text-zinc-200">07:55 AM</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Present
+                            </span>
+                        </td>
+                        <td class="p-4 text-zinc-500">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="truncate max-w-[160px]">Arrived on time, ready for session.</span>
+                                <button type="button" onclick="openNoteModal('Ahmed Ali', 'Arrived on time, ready for session.')" class="text-lime-600 dark:text-lime-400 hover:underline font-bold text-[11px] shrink-0 cursor-pointer">
+                                    <i class="fas fa-pen text-[10px] mr-1"></i> Edit Note
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-4 text-right space-x-1">
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-emerald-500 text-white font-bold transition shadow-sm cursor-pointer">Present</button>
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-700 dark:text-zinc-300 transition cursor-pointer">Absent</button>
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-amber-500 hover:text-white text-zinc-700 dark:text-zinc-300 transition cursor-pointer">Late</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2: Absent (Has Note -> Edit Note) -->
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
+                        <td class="p-4">
+                            <input type="checkbox" class="rounded border-zinc-300 dark:border-zinc-700 text-lime-500 focus:ring-lime-500 w-4 h-4 cursor-pointer" />
+                        </td>
+                        <td class="p-4">
+                            <span class="font-bold text-zinc-900 dark:text-white block">Hodan Yusuf</span>
+                            <span class="text-[11px] text-zinc-400 font-mono">#MEM-002</span>
+                        </td>
+                        <td class="p-4 font-mono font-semibold text-zinc-400">—</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 border border-rose-500/20 inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Absent
+                            </span>
+                        </td>
+                        <td class="p-4 text-zinc-500">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="truncate max-w-[160px]">Absent due to personal reason.</span>
+                                <button type="button" onclick="openNoteModal('Hodan Yusuf', 'Absent due to personal reason.')" class="text-lime-600 dark:text-lime-400 hover:underline font-bold text-[11px] shrink-0 cursor-pointer">
+                                    <i class="fas fa-pen text-[10px] mr-1"></i> Edit Note
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-4 text-right space-x-1">
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-500 hover:text-white text-zinc-700 dark:text-zinc-300 transition cursor-pointer">Present</button>
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-rose-500 text-white font-bold transition shadow-sm cursor-pointer">Absent</button>
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-amber-500 hover:text-white text-zinc-700 dark:text-zinc-300 transition cursor-pointer">Late</button>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3: Late (No Note initially -> Add Note) -->
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
+                        <td class="p-4">
+                            <input type="checkbox" class="rounded border-zinc-300 dark:border-zinc-700 text-lime-500 focus:ring-lime-500 w-4 h-4 cursor-pointer" />
+                        </td>
+                        <td class="p-4">
+                            <span class="font-bold text-zinc-900 dark:text-white block">Mohamed Hassan</span>
+                            <span class="text-[11px] text-zinc-400 font-mono">#MEM-003</span>
+                        </td>
+                        <td class="p-4 font-mono font-semibold text-zinc-800 dark:text-zinc-200">08:08 AM</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20 inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Late
+                            </span>
+                        </td>
+                        <td class="p-4 text-zinc-400 italic">
+                            <div class="flex items-center justify-between gap-2">
+                                <span>No notes added</span>
+                                <button type="button" onclick="openNoteModal('Mohamed Hassan', '')" class="text-lime-600 dark:text-lime-400 hover:underline font-bold text-[11px] not-italic shrink-0 cursor-pointer">
+                                    <i class="fas fa-plus text-[10px] mr-1"></i> Add Note
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-4 text-right space-x-1">
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-500 hover:text-white text-zinc-700 dark:text-zinc-300 transition cursor-pointer">Present</button>
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-700 dark:text-zinc-300 transition cursor-pointer">Absent</button>
+                            <button type="button" class="px-2.5 py-1 rounded-lg bg-amber-500 text-white font-bold transition shadow-sm cursor-pointer">Late</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 7. Pagination Footer -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
+            <span class="text-zinc-500 dark:text-zinc-400 font-medium">Showing 1–10 of 24 members</span>
+            <div class="flex items-center gap-1.5">
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">Previous</button>
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-lime-400 text-black font-bold transition-all cursor-pointer">1</button>
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">2</button>
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">3</button>
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Attendance History Section -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden mt-8">
+        <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex justify-between items-center">
+            <div>
+                <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-history text-lime-500"></i> Attendance History
+                </h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Past class attendance records and adherence summaries.</p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-zinc-600 dark:text-zinc-300">
+                <thead class="bg-zinc-50/50 dark:bg-zinc-950/50 text-zinc-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                    <tr>
+                        <th class="p-4">Date</th>
+                        <th class="p-4">Class Name</th>
+                        <th class="p-4">Present</th>
+                        <th class="p-4">Absent</th>
+                        <th class="p-4">Late</th>
+                        <th class="p-4">Attendance Rate</th>
+                        <th class="p-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-xs font-medium">
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer" onclick="alert('Viewing history details for Aug 12')">
+                        <td class="p-4 font-mono font-bold text-zinc-800 dark:text-zinc-200">Aug 12, 2026</td>
+                        <td class="p-4 font-bold text-zinc-900 dark:text-white">Morning Strength Training</td>
+                        <td class="p-4 text-emerald-500 font-bold">18</td>
+                        <td class="p-4 text-rose-500 font-bold">4</td>
+                        <td class="p-4 text-amber-500 font-bold">2</td>
+                        <td class="p-4 font-mono font-bold text-zinc-900 dark:text-white">83%</td>
+                        <td class="p-4 text-right">
+                            <span class="text-lime-600 dark:text-lime-400 font-bold hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-[10px]"></i></span>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer" onclick="alert('Viewing history details for Aug 11')">
+                        <td class="p-4 font-mono font-bold text-zinc-800 dark:text-zinc-200">Aug 11, 2026</td>
+                        <td class="p-4 font-bold text-zinc-900 dark:text-white">Cardio Blast</td>
+                        <td class="p-4 text-emerald-500 font-bold">20</td>
+                        <td class="p-4 text-rose-500 font-bold">2</td>
+                        <td class="p-4 text-amber-500 font-bold">1</td>
+                        <td class="p-4 font-mono font-bold text-zinc-900 dark:text-white">91%</td>
+                        <td class="p-4 text-right">
+                            <span class="text-lime-600 dark:text-lime-400 font-bold hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-[10px]"></i></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ==================== ADD / EDIT ATTENDANCE NOTE MODAL ==================== -->
+<div id="noteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-8">
+
+        <!-- Modal Header -->
+        <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
+            <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-lime-500"></i>
+                <span id="noteModalTitle">Attendance Note</span>
+            </h3>
+            <button type="button" onclick="closeNoteModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-4 text-xs">
+            <div>
+                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Attendance Note / Reason</label>
+                <textarea id="noteTextArea" rows="4" placeholder="Enter reason for absence, tardiness, or session notes..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition resize-none"></textarea>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
+            <button type="button" onclick="closeNoteModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer text-xs">
+                Cancel
+            </button>
+            <button type="button" onclick="alert('Note saved successfully!'); closeNoteModal();" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer text-xs">
+                Save Note
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- JavaScript for Modal Control -->
+<script>
+    function openNoteModal(memberName, currentNote) {
+        document.getElementById('noteModalTitle').innerText = (currentNote ? 'Edit Note for ' : 'Add Note for ') + memberName;
+        document.getElementById('noteTextArea').value = currentNote;
+        document.getElementById('noteModal').classList.remove('hidden');
+    }
+    function closeNoteModal() {
+        document.getElementById('noteModal').classList.add('hidden');
+    }
+</script>

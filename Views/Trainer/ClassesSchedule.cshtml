@@ -1,0 +1,476 @@
+﻿@{
+    ViewData["Title"] = "My Schedule";
+    Layout = "~/Views/layouts/TrainerMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="p-4 md:p-6 bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 min-h-screen transition-colors duration-200">
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white flex items-center gap-3">
+                <i class="fa-solid fa-calendar-days text-lime-500"></i>
+                My Class Schedule
+            </h1>
+            <p class="text-zinc-500 dark:text-zinc-400 text-xs md:text-sm mt-1">Manage your group fitness classes, track member attendance, and view class rosters.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+            <button type="button" onclick="openClassNoteModal()" class="w-full sm:w-auto bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-lime-500/20 transition duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Add Class Note
+            </button>
+        </div>
+    </div>
+
+    <!-- Metric Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6 md:mb-8">
+        <!-- Today's Classes -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Today's Classes</p>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">4 Classes</h3>
+                </div>
+                <div class="w-12 h-12 bg-lime-500/10 border border-lime-500/20 rounded-xl flex items-center justify-center text-lime-600 dark:text-lime-400">
+                    <i class="fa-solid fa-people-group text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Enrolled Members -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Members Today</p>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">42 Enrolled</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <i class="fa-solid fa-users text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Classes -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Completed Classes</p>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">1 Finished</h3>
+                </div>
+                <div class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                    <i class="fa-solid fa-circle-check text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Classes -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Upcoming Classes</p>
+                    <h3 class="text-2xl font-bold text-amber-500 dark:text-amber-400 mt-1">3 Remaining</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-500 dark:text-amber-400">
+                    <i class="fa-solid fa-hourglass-start text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Controls & View Mode Toggle -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+            <button type="button" class="p-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition cursor-pointer">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+
+            <div class="text-center">
+                <span id="dateDisplay" class="text-base font-bold text-zinc-900 dark:text-white block">Thursday, Aug 6, 2026</span>
+                <span id="viewSubtitle" class="text-[11px] font-semibold text-lime-600 dark:text-lime-400">Today Classes</span>
+            </div>
+
+            <button type="button" class="p-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition cursor-pointer">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <select class="w-full sm:w-auto bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 cursor-pointer">
+                <option value="All">All Group Classes</option>
+                <option value="HIIT">Morning HIIT</option>
+                <option value="Strength">Strength Training</option>
+                <option value="Yoga">Yoga Session</option>
+                <option value="Cardio">Cardio Blast</option>
+                <option value="CrossFit">CrossFit</option>
+            </select>
+
+            <!-- JS View Switcher Buttons -->
+            <div class="flex items-center bg-zinc-100 dark:bg-zinc-950 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 w-full sm:w-auto">
+                <button type="button" id="btnDayView" onclick="switchScheduleView('day')" class="w-1/2 sm:w-auto bg-lime-500 text-zinc-950 font-bold px-4 py-1.5 rounded-lg text-xs transition cursor-pointer">
+                    Day View
+                </button>
+                <button type="button" id="btnWeekView" onclick="switchScheduleView('week')" class="w-1/2 sm:w-auto text-zinc-500 dark:text-zinc-400 font-medium px-4 py-1.5 rounded-lg text-xs hover:text-zinc-900 dark:hover:text-white transition cursor-pointer">
+                    Week View
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY VIEW SECTION -->
+    <div id="dayViewContainer" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 md:p-6 shadow-sm mb-8">
+        <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-lime-500"></i>
+            Daily Group Classes Timeline
+        </h2>
+
+        <div class="space-y-4">
+
+            <!-- Class 1: Morning HIIT (Completed) -->
+            <div class="flex flex-col md:flex-row gap-2 md:gap-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <span class="text-sm font-bold text-zinc-900 dark:text-white">07:00 AM</span>
+                    <span class="text-xs text-zinc-400 block">07:00 - 08:00 AM</span>
+                </div>
+                <div class="flex-grow">
+                    <div class="bg-lime-500/10 border-l-4 border-lime-500 rounded-r-xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-lime-500 text-zinc-950">Group Class</span>
+                                <h4 class="text-sm font-bold text-zinc-900 dark:text-white">Morning HIIT</h4>
+                            </div>
+                            <p class="text-xs text-zinc-600 dark:text-zinc-300"><i class="fa-solid fa-users text-lime-600 dark:text-lime-400 mr-1.5"></i>Attendance: 12 / 12 Members Registered</p>
+                            <p class="text-xs text-zinc-400"><i class="fa-solid fa-location-dot mr-1.5"></i>Studio Hall 1</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="#" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1">
+                                <i class="fa-solid fa-users text-xs text-zinc-400"></i> View Members
+                            </a>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                <i class="fa-solid fa-check text-xs"></i> Completed
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class 2: Strength Training -->
+            <div class="flex flex-col md:flex-row gap-2 md:gap-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <span class="text-sm font-bold text-zinc-900 dark:text-white">09:30 AM</span>
+                    <span class="text-xs text-zinc-400 block">09:30 - 10:30 AM</span>
+                </div>
+                <div class="flex-grow">
+                    <div class="bg-cyan-500/10 border-l-4 border-cyan-500 rounded-r-xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-cyan-500 text-zinc-950">Group Class</span>
+                                <h4 class="text-sm font-bold text-zinc-900 dark:text-white">Strength Training</h4>
+                            </div>
+                            <p class="text-xs text-zinc-600 dark:text-zinc-300"><i class="fa-solid fa-users text-cyan-600 dark:text-cyan-400 mr-1.5"></i>Enrolled: 10 / 15 Members</p>
+                            <p class="text-xs text-zinc-400"><i class="fa-solid fa-location-dot mr-1.5"></i>Weight Training Area</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="#" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1">
+                                <i class="fa-solid fa-users text-xs text-zinc-400"></i> View Members
+                            </a>
+                            <a href="#" class="bg-cyan-500 hover:bg-cyan-400 text-zinc-950 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-clipboard-user text-xs"></i> Take Attendance
+                            </a>
+                            <button type="button" onclick="openClassNoteModal('Strength Training')" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1 cursor-pointer">
+                                <i class="fa-solid fa-note-sticky text-xs text-cyan-500"></i> Class Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class 3: Yoga Session -->
+            <div class="flex flex-col md:flex-row gap-2 md:gap-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <span class="text-sm font-bold text-zinc-900 dark:text-white">04:00 PM</span>
+                    <span class="text-xs text-zinc-400 block">04:00 - 05:00 PM</span>
+                </div>
+                <div class="flex-grow">
+                    <div class="bg-amber-500/10 border-l-4 border-amber-500 rounded-r-xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-amber-500 text-zinc-950">Group Class</span>
+                                <h4 class="text-sm font-bold text-zinc-900 dark:text-white">Yoga Session</h4>
+                            </div>
+                            <p class="text-xs text-zinc-600 dark:text-zinc-300"><i class="fa-solid fa-users text-amber-500 mr-1.5"></i>Enrolled: 12 / 12 Members (Full)</p>
+                            <p class="text-xs text-zinc-400"><i class="fa-solid fa-location-dot mr-1.5"></i>Mind & Body Studio</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="#" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1">
+                                <i class="fa-solid fa-users text-xs text-zinc-400"></i> View Members
+                            </a>
+                            <a href="#" class="bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-clipboard-user text-xs"></i> Take Attendance
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class 4: CrossFit -->
+            <div class="flex flex-col md:flex-row gap-2 md:gap-6 pb-4">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <span class="text-sm font-bold text-zinc-900 dark:text-white">06:00 PM</span>
+                    <span class="text-xs text-zinc-400 block">06:00 - 07:00 PM</span>
+                </div>
+                <div class="flex-grow">
+                    <div class="bg-purple-500/10 border-l-4 border-purple-500 rounded-r-xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-purple-500 text-white">Group Class</span>
+                                <h4 class="text-sm font-bold text-zinc-900 dark:text-white">CrossFit</h4>
+                            </div>
+                            <p class="text-xs text-zinc-600 dark:text-zinc-300"><i class="fa-solid fa-users text-purple-500 mr-1.5"></i>Enrolled: 8 / 10 Members</p>
+                            <p class="text-xs text-zinc-400"><i class="fa-solid fa-location-dot mr-1.5"></i>CrossFit Arena</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="#" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1">
+                                <i class="fa-solid fa-users text-xs text-zinc-400"></i> View Members
+                            </a>
+                            <a href="#" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-clipboard-user text-xs"></i> Take Attendance
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- WEEK VIEW SECTION -->
+    <div id="weekViewContainer" class="hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 md:p-6 shadow-sm mb-8 overflow-x-auto">
+        <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-week text-lime-500"></i>
+            Weekly Group Class Schedule (Aug 3 - Aug 9, 2026)
+        </h2>
+
+        <div class="min-w-[800px]">
+            <!-- Grid Days Header -->
+            <div class="grid grid-cols-7 gap-2 mb-3 text-center border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/50">
+                    <span class="text-xs text-zinc-400 block font-semibold">MON</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 3</span>
+                </div>
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/50">
+                    <span class="text-xs text-zinc-400 block font-semibold">TUE</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 4</span>
+                </div>
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/50">
+                    <span class="text-xs text-zinc-400 block font-semibold">WED</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 5</span>
+                </div>
+                <!-- Today Highlighted -->
+                <div class="p-2 rounded-xl bg-lime-500/10 border border-lime-500/30">
+                    <span class="text-xs text-lime-600 dark:text-lime-400 block font-bold">THU (Today)</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 6</span>
+                </div>
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/50">
+                    <span class="text-xs text-zinc-400 block font-semibold">FRI</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 7</span>
+                </div>
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/50">
+                    <span class="text-xs text-zinc-400 block font-semibold">SAT</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 8</span>
+                </div>
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/50">
+                    <span class="text-xs text-zinc-400 block font-semibold">SUN</span>
+                    <span class="text-sm font-extrabold text-zinc-900 dark:text-white">Aug 9</span>
+                </div>
+            </div>
+
+            <!-- Grid Classes Row -->
+            <div class="grid grid-cols-7 gap-2 min-h-[350px]">
+
+                <!-- Monday -->
+                <div class="space-y-2">
+                    <div class="p-2.5 bg-lime-500/10 border-l-2 border-lime-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 block">07:00 AM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Morning HIIT</p>
+                        <span class="text-[10px] text-zinc-400 block">Studio 1</span>
+                    </div>
+                    <div class="p-2.5 bg-red-500/10 border-l-2 border-red-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-red-500 block">05:00 PM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Cardio Blast</p>
+                        <span class="text-[10px] text-zinc-400 block">Main Hall</span>
+                    </div>
+                </div>
+
+                <!-- Tuesday -->
+                <div class="space-y-2">
+                    <div class="p-2.5 bg-cyan-500/10 border-l-2 border-cyan-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 block">09:30 AM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Strength Training</p>
+                        <span class="text-[10px] text-zinc-400 block">Weight Area</span>
+                    </div>
+                    <div class="p-2.5 bg-amber-500/10 border-l-2 border-amber-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 block">04:00 PM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Yoga Session</p>
+                        <span class="text-[10px] text-zinc-400 block">Studio 2</span>
+                    </div>
+                </div>
+
+                <!-- Wednesday -->
+                <div class="space-y-2">
+                    <div class="p-2.5 bg-lime-500/10 border-l-2 border-lime-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 block">07:00 AM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Morning HIIT</p>
+                        <span class="text-[10px] text-zinc-400 block">Studio 1</span>
+                    </div>
+                    <div class="p-2.5 bg-purple-500/10 border-l-2 border-purple-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-purple-500 block">06:00 PM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">CrossFit</p>
+                        <span class="text-[10px] text-zinc-400 block">CrossFit Arena</span>
+                    </div>
+                </div>
+
+                <!-- Thursday (Today) -->
+                <div class="space-y-2 bg-zinc-50/50 dark:bg-zinc-800/20 p-1 rounded-xl">
+                    <div class="p-2.5 bg-lime-500/10 border-l-2 border-lime-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 block">07:00 AM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Morning HIIT</p>
+                        <span class="text-[10px] text-zinc-400 block">Studio 1</span>
+                    </div>
+                    <div class="p-2.5 bg-cyan-500/10 border-l-2 border-cyan-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 block">09:30 AM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Strength Training</p>
+                        <span class="text-[10px] text-zinc-400 block">Weight Area</span>
+                    </div>
+                    <div class="p-2.5 bg-amber-500/10 border-l-2 border-amber-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 block">04:00 PM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Yoga Session</p>
+                        <span class="text-[10px] text-zinc-400 block">Studio 2</span>
+                    </div>
+                    <div class="p-2.5 bg-purple-500/10 border-l-2 border-purple-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-purple-500 block">06:00 PM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">CrossFit</p>
+                        <span class="text-[10px] text-zinc-400 block">Arena</span>
+                    </div>
+                </div>
+
+                <!-- Friday -->
+                <div class="space-y-2">
+                    <div class="p-2.5 bg-red-500/10 border-l-2 border-red-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-red-500 block">05:00 PM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">Cardio Blast</p>
+                        <span class="text-[10px] text-zinc-400 block">Main Hall</span>
+                    </div>
+                </div>
+
+                <!-- Saturday -->
+                <div class="space-y-2">
+                    <div class="p-2.5 bg-purple-500/10 border-l-2 border-purple-500 rounded-lg text-xs">
+                        <span class="text-[10px] font-bold text-purple-500 block">10:00 AM</span>
+                        <p class="font-bold text-zinc-900 dark:text-white truncate">CrossFit</p>
+                        <span class="text-[10px] text-zinc-400 block">CrossFit Arena</span>
+                    </div>
+                </div>
+
+                <!-- Sunday -->
+                <div class="p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl text-center flex items-center justify-center">
+                    <span class="text-[11px] font-bold text-zinc-400">Day Off</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ==================== ADD CLASS NOTE MODAL ==================== -->
+<div id="classNoteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-8">
+
+        <!-- Modal Header -->
+        <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
+            <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-lime-500"></i>
+                <span id="classNoteModalTitle">Add Class Note</span>
+            </h3>
+            <button type="button" onclick="closeClassNoteModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-4 text-xs">
+            <div>
+                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Class</label>
+                <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition cursor-pointer">
+                    <option value="Morning HIIT">Morning HIIT (07:00 AM)</option>
+                    <option value="Strength Training">Strength Training (09:30 AM)</option>
+                    <option value="Yoga Session">Yoga Session (04:00 PM)</option>
+                    <option value="CrossFit">CrossFit (06:00 PM)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Class Note / Feedback</label>
+                <textarea id="classNoteTextArea" rows="4" placeholder="Enter notes regarding equipment, session intensity, or room changes..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition resize-none"></textarea>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
+            <button type="button" onclick="closeClassNoteModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer text-xs">
+                Cancel
+            </button>
+            <button type="button" onclick="alert('Class note saved successfully!'); closeClassNoteModal();" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer text-xs">
+                Save Note
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- JavaScript View Switcher & Modal Control -->
+<script type="text/javascript">
+    function switchScheduleView(viewMode) {
+        const dayContainer = document.getElementById('dayViewContainer');
+        const weekContainer = document.getElementById('weekViewContainer');
+        const btnDay = document.getElementById('btnDayView');
+        const btnWeek = document.getElementById('btnWeekView');
+        const dateDisplay = document.getElementById('dateDisplay');
+        const viewSubtitle = document.getElementById('viewSubtitle');
+
+        if (viewMode === 'day') {
+            dayContainer.classList.remove('hidden');
+            weekContainer.classList.add('hidden');
+
+            btnDay.className = "w-1/2 sm:w-auto bg-lime-500 text-zinc-950 font-bold px-4 py-1.5 rounded-lg text-xs transition cursor-pointer";
+            btnWeek.className = "w-1/2 sm:w-auto text-zinc-500 dark:text-zinc-400 font-medium px-4 py-1.5 rounded-lg text-xs hover:text-zinc-900 dark:hover:text-white transition cursor-pointer";
+
+            dateDisplay.innerText = "Thursday, Aug 6, 2026";
+            viewSubtitle.innerText = "Today Classes";
+        } else {
+            dayContainer.classList.add('hidden');
+            weekContainer.classList.remove('hidden');
+
+            btnWeek.className = "w-1/2 sm:w-auto bg-lime-500 text-zinc-950 font-bold px-4 py-1.5 rounded-lg text-xs transition cursor-pointer";
+            btnDay.className = "w-1/2 sm:w-auto text-zinc-500 dark:text-zinc-400 font-medium px-4 py-1.5 rounded-lg text-xs hover:text-zinc-900 dark:hover:text-white transition cursor-pointer";
+
+            dateDisplay.innerText = "Aug 3 - Aug 9, 2026";
+            viewSubtitle.innerText = "Weekly Class Overview";
+        }
+    }
+
+    function openClassNoteModal(className) {
+        if (className) {
+            document.getElementById('classNoteModalTitle').innerText = 'Class Note for ' + className;
+        } else {
+            document.getElementById('classNoteModalTitle').innerText = 'Add Class Note';
+        }
+        document.getElementById('classNoteTextArea').value = '';
+        document.getElementById('classNoteModal').classList.remove('hidden');
+    }
+
+    function closeClassNoteModal() {
+        document.getElementById('classNoteModal').classList.add('hidden');
+    }
+</script>

@@ -1,0 +1,242 @@
+﻿@{
+    ViewData["Title"] = "Member Attendance Tracker";
+    Layout = "~/Views/layouts/MemberMaster.cshtml";
+}
+
+<div class="max-w-7xl mx-auto space-y-8 pb-12 text-zinc-800 dark:text-zinc-100">
+
+    <!-- BREADCRUMB & HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <span class="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest">Gym Activity</span>
+            <h1 class="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white mt-1">Attendance Tracker</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-2 rounded-xl shadow-sm">
+                <i data-lucide="calendar" class="w-4 h-4 text-lime-500"></i>
+                <label for="ddlMonthFilter" class="text-xs font-bold text-zinc-600 dark:text-zinc-300">Filter Month:</label>
+                <select id="ddlMonthFilter" name="ddlMonthFilter" class="bg-transparent text-xs font-bold text-zinc-900 dark:text-white focus:outline-none cursor-pointer">
+                    <option value="2026-08" selected>August 2026</option>
+                    <option value="2026-07">July 2026</option>
+                    <option value="2026-06">June 2026</option>
+                    <option value="2026-05">May 2026</option>
+                    <option value="2026-04">April 2026</option>
+                    <option value="2026-03">March 2026</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS METRICS ROW -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Total Visits -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Monthly Visits</span>
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                    <span id="lblTotalVisits">18</span> <span class="text-xs text-zinc-400 font-normal">sessions</span>
+                </h3>
+                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-2 block font-bold">Consistent Activity</span>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Today's Status</span>
+                <i data-lucide="activity" class="w-5 h-5 text-lime-500"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-zinc-900 dark:text-white">
+                    <span id="lblTodayStatus">Present (In Gym)</span>
+                </h3>
+                <span class="text-[10px] text-lime-600 dark:text-lime-400 mt-2 block font-bold">Checked in at 07:30 AM</span>
+            </div>
+        </div>
+
+        <!-- Current Streak -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Active Streak</span>
+                <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                    <span id="lblStreak">4</span> <span class="text-xs text-zinc-400 font-normal">days</span>
+                </h3>
+                <span class="text-[10px] text-amber-500 mt-2 block font-bold">Keep it burning!</span>
+            </div>
+        </div>
+
+        <!-- Avg Duration -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Avg. Session Duration</span>
+                <i data-lucide="clock" class="w-5 h-5 text-sky-500"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                    1 hr <span class="text-xs text-zinc-400 font-normal">15 mins</span>
+                </h3>
+                <span class="text-[10px] text-sky-600 dark:text-sky-400 mt-2 block font-bold">Optimal Workout Time</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MAIN GRID: CALENDAR TRACKER & ATTENDANCE HISTORY -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- 1. MONTHLY CALENDAR GRID (5 Cols) -->
+        <div class="lg:col-span-5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4">
+                <h3 id="litCalendarTitle" class="text-base font-bold text-zinc-900 dark:text-white">August 2026 Monthly Tracker</h3>
+            </div>
+
+            <!-- Days of Week Header -->
+            <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                <div>Sat</div>
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+            </div>
+
+            <!-- Calendar Repeater Grid Simulation -->
+            <div class="grid grid-cols-7 gap-1.5 text-center text-xs">
+                <!-- Empty offset days -->
+                <div class="p-2.5 invisible"></div>
+
+                <!-- Days 1 to 31 -->
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 font-bold">1</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">2</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">3</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 font-bold">4</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">5</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">6</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 font-bold">7</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">8</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">9</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 font-bold">10</div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">11</div>
+                <!-- Today Highlighted -->
+                <div class="p-2.5 rounded-xl bg-lime-400 text-black font-black shadow-md shadow-lime-400/20 ring-2 ring-lime-400">12</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">13</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">14</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">15</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">16</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">17</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">18</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">19</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">20</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">21</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">22</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">23</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">24</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">25</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">26</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">27</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">28</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">29</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">30</div>
+                <div class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 font-medium">31</div>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex items-center justify-around pt-4 border-t border-zinc-100 dark:border-zinc-800 text-[10px] font-bold text-zinc-500">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Present</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-lime-400"></span> Today</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span> Rest/Off</span>
+            </div>
+        </div>
+
+        <!-- 2. ATTENDANCE HISTORY TABLE (7 Cols) -->
+        <div class="lg:col-span-7 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4">
+                <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="history" class="w-4 h-4 text-lime-500"></i> Attendance Logs
+                </h3>
+                <span class="text-xs text-zinc-400 font-semibold">Showing Selected Month</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-zinc-100 dark:border-zinc-800 text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">
+                            <th class="py-3 px-3">Date</th>
+                            <th class="py-3 px-3">Day</th>
+                            <th class="py-3 px-3">Check-In</th>
+                            <th class="py-3 px-3">Check-Out</th>
+                            <th class="py-3 px-3">Duration</th>
+                            <th class="py-3 px-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-medium text-zinc-800 dark:text-zinc-200">
+                        <!-- Active Session -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
+                            <td class="py-3.5 px-3 font-bold text-zinc-900 dark:text-white">Aug 12, 2026</td>
+                            <td class="py-3.5 px-3 text-zinc-500">Wednesday</td>
+                            <td class="py-3.5 px-3 font-bold">07:30 AM</td>
+                            <td class="py-3.5 px-3 text-zinc-400 italic">Active Session</td>
+                            <td class="py-3.5 px-3 text-zinc-400">-</td>
+                            <td class="py-3.5 px-3 text-right">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">In Gym</span>
+                            </td>
+                        </tr>
+                        <!-- Completed Session 1 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
+                            <td class="py-3.5 px-3 font-bold text-zinc-900 dark:text-white">Aug 11, 2026</td>
+                            <td class="py-3.5 px-3 text-zinc-500">Tuesday</td>
+                            <td class="py-3.5 px-3 font-bold">06:00 PM</td>
+                            <td class="py-3.5 px-3">07:15 PM</td>
+                            <td class="py-3.5 px-3 text-zinc-600 dark:text-zinc-300">1 hr 15 mins</td>
+                            <td class="py-3.5 px-3 text-right">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-400/20">Completed</span>
+                            </td>
+                        </tr>
+                        <!-- Completed Session 2 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
+                            <td class="py-3.5 px-3 font-bold text-zinc-900 dark:text-white">Aug 09, 2026</td>
+                            <td class="py-3.5 px-3 text-zinc-500">Sunday</td>
+                            <td class="py-3.5 px-3 font-bold">07:00 AM</td>
+                            <td class="py-3.5 px-3">08:20 AM</td>
+                            <td class="py-3.5 px-3 text-zinc-600 dark:text-zinc-300">1 hr 20 mins</td>
+                            <td class="py-3.5 px-3 text-right">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-400/20">Completed</span>
+                            </td>
+                        </tr>
+                        <!-- Completed Session 3 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
+                            <td class="py-3.5 px-3 font-bold text-zinc-900 dark:text-white">Aug 08, 2026</td>
+                            <td class="py-3.5 px-3 text-zinc-500">Saturday</td>
+                            <td class="py-3.5 px-3 font-bold">06:30 AM</td>
+                            <td class="py-3.5 px-3">07:45 AM</td>
+                            <td class="py-3.5 px-3 text-zinc-600 dark:text-zinc-300">1 hr 15 mins</td>
+                            <td class="py-3.5 px-3 text-right">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-400/20">Completed</span>
+                            </td>
+                        </tr>
+                        <!-- Completed Session 4 -->
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
+                            <td class="py-3.5 px-3 font-bold text-zinc-900 dark:text-white">Aug 06, 2026</td>
+                            <td class="py-3.5 px-3 text-zinc-500">Thursday</td>
+                            <td class="py-3.5 px-3 font-bold">05:30 PM</td>
+                            <td class="py-3.5 px-3">07:00 PM</td>
+                            <td class="py-3.5 px-3 text-zinc-600 dark:text-zinc-300">1 hr 30 mins</td>
+                            <td class="py-3.5 px-3 text-right">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-400/20">Completed</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,165 @@
+﻿@{
+    ViewData["Title"] = "My Progress Tracker";
+    Layout = "~/Views/layouts/MemberMaster.cshtml";
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="max-w-7xl mx-auto space-y-8 pb-12 p-4 md:p-6 text-zinc-800 dark:text-zinc-100 min-h-screen">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <span class="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest">Fitness & Metrics</span>
+            <h1 class="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white mt-1">My Progress Tracker</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-calendar text-lime-500"></i> Current Status
+            </span>
+        </div>
+    </div>
+
+    <!-- CURRENT STATS OVERVIEW -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Weight -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Current Weight</span>
+                <i class="fa-solid fa-scale-balanced text-lime-500 text-lg"></i>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                0.0 <span class="text-xs text-zinc-400 font-normal">kg</span>
+            </h3>
+        </div>
+
+        <!-- Body Fat -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Body Fat %</span>
+                <i class="fa-solid fa-percent text-amber-500 text-lg"></i>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                0.0 <span class="text-xs text-zinc-400 font-normal">%</span>
+            </h3>
+        </div>
+
+        <!-- BMI -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">BMI Ratio</span>
+                <i class="fa-solid fa-heart-pulse text-sky-500 text-lg"></i>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                0.0
+                <span class="text-xs text-zinc-400 font-normal ml-1">Normal</span>
+            </h3>
+        </div>
+
+        <!-- Lean Muscle -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-zinc-500 font-medium">Muscle Mass</span>
+                <i class="fa-solid fa-dumbbell text-rose-500 text-lg"></i>
+            </div>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+                0.0 <span class="text-xs text-zinc-400 font-normal">kg</span>
+            </h3>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- TARGET WEIGHT GOAL CARD -->
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">Active Target</span>
+                        <h3 class="text-base font-bold text-zinc-900 dark:text-white">
+                            Weight Loss Goal
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs font-bold">
+                        <span class="text-zinc-500">Current: <strong class="text-lime-500">0.0 kg</strong></span>
+                        <span class="text-zinc-500">Target: <strong class="text-zinc-900 dark:text-white">70.0 kg</strong></span>
+                    </div>
+                    <div class="w-full bg-zinc-100 dark:bg-zinc-800 h-3 rounded-full overflow-hidden p-0.5">
+                        <div class="bg-lime-400 h-full rounded-full transition-all duration-500" style="width: 75%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BODY METRICS TABLE -->
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-zinc-900 dark:text-white">Current Body Measurements</h3>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-zinc-600 dark:text-zinc-400">
+                        <thead class="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-200 uppercase font-bold text-[10px] tracking-wider rounded-xl">
+                            <tr>
+                                <th class="p-4 rounded-l-2xl">Date</th>
+                                <th class="p-4">Weight</th>
+                                <th class="p-4">Fat %</th>
+                                <th class="p-4">Chest</th>
+                                <th class="p-4">Waist</th>
+                                <th class="p-4 rounded-r-2xl">Arms</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 font-medium">
+                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition">
+                                <td class="p-4 font-bold text-zinc-900 dark:text-white">Today</td>
+                                <td class="p-4 font-semibold text-lime-600 dark:text-lime-400">0.0 kg</td>
+                                <td class="p-4">0%</td>
+                                <td class="p-4">-</td>
+                                <td class="p-4">-</td>
+                                <td class="p-4">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE: TRAINER FEEDBACK -->
+        <div class="space-y-6">
+
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+                <div class="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                    <div class="w-10 h-10 rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-message text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-zinc-900 dark:text-white">Trainer's Assessment</h4>
+                    </div>
+                </div>
+
+                <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed italic">
+                    "Horumar fiican ayaa ka muuqda!"
+                </p>
+            </div>
+
+            <div class="bg-zinc-900 text-white rounded-3xl p-6 space-y-3 shadow-xl">
+                <div class="flex items-center gap-2 text-lime-400">
+                    <i class="fa-solid fa-calendar-check text-xs"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Next Body Check</span>
+                </div>
+                <h4 class="text-sm font-bold">
+                    September 01, 2026
+                </h4>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
