@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Testimonials";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale xog ah (Sample Testimonials List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var testimonialsList = new List<dynamic>
+    {
+        new
+        {
+            Feedback = "Joining FitZone completely changed my lifestyle. The trainers are certified and professional, and the equipment is top-notch!",
+            MemberName = "Ahmed Mohamed",
+            MemberImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"
+        },
+        new
+        {
+            Feedback = "The atmosphere is extremely motivating. I've lost over 10kg and gained so much strength thanks to the personalized workout plan.",
+            MemberName = "Amina Ali",
+            MemberImage = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80"
+        },
+        new
+        {
+            Feedback = "Best gym in town hands down! Clean facilities, friendly staff, and the supplement store has everything I need after a heavy workout.",
+            MemberName = "Liban Hassan",
+            MemberImage = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"
+        }
+    };
+}
+
+<!-- TESTIMONIALS SECTION -->
+<section id="testimonials" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                TESTIMONIALS
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                What Our <span class="text-[#a3e635]">Members</span> Say
+            </h2>
+        </div>
+
+        <!-- Testimonials Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+            @foreach (var item in testimonialsList)
+            {
+                <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
+                    <div class="space-y-4">
+                        <!-- Quote Icon -->
+                        <div class="text-[#a3e635]">
+                            <i data-lucide="quote" class="w-8 h-8 rotate-180 fill-[#a3e635]/20"></i>
+                        </div>
+                        <!-- Feedback Text -->
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            @item.Feedback
+                        </p>
+                    </div>
+
+                    <!-- Divider Line & Member Info -->
+                    <div class="pt-6 mt-6 border-t border-neutral-900 flex items-center gap-4">
+                        <img src="@item.MemberImage"
+                             alt="@item.MemberName"
+                             class="w-12 h-12 rounded-full object-cover border-2 border-[#a3e635]" />
+                        <div>
+                            <h4 class="text-sm font-bold text-white">@item.MemberName</h4>
+
+                            <!-- Star Rating -->
+                            <div class="flex gap-1 text-[#a3e635] text-xs mt-1">
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+</section>

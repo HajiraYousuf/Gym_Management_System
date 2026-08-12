@@ -33,6 +33,11 @@ namespace GymManagementSystem.Controllers
             
             return View();
         }
+        public IActionResult Members()
+        {
+
+            return View();
+        }
         public async Task<IActionResult> Index()
         {
             var totalMembers = await _context.Members.CountAsync();

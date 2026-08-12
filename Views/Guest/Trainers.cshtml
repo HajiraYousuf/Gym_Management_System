@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Our Trainers";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale xog ah (Sample Trainers List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var trainersList = new List<dynamic>
+    {
+        new
+        {
+            ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80",
+            TrainerName = "Sarah Jenkins",
+            Role = "Head Strength Coach",
+            Experience = "8 Years Experience"
+        },
+        new
+        {
+            ImageUrl = "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=600&q=80",
+            TrainerName = "David Miller",
+            Role = "CrossFit & Conditioning",
+            Experience = "5 Years Experience"
+        },
+        new
+        {
+            ImageUrl = "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=600&q=80",
+            TrainerName = "Alex Turner",
+            Role = "Personal Fitness Trainer",
+            Experience = "6 Years Experience"
+        },
+        new
+        {
+            ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80",
+            TrainerName = "Jessica Wong",
+            Role = "Yoga & Mobility Specialist",
+            Experience = "7 Years Experience"
+        }
+    };
+}
+
+<!-- OUR TRAINERS SECTION -->
+<section id="trainers" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                OUR TRAINERS
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Meet Our <span class="text-[#a3e635]">Experts</span>
+            </h2>
+        </div>
+
+        <!-- Trainers Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+
+            @foreach (var trainer in trainersList)
+            {
+                <div class="group bg-neutral-950 border border-neutral-800/80 rounded-3xl p-4 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
+
+                    <!-- Image Container -->
+                    <div class="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 border border-neutral-900">
+                        <img src="@trainer.ImageUrl"
+                             alt="@trainer.TrainerName"
+                             class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    </div>
+
+                    <!-- Info -->
+                    <h3 class="text-lg font-extrabold text-white">
+                        @trainer.TrainerName
+                    </h3>
+                    <p class="text-xs text-neutral-400 mt-1 font-medium">
+                        @trainer.Role
+                    </p>
+                    <p class="text-xs text-[#a3e635] mt-0.5 font-semibold">
+                        @trainer.Experience
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- View All Trainers Link -->
+        <div class="text-center pt-4">
+            <a href="@Url.Action("Trainers", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-1">
+                View All Trainers
+            </a>
+        </div>
+
+    </div>
+</section>

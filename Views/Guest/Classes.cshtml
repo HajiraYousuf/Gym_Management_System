@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Our Classes";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale xog ah (Sample Classes List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var classList = new List<dynamic>
+    {
+        new { ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80", ClassName = "Strength & Lifting", TrainerName = "John Doe", Days = "Mon, Wed, Fri", TimeSlot = "08:00 AM - 10:00 AM", Icon = "dumbbell" },
+        new { ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80", ClassName = "Cardio & Burn", TrainerName = "Jane Smith", Days = "Tue, Thu, Sat", TimeSlot = "10:00 AM - 11:30 AM", Icon = "activity" },
+        new { ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80", ClassName = "CrossFit Pro", TrainerName = "Mike Johnson", Days = "Mon, Wed, Fri", TimeSlot = "04:00 PM - 06:00 PM", Icon = "target" }
+    };
+}
+
+<section id="classes" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                OUR CLASSES
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Find the Class <span class="text-[#a3e635]">You Love</span>
+            </h2>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto justify-center">
+
+            @foreach (var item in classList)
+            {
+                <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-5 flex flex-col items-center text-center shadow-lg shadow-black/80 transition-all duration-300 hover:-translate-y-3 hover:border-[#a3e635]">
+
+                    <!-- Image Container -->
+                    <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-5 border border-neutral-900">
+                        <img src="@item.ImageUrl"
+                             alt="@item.ClassName"
+                             class="w-full h-full object-cover" />
+
+                        <!-- Icon Badge -->
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 w-10 h-10 rounded-xl bg-neutral-950/90 backdrop-blur-md border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                            <i data-lucide="@item.Icon" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <h3 class="text-xl font-extrabold uppercase text-white mb-2">
+                        @item.ClassName
+                    </h3>
+
+                    <p class="text-xs text-neutral-400 mb-2">
+                        Trainer: <span class="text-neutral-200 font-bold">@item.TrainerName</span>
+                    </p>
+
+                    <p class="text-sm text-neutral-400 font-medium">@item.Days</p>
+                    <p class="text-sm font-bold text-[#a3e635] mt-1">@item.TimeSlot</p>
+
+                </div>
+            }
+
+        </div>
+
+        <div class="text-center pt-6">
+            <a href="@Url.Action("Schedule", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all">
+                View Full Schedule
+            </a>
+        </div>
+
+    </div>
+</section>

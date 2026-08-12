@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+}
+
+<!-- ABOUT US SECTION -->
+<section id="about" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-16">
+
+        <!-- Top Grid: Text Content & Image -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+            <!-- Left Column: Content -->
+            <div class="lg:col-span-6 space-y-6">
+                <!-- Subheading -->
+                <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                    ABOUT US
+                </span>
+
+                <!-- Main Heading -->
+                <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-tight">
+                    We're Here to <br />
+                    <span class="text-[#a3e635]">Transform You</span>
+                </h2>
+
+                <!-- Description Paragraph -->
+                <p class="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-xl">
+                    At FitZone, we believe fitness is more than just a workout — it's a lifestyle. Our mission is to help you become the strongest, healthiest version of yourself.
+                </p>
+            </div>
+
+            <!-- Right Column: Image -->
+            <div class="lg:col-span-6 flex justify-center lg:justify-end">
+                <div class="relative w-full max-w-lg aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80"
+                         alt="Female Gym Athlete"
+                         class="w-full h-full object-cover object-center" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Grid: 4 Feature Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <!-- Card 1: Our Mission -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Mission</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        To empower people to live healthier lives.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 2: Our Vision -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="eye" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Vision</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        To be the leading fitness community.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3: Our Services -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Services</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        Training, nutrition guidance & more.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 4: Our Support -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Support</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        We support you every step of the way.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>

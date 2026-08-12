@@ -7,7 +7,7 @@
         bool isActive = currentPath.Equals(path.ToLower(), StringComparison.OrdinalIgnoreCase);
 
         return isActive
-            ? "flex items-center gap-3 px-4 py-2.5 rounded-lg text-lime-400 bg-[#1d3815] dark:bg-zinc-900 text-[13px] font-bold transition"
+            ? "flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#13250E] bg-lime-400 font-bold text-[13px] shadow-md shadow-lime-400/20 transition"
             : "flex items-center gap-3 px-4 py-2.5 rounded-lg text-emerald-100/90 dark:text-zinc-300 text-[13px] font-medium hover:bg-[#1d3815] dark:hover:bg-zinc-900 hover:text-lime-400 dark:hover:text-lime-400 transition";
     }
 }
@@ -25,17 +25,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+            body {
+                font-family: 'Inter', sans-serif;
+            }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Tailwind Config for Dark Mode -->
     <script>
-        tailwind.config = {
-            darkMode: 'class'
-        }
+            tailwind.config = {
+                darkMode: 'class'
+            }
     </script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
                     <a asp-controller="Admin" asp-action="Dashboard" class="flex items-center gap-3 cursor-pointer group">
                         <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-lime-400 flex items-center justify-center shadow-lg shadow-lime-400/20 group-hover:scale-105 transition-transform duration-200 shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-6 md:h-6 text-[#13250E] dark:text-zinc-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 10v4m3-6v8m10-8v8m3-6v4M7 12h10"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 10v4m3-6v8m10-8v8m3-6v4M7 12h10" />
                             </svg>
                         </div>
                         <div>
@@ -75,7 +75,7 @@
                     <div class="hidden md:flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 flex items-center justify-center shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10" />
                             </svg>
                         </div>
                         <div>
@@ -89,7 +89,7 @@
                 <div class="hidden sm:flex flex-1 justify-center max-w-md mx-2">
                     <div class="relative w-full">
                         <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-lime-400/60 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
                         </svg>
                         <input type="text" id="txtSearch" name="search" placeholder="Search users, payments..." class="w-full h-10 pl-10 pr-4 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 text-sm text-emerald-100 dark:text-zinc-100 placeholder:text-lime-400/50 dark:placeholder:text-zinc-500 outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20 transition-all" />
                     </div>
@@ -100,17 +100,9 @@
                     <!-- Mobile Search Toggle Button -->
                     <button type="button" onclick="toggleMobileSearch()" class="sm:hidden w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition text-lime-400 dark:text-zinc-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
                         </svg>
                     </button>
-
-                    <!-- New Button -->
-                    <a href="#" class="h-10 px-3 md:px-4 rounded-xl bg-lime-400 hover:bg-lime-300 text-[#13250E] dark:text-zinc-950 text-xs md:text-sm font-bold flex items-center gap-1.5 md:gap-2 shadow-lg shadow-lime-400/20 hover:shadow-lime-400/40 hover:-translate-y-0.5 transition-all duration-200 active:scale-95 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span class="hidden sm:inline">New</span>
-                    </a>
 
                     <!-- Theme Toggle Button -->
                     <button id="themeToggle" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95 shrink-0">
@@ -120,7 +112,7 @@
                         </svg>
                         <!-- Moon Icon (Dark Mode) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-400 hidden dark:block hover:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
                         </svg>
                     </button>
 
@@ -128,12 +120,15 @@
                     <div class="relative shrink-0">
                         <a asp-controller="Admin" asp-action="Notification" class="w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400 dark:text-zinc-400 hover:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5" />
                             </svg>
                         </a>
                         <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-lime-400 text-[#13250E] dark:text-zinc-950 text-[10px] font-extrabold flex items-center justify-center shadow-md animate-pulse">8</span>
                     </div>
 
+                    <div class="hidden sm:block w-px h-8 bg-[#1f3a17] dark:bg-zinc-800"></div>
+
+                    
                     <div class="hidden sm:block w-px h-8 bg-[#1f3a17] dark:bg-zinc-800"></div>
 
                     <!-- Profile Button -->
@@ -144,7 +139,7 @@
                             <span class="text-[10px] text-lime-400 leading-none font-medium">Super Admin</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" class="hidden md:block w-3.5 h-3.5 text-lime-400/60 dark:text-zinc-500 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </a>
                 </div>
@@ -154,20 +149,19 @@
             <div id="mobileSearch" class="hidden sm:hidden px-4 pb-3 pt-1 bg-[#13250E] dark:bg-zinc-950 border-b border-[#1f3a17] dark:border-zinc-800">
                 <div class="relative w-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-lime-400/60 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
                     </svg>
                     <input type="text" id="txtSearchMobile" name="searchMobile" placeholder="Search..." class="w-full h-10 pl-10 pr-4 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 text-sm text-emerald-100 dark:text-zinc-100 placeholder:text-lime-400/50 dark:placeholder:text-zinc-500 focus:outline-none focus:border-lime-400" />
                 </div>
             </div>
         </nav>
 
-        <!-- ========================= SIDEBAR ========================= -->
         <aside class="fixed top-[70px] left-0 z-40 w-[260px] h-[calc(100vh-70px)] bg-[#13250E] dark:bg-zinc-950 border-r border-[#1f3a17] dark:border-zinc-800 flex flex-col justify-between transition-colors duration-200">
             
             <div class="p-4 space-y-1 overflow-y-auto flex-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#23421a] dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#2e5723] dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                 <!-- 1. DASHBOARD -->
-                <a asp-controller="Admin" asp-action="Dashboard" class="@GetMenuClass("/Admin/Dashboard")">
+                <a href="@Url.Action("Dashboard", "Admin")" class="@GetMenuClass("/admin/dashboard")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
                     </svg>
@@ -176,49 +170,33 @@
 
                 <!-- 2. USER MANAGEMENT -->
                 <div class="space-y-0.5">
-
-                    <!-- MAIN MENU -->
                     <button type="button"
                             onclick="toggleSubmenu('userMenu')"
                             class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-emerald-100/90 dark:text-zinc-300 text-[13px] font-medium hover:bg-[#1d3815] dark:hover:bg-zinc-900 hover:text-lime-400 dark:hover:text-lime-400 transition">
-
                         <div class="flex items-center gap-3">
                             <i class="fa-solid fa-users-gear w-4 text-lime-400/70 dark:text-zinc-400"></i>
                             <span>User Management</span>
                         </div>
-
-                        <i id="userMenuArrow"
-                           class="fa-solid fa-chevron-down text-[10px] text-lime-400/50 dark:text-zinc-500 transition-transform duration-200">
-                        </i>
+                        <i id="userMenuArrow" class="fa-solid fa-chevron-down text-[10px] text-lime-400/50 dark:text-zinc-500 transition-transform duration-200"></i>
                     </button>
-
-                    <!-- SUB MENUS -->
-                    <div id="userMenu"
-                         class="hidden ml-5 pl-3 border-l border-[#274b1e] dark:border-zinc-800/80 space-y-0.5">
-
-                        <!-- MEMBERS -->
-                        <a asp-controller="Admin" asp-action="Members" class="@GetMenuClass("/Admin/Members")">
+                    <div id="userMenu" class="hidden ml-5 pl-3 border-l border-[#274b1e] dark:border-zinc-800/80 space-y-0.5">
+                        <a href="@Url.Action("Members", "Admin")" class="@GetMenuClass("/admin/members")">
                             <i class="fa-solid fa-user text-[11px] text-lime-400/60 dark:text-zinc-500"></i>
                             <span>Members</span>
                         </a>
-
-                        <!-- TRAINERS -->
-                        <a asp-controller="Admin" asp-action="Trainers" class="@GetMenuClass("/Admin/Trainers")">
+                        <a href="@Url.Action("Trainers", "Admin")" class="@GetMenuClass("/admin/trainers")">
                             <i class="fa-solid fa-dumbbell text-[11px] text-lime-400/60 dark:text-zinc-500"></i>
                             <span>Trainers</span>
                         </a>
-
-                        <!-- RECEPTION -->
-                        <a asp-controller="Admin" asp-action="Reception" class="@GetMenuClass("/Admin/Reception")">
+                        <a href="@Url.Action("Reception", "Admin")" class="@GetMenuClass("/admin/reception")">
                             <i class="fa-solid fa-headset text-[11px] text-lime-400/60 dark:text-zinc-500"></i>
                             <span>Reception</span>
                         </a>
-
                     </div>
                 </div>
 
                 <!-- 3. MEMBERSHIP -->
-                <a asp-controller="Admin" asp-action="Membership" class="@GetMenuClass("/Admin/Membership")">
+                <a href="@Url.Action("MembershipPlans", "Admin")" class="@GetMenuClass("/admin/membershipplans")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -226,79 +204,79 @@
                 </a>
 
                 <!-- 4. CLASS SCHEDULE -->
-                <a asp-controller="Admin" asp-action="ClassSchedule" class="@GetMenuClass("/Admin/ClassSchedule")">
+                <a href="@Url.Action("Classes", "Admin")" class="@GetMenuClass("/admin/classes")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M5 11h14M5 19h14a2 2 0 002-2V7H3v10a2 2 0 002 2z" />
                     </svg>
                     <span>Class Schedule</span>
                 </a>
 
-                <!-- 6. ATTENDANCE -->
-                <a asp-controller="Admin" asp-action="Attendance" class="@GetMenuClass("/Admin/Attendance")">
+                <!-- 5. ATTENDANCE -->
+                <a href="@Url.Action("Attendance", "Admin")" class="@GetMenuClass("/admin/attendance")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 02 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     <span>Attendance</span>
                 </a>
 
-                <!-- 7. WORKOUT PLANS -->
-                <a asp-controller="Admin" asp-action="WorkoutPlans" class="@GetMenuClass("/Admin/WorkoutPlans")">
+                <!-- 6. WORKOUT PLANS -->
+                <a href="@Url.Action("WorkoutPlans", "Admin")" class="@GetMenuClass("/admin/workoutplans")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                     <span>Workout Plans</span>
                 </a>
 
-                <!-- 8. NUTRITION -->
-                <a asp-controller="Admin" asp-action="Nutrition" class="@GetMenuClass("/Admin/Nutrition")">
+                <!-- 7. NUTRITION -->
+                <a href="@Url.Action("NutritionPlans", "Admin")" class="@GetMenuClass("/admin/nutritionplans")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                     </svg>
                     <span>Nutrition</span>
                 </a>
 
-                <!-- 10. STORE -->
-                <a asp-controller="Admin" asp-action="Store" class="@GetMenuClass("/Admin/Store")">
+                <!-- 8. STORE -->
+                <a href="@Url.Action("Store", "Admin")" class="@GetMenuClass("/admin/store")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                     <span>Store</span>
                 </a>
 
-                <!-- 11. PAYMENT -->
-                <a asp-controller="Admin" asp-action="Payment" class="@GetMenuClass("/Admin/Payment")">
+                <!-- 9. PAYMENT -->
+                <a href="@Url.Action("Payments", "Admin")" class="@GetMenuClass("/admin/payments")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 03 3z" />
                     </svg>
                     <span>Payment</span>
                 </a>
 
-                <!-- 12. RESERVATION -->
-                <a asp-controller="Admin" asp-action="Reservation" class="@GetMenuClass("/Admin/Reservation")">
+                <!-- 10. RESERVATION -->
+                <a href="@Url.Action("Reservation", "Admin")" class="@GetMenuClass("/admin/reservation")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
                     </svg>
                     <span>Reservation</span>
                 </a>
 
-                <!-- 13. REPORT -->
-                <a asp-controller="Admin" asp-action="Report" class="@GetMenuClass("/Admin/Report")">
+                <!-- 11. REPORT -->
+                <a href="@Url.Action("Report", "Admin")" class="@GetMenuClass("/admin/report")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m4 6V7m4 10v-9" />
                     </svg>
                     <span>Report</span>
                 </a>
 
-                <!-- 14. NOTIFICATION -->
-                <a asp-controller="Admin" asp-action="Notification" class="@GetMenuClass("/Admin/Notification")">
+                <!-- 12. NOTIFICATION -->
+                <a href="@Url.Action("Notification", "Admin")" class="@GetMenuClass("/admin/notification")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
                     <span>Notification</span>
                 </a>
 
-                <!-- 15. SETTINGS -->
-                <a asp-controller="Admin" asp-action="Settings" class="@GetMenuClass("/Admin/Settings")">
+                <!-- 13. SETTINGS -->
+                <a href="@Url.Action("Settings", "Admin")" class="@GetMenuClass("/admin/settings")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -310,14 +288,12 @@
 
             <!-- BOTTOM CONTENT: LOGOUT -->
             <div class="p-4 border-t border-[#1f3a17] dark:border-zinc-900 bg-[#13250E] dark:bg-zinc-950 shrink-0">
-                <form asp-controller="Account" asp-action="Logout" method="post" class="w-full">
-                    <button type="submit" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-400 bg-zinc-950 dark:text-red-400 text-[13px] font-medium hover:bg-red-500/10 dark:hover:bg-red-950/30 hover:text-red-300 dark:hover:text-red-300 transition w-full">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span>Logout</span>
-                    </button>
-                </form>
+                <button type="button" onclick="openLogoutModal()" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-400 bg-zinc-950 dark:text-red-400 text-[13px] font-medium hover:bg-red-500/10 dark:hover:bg-red-950/30 hover:text-red-300 dark:hover:text-red-300 transition w-full">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>Logout</span>
+                </button>
             </div>
 
         </aside>
@@ -329,62 +305,104 @@
 
     </div>
 
+    <!-- ========================= LOGOUT POPUP MODAL ========================= -->
+    <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-[#13250E] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl transform transition-all scale-95 opacity-0" id="logoutModalContent">
+            <div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xl mx-auto mb-4">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white dark:text-white text-center mb-1">Confirm Logout</h3>
+            <p class="text-xs text-lime-400/70 dark:text-zinc-400 text-center mb-6">Are you sure you want to log out of your account?</p>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeLogoutModal()" class="flex-1 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-800 border border-[#274b1e] dark:border-zinc-700 text-emerald-100 dark:text-zinc-200 text-xs font-semibold hover:border-lime-400 transition">
+                    Cancel
+                </button>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="flex-1">
+                    <button type="submit" class="w-full h-10 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-semibold shadow-lg shadow-red-500/20 transition">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ================= 1. SUBMENU TOGGLE =================
-        function toggleSubmenu(id) {
-            var menu = document.getElementById(id);
-            var arrow = document.getElementById(id + 'Arrow');
-            if (menu && menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                if (arrow) arrow.classList.add('rotate-180');
-            } else if (menu) {
-                menu.classList.add('hidden');
-                if (arrow) arrow.classList.remove('rotate-180');
-            }
-        }
-
-        // ================= 2. DOM LOAD EVENTS & THEME INIT =================
-        document.addEventListener("DOMContentLoaded", function () {
-            // A. Auto-expand Submenu marka boggu load gareeyo
-            var currentPath = window.location.pathname.toLowerCase();
-            if (currentPath.includes("/admin/members") || currentPath.includes("/admin/trainers") || currentPath.includes("/admin/reception")) {
-                var menu = document.getElementById('userMenu');
-                var arrow = document.getElementById('userMenuArrow');
-                if (menu) menu.classList.remove('hidden');
-                if (arrow) arrow.classList.add('rotate-180');
+            // ================= 1. SUBMENU TOGGLE =================
+            function toggleSubmenu(id) {
+                var menu = document.getElementById(id);
+                var arrow = document.getElementById(id + 'Arrow');
+                if (menu && menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                    if (arrow) arrow.classList.add('rotate-180');
+                } else if (menu) {
+                    menu.classList.add('hidden');
+                    if (arrow) arrow.classList.remove('rotate-180');
+                }
             }
 
-            // B. Theme Check (Dark/Light) marka boggu load gareeyo
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        });
+            // ================= 2. DOM LOAD EVENTS & THEME INIT =================
+            document.addEventListener("DOMContentLoaded", function() {
+                // A. Auto-expand Submenu marka boggu load gareeyo
+                var currentPath = window.location.pathname.toLowerCase();
+                if (currentPath.includes("/admin/members") || currentPath.includes("/admin/trainers") || currentPath.includes("/admin/reception")) {
+                    var menu = document.getElementById('userMenu');
+                    var arrow = document.getElementById('userMenuArrow');
+                    if (menu) menu.classList.remove('hidden');
+                    if (arrow) arrow.classList.add('rotate-180');
+                }
 
-        // ================= 3. THEME TOGGLE FUNCTION =================
-        function toggleTheme() {
-            const html = document.documentElement;
+                // B. Theme Check (Dark/Light) marka boggu load gareeyo
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
 
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
+            // ================= 3. THEME TOGGLE FUNCTION =================
+            function toggleTheme() {
+                const html = document.documentElement;
 
-        // ================= 4. MOBILE SEARCH TOGGLE =================
-        function toggleMobileSearch() {
-            const searchBox = document.getElementById('mobileSearch');
-            if (searchBox) {
-                searchBox.classList.toggle('hidden');
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
             }
-        }
+
+            // ================= 4. MOBILE SEARCH TOGGLE =================
+            function toggleMobileSearch() {
+                const searchBox = document.getElementById('mobileSearch');
+                if (searchBox) {
+                    searchBox.classList.toggle('hidden');
+                }
+            }
+
+            // ================= 5. LOGOUT POPUP MODAL FUNCTIONS =================
+            function openLogoutModal() {
+                const modal = document.getElementById('logoutModal');
+                const content = document.getElementById('logoutModalContent');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function closeLogoutModal() {
+                const modal = document.getElementById('logoutModal');
+                const content = document.getElementById('logoutModalContent');
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 200);
+            }
     </script>
-    
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

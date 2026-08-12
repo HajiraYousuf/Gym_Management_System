@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+}
+
+<!-- CONTACT US SECTION -->
+<section id="contact" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
+
+            <!-- Left Column: Info Details (Static) -->
+            <div class="lg:col-span-5 space-y-8">
+                <div class="space-y-2">
+                    <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                        CONTACT US
+                    </span>
+                    <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-tight">
+                        We'd Love to <br />
+                        Hear From <span class="text-[#a3e635]">You</span>
+                    </h2>
+                </div>
+
+                <div class="space-y-6 pt-2">
+
+                    <!-- Item 1: Address -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-[#a3e635] shrink-0">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-neutral-400 font-medium">Our Location</p>
+                            <p class="text-sm font-bold text-white">123 Fitness Ave, Gym City</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Email -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-[#a3e635] shrink-0">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-neutral-400 font-medium">Email Us</p>
+                            <p class="text-sm font-bold text-white">support@ironcoregym.com</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Phone -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-[#a3e635] shrink-0">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-neutral-400 font-medium">Call Us</p>
+                            <p class="text-sm font-bold text-white">+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column: Contact Form -->
+            <div class="lg:col-span-7">
+                <div class="space-y-4 bg-neutral-950 p-8 rounded-3xl border border-neutral-800/80 shadow-2xl">
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="p-4 rounded-xl text-sm font-semibold mb-4 bg-[#a3e635]/10 border border-[#a3e635] text-[#a3e635]">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("SubmitContact", "Guest", FormMethod.Post))
+                    {
+                        <div class="space-y-4">
+                            <div>
+                                <input type="text" name="Name" placeholder="Your Name" required
+                                       class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors" />
+                            </div>
+
+                            <div>
+                                <input type="email" name="Email" placeholder="Your Email" required
+                                       class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors" />
+                            </div>
+
+                            <div>
+                                <input type="text" name="Subject" placeholder="Subject" required
+                                       class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors" />
+                            </div>
+
+                            <div>
+                                <textarea name="Message" rows="4" placeholder="Your Message" required
+                                          class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors resize-none"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                    class="w-full py-4 rounded-xl bg-[#a3e635] text-black font-extrabold text-sm hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-0.5 cursor-pointer">
+                                Send Message
+                            </button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

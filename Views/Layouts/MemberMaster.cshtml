@@ -1,14 +1,23 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    // Helper function oo si dynamic ah u ogaanaysa bogga furan si uu menu-ka u active oo u ifo (Highlight)
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+
+    string GetMenuClass(string path)
+    {
+        bool isActive = currentPath.Equals(path.ToLower(), StringComparison.OrdinalIgnoreCase);
+
+        return isActive
+            ? "flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#13250E] bg-lime-400 font-bold text-[13px] shadow-md shadow-lime-400/20 transition"
+            : "flex items-center gap-3 px-4 py-2.5 rounded-lg text-emerald-100/90 dark:text-zinc-300 text-[13px] font-medium hover:bg-[#1d3815] dark:hover:bg-zinc-900 hover:text-lime-400 dark:hover:text-lime-400 transition";
+    }
 }
+
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FitZone Gym Management</title>
+    <title>FitZone Gym Management</title>
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -80,14 +89,6 @@
 
                 <!-- RIGHT -->
                 <div class="flex items-center gap-3">
-                    <!-- Add Button -->
-                    <a href="@Url.Action("WorkoutPlan", "Member")" class="h-10 px-5 rounded-xl bg-lime-400 hover:bg-lime-300 transition text-black text-sm font-bold flex items-center gap-2 shadow-lg shadow-lime-400/20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span class="hidden sm:inline">New</span>
-                    </a>
-
                     <!-- Theme Toggle Button -->
                     <button id="themeToggle" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-[#1c3815] dark:bg-zinc-900 border border-[#2b5420] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95 shrink-0 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -112,6 +113,9 @@
 
                     <div class="hidden sm:block w-px h-8 bg-[#23451A] dark:bg-zinc-700"></div>
 
+                    
+                    <div class="hidden sm:block w-px h-8 bg-[#23451A] dark:bg-zinc-700"></div>
+
                     <!-- Profile -->
                     <a href="@Url.Action("Profile", "Member")" class="flex items-center gap-3 bg-[#1c3815] dark:bg-zinc-900 border border-[#2b5420] dark:border-zinc-700 rounded-xl px-2 py-1.5 hover:border-lime-400 transition">
                         <img src="https://i.pravatar.cc/100?img=12" class="w-9 h-9 rounded-lg border border-lime-400 object-cover" alt="Profile">
@@ -125,20 +129,9 @@
         </nav>
 
         <!-- ================= SIDEBAR START ================= -->
-        <aside id="sidebar" class="fixed top-0 bottom-0 left-0 z-40 w-[260px] bg-[#13250E] dark:bg-zinc-950 border-r border-[#23451A] dark:border-zinc-800 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0">
-            
-            <div class="flex flex-col h-full overflow-hidden">
-                <!-- Logo & Brand -->
-                <div class="p-5 flex items-center gap-3 border-b border-[#1c3815] dark:border-zinc-900 shrink-0">
-                    <div class="bg-lime-400 p-2 rounded-xl text-black shadow-md shadow-lime-400/20">
-                        <i data-lucide="dumbbell" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-base text-white tracking-wide leading-none">FitZone</h1>
-                        <span class="text-[10px] text-zinc-400 font-semibold tracking-wider uppercase">STRONGER EVERYDAY</span>
-                    </div>
-                </div>
+        <aside id="sidebar" class="fixed top-[70px] bottom-0 left-0 z-40 w-[260px] bg-[#13250E] dark:bg-zinc-950 border-r border-[#23451A] dark:border-zinc-800 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
+            <div class="flex flex-col h-full overflow-hidden">
                 <!-- User Profile Card -->
                 <div class="p-3 mx-3 my-3 bg-[#1a3313] dark:bg-zinc-900/60 border border-[#274b1e] dark:border-zinc-800/80 rounded-2xl flex items-center gap-3 shrink-0">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop" alt="Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-lime-400/30" />
@@ -150,71 +143,49 @@
                     </div>
                 </div>
 
-                @{
-                    string GetActive(string controller, string action) {
-                        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-                        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-                        
-                        bool isActive = string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
-                                        string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
-
-                        return isActive 
-                            ? "nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-lime-400 text-black font-semibold text-[13px] shadow-lg shadow-lime-400/20 transition"
-                            : "nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-zinc-300 hover:bg-[#1a3313] dark:hover:bg-zinc-900 hover:text-lime-400 text-[13px] font-medium transition";
-                    }
-                }
-
                 <!-- Navigation Links -->
                 <nav id="sidebarNav" class="px-3 space-y-1 overflow-y-auto flex-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#274b1e] dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full">
-                    
-                    <a href="@Url.Action("Dashboard", "Member")" class="@GetActive("Member", "Dashboard")">
+
+                    <!-- 1. Dashboard -->
+                    <a href="@Url.Action("Dashboard", "Member")" class="@GetMenuClass("/member/dashboard")">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                         <span>Dashboard</span>
                     </a>
 
-                    <a href="@Url.Action("Profile", "Member")" class="@GetActive("Member", "Profile")">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                        <span>My Profile</span>
-                    </a>
-
-                    <a href="@Url.Action("Membership", "Member")" class="@GetActive("Member", "Membership")">
+                    <!-- 2. Membership -->
+                    <a href="@Url.Action("Membership", "Member")" class="@GetMenuClass("/member/membership")">
                         <i data-lucide="id-card" class="w-4 h-4"></i>
                         <span>Membership</span>
                     </a>
 
-                    <a href="@Url.Action("WorkoutPlan", "Member")" class="@GetActive("Member", "WorkoutPlan")">
+                    <!-- 3. Workout Plans (Waa WorkoutPlans.cshtml) -->
+                    <a href="@Url.Action("WorkoutPlans", "Member")" class="@GetMenuClass("/member/workoutplans")">
                         <i data-lucide="activity" class="w-4 h-4"></i>
-                        <span>Workout Plan</span>
+                        <span>Workout Plans</span>
                     </a>
 
-                    <a href="@Url.Action("NutritionPlan", "Member")" class="@GetActive("Member", "NutritionPlan")">
+                    <!-- 4. Nutrition Plans (Waa NutritionPlans.cshtml) -->
+                    <a href="@Url.Action("NutritionPlans", "Member")" class="@GetMenuClass("/member/nutritionplans")">
                         <i data-lucide="utensils" class="w-4 h-4"></i>
-                        <span>Nutrition Plan</span>
+                        <span>Nutrition Plans</span>
                     </a>
 
-                    <a href="@Url.Action("ClassSchedule", "Member")" class="@GetActive("Member", "ClassSchedule")">
+                    <!-- 5. Class Schedule -->
+                    <a href="@Url.Action("ClassSchedule", "Member")" class="@GetMenuClass("/member/classschedule")">
                         <i data-lucide="calendar" class="w-4 h-4"></i>
                         <span>Class Schedule</span>
                     </a>
 
-                    <a href="@Url.Action("Attendance", "Member")" class="@GetActive("Member", "Attendance")">
+                    <!-- 6. Attendance -->
+                    <a href="@Url.Action("Attendance", "Member")" class="@GetMenuClass("/member/attendance")">
                         <i data-lucide="clipboard-check" class="w-4 h-4"></i>
                         <span>Attendance</span>
                     </a>
 
-                    <a href="@Url.Action("Progress", "Member")" class="@GetActive("Member", "Progress")">
+                    <!-- 7. Progress (Waa progress.cshtml) -->
+                    <a href="@Url.Action("Progress", "Member")" class="@GetMenuClass("/member/progress")">
                         <i data-lucide="line-chart" class="w-4 h-4"></i>
                         <span>Progress</span>
-                    </a>
-
-                    <a href="@Url.Action("Notifications", "Member")" class="@GetActive("Member", "Notifications")">
-                        <i data-lucide="bell" class="w-4 h-4"></i>
-                        <span>Notifications</span>
-                    </a>
-
-                    <a href="@Url.Action("Messages", "Member")" class="@GetActive("Member", "Messages")">
-                        <i data-lucide="message-square" class="w-4 h-4"></i>
-                        <span>Messages</span>
                     </a>
 
                 </nav>
@@ -232,20 +203,38 @@
                     </div>
                 </div>
 
-                <form asp-controller="Account" asp-action="Logout" method="post">
-                    <button type="submit" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-red-400 text-[13px] font-medium hover:bg-red-950/30 hover:text-red-300 transition w-full cursor-pointer">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
-                        <span>Logout</span>
-                    </button>
-                </form>
+                <button type="button" onclick="openLogoutModal()" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-red-400 text-[13px] font-medium hover:bg-red-950/30 hover:text-red-300 transition w-full cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Logout</span>
+                </button>
             </div>
 
         </aside>
-
         <!-- ================= MAIN CONTENT ================= -->
-        <main class="lg:ml-[260px] pt-20 px-6 min-h-screen">
+        <main class="lg:ml-[260px] pt-[70px] px-6 min-h-screen">
             @RenderBody()
         </main>
+    </div>
+
+    <!-- ========================= LOGOUT POPUP MODAL ========================= -->
+    <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-[#13250E] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl transform transition-all scale-95 opacity-0" id="logoutModalContent">
+            <div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xl mx-auto mb-4">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white text-center mb-1">Confirm Logout</h3>
+            <p class="text-xs text-lime-400/70 dark:text-zinc-400 text-center mb-6">Are you sure you want to log out of your account?</p>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeLogoutModal()" class="flex-1 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-800 border border-[#274b1e] dark:border-zinc-700 text-emerald-100 dark:text-zinc-200 text-xs font-semibold hover:border-lime-400 transition cursor-pointer">
+                    Cancel
+                </button>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="flex-1">
+                    <button type="submit" class="w-full h-10 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-semibold shadow-lg shadow-red-500/20 transition cursor-pointer">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript -->
@@ -279,6 +268,27 @@
                 sidebar.classList.toggle('-translate-x-full');
                 overlay.classList.toggle('hidden');
             }
+        }
+
+        // Logout Popup Modal Functions
+        function openLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            const content = document.getElementById('logoutModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            const content = document.getElementById('logoutModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
         }
     </script>
 </body>

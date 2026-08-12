@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale xog ah (Sample Order Items) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var orderItems = ViewBag.OrderItems as List<dynamic> ?? new List<dynamic>
+    {
+        new { ProductName = "Whey Protein", Quantity = 1, TotalPrice = 45.00m },
+        new { ProductName = "Gym Shaker Bottle", Quantity = 2, TotalPrice = 15.00m }
+    };
+
+    decimal subtotal = orderItems.Sum(item => (decimal)(item.TotalPrice ?? 0m));
+    decimal shippingFee = 5.00m;
+    decimal totalPayment = subtotal + shippingFee;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-white">
+    <h2 class="text-3xl font-extrabold tracking-tight mb-8">Checkout & Payment</h2>
+
+    @if (TempData["AlertMessage"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl text-sm font-semibold bg-[#a3e635]/10 border border-[#a3e635] text-[#a3e635]">
+            @TempData["AlertMessage"]
+        </div>
+    }
+
+    @using (Html.BeginForm("PlaceOrder", "Guest", FormMethod.Post))
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Column: Shipping & Payment Details -->
+            <div class="lg:col-span-8">
+                <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 sm:p-8 mb-6">
+
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                        <i data-lucide="truck" class="w-6 h-6 text-[#a3e635]"></i> Shipping Details
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-neutral-300 mb-2">Full Name</label>
+                            <input type="text" name="FullName" required placeholder="John Doe"
+                                   class="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:border-[#a3e635] transition-colors" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-neutral-300 mb-2">Phone Number</label>
+                            <input type="tel" name="Phone" required placeholder="+252 63..."
+                                   class="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:border-[#a3e635] transition-colors" />
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-semibold text-neutral-300 mb-2">Delivery Address</label>
+                            <textarea name="Address" rows="2" required placeholder="District, Street, Building name..."
+                                      class="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:border-[#a3e635] transition-colors resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold mt-10 mb-6 flex items-center gap-2 text-white">
+                        <i data-lucide="credit-card" class="w-6 h-6 text-[#a3e635]"></i> Payment Method
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <label class="relative flex items-center p-4 bg-neutral-950 border border-neutral-800 rounded-xl cursor-pointer hover:border-[#a3e635]/50 transition-all">
+                            <input type="radio" name="PaymentMethod" value="ZAAD" checked class="accent-[#a3e635] w-4 h-4" />
+                            <span class="ml-3 font-semibold text-sm text-white">ZAAD / EVC Plus / Sahal</span>
+                        </label>
+
+                        <label class="relative flex items-center p-4 bg-neutral-950 border border-neutral-800 rounded-xl cursor-pointer hover:border-[#a3e635]/50 transition-all">
+                            <input type="radio" name="PaymentMethod" value="Cash" class="accent-[#a3e635] w-4 h-4" />
+                            <span class="ml-3 font-semibold text-sm text-white">Cash on Delivery</span>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Order Review Card -->
+            <div class="lg:col-span-4">
+                <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 sticky top-28">
+                    <h4 class="text-lg font-bold mb-4 text-white border-b border-neutral-800 pb-2">Your Order</h4>
+
+                    @foreach (var item in orderItems)
+                    {
+                        <div class="flex justify-between items-center py-2 text-sm border-b border-neutral-800/60">
+                            <span class="text-neutral-400">@item.ProductName (x@item.Quantity)</span>
+                            <span class="font-bold text-white">$@string.Format("{0:F2}", item.TotalPrice)</span>
+                        </div>
+                    }
+
+                    <div class="flex justify-between items-center py-2 text-sm text-neutral-400 mt-2">
+                        <span>Shipping</span>
+                        <span class="font-semibold text-white">$@string.Format("{0:F2}", shippingFee)</span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 mb-4 border-t border-neutral-800 mt-2">
+                        <span class="text-neutral-300 font-bold">Total Payment</span>
+                        <span class="text-2xl font-black text-[#a3e635]">$@string.Format("{0:F2}", totalPayment)</span>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-[#a3e635] text-black font-extrabold py-3.5 px-4 rounded-xl hover:bg-[#86efac] transition-all cursor-pointer shadow-lg shadow-[#a3e635]/10">
+                        Place Order Now
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>

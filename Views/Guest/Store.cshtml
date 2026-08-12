@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Our Store";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale xog ah (Sample Products List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var productList = new List<dynamic>
+    {
+        new { ProductID = 1, ProductName = "Whey Protein Isolate", Price = 59.99m, ProductImage = "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=500&q=80" },
+        new { ProductID = 2, ProductName = "Gym Shaker Bottle", Price = 12.50m, ProductImage = "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=500&q=80" },
+        new { ProductID = 3, ProductName = "Adjustable Dumbbells", Price = 120.00m, ProductImage = "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=500&q=80" },
+        new { ProductID = 4, ProductName = "Resistance Bands Set", Price = 24.99m, ProductImage = "https://images.unsplash.com/photo-1598289431512-b97b09177c42?auto=format&fit=crop&w=500&q=80" }
+    };
+}
+
+<!-- OUR STORE SECTION -->
+<section id="store" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-10">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                OUR STORE
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Shop <span class="text-[#a3e635]">Top Products</span>
+            </h2>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto pt-4">
+
+            @foreach (var product in productList)
+            {
+                <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-5 flex flex-col justify-between text-center transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
+                    <div>
+                        <!-- Product Image Container -->
+                        <div class="w-full aspect-square rounded-2xl bg-neutral-900/50 p-4 flex items-center justify-center mb-4 border border-neutral-900 overflow-hidden">
+                            <img src="@product.ProductImage"
+                                 alt="@product.ProductName"
+                                 class="max-h-full object-contain" />
+                        </div>
+                        <!-- Title & Price -->
+                        <h3 class="text-base font-bold text-white mb-1">
+                            @product.ProductName
+                        </h3>
+                        <p class="text-lg font-black text-[#a3e635] mb-5">
+                            $@string.Format("{0:N2}", product.Price)
+                        </p>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <a href="@Url.Action("AddToCart", "Guest", new { id = product.ProductID })"
+                       class="w-full py-2.5 rounded-xl bg-[#a3e635] text-black font-extrabold text-xs hover:bg-[#86efac] transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                    </a>
+                </div>
+            }
+
+        </div>
+
+        <!-- View All Products Link -->
+        <div class="text-center pt-4">
+            <a href="@Url.Action("Store", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-1">
+                View All Products
+            </a>
+        </div>
+
+    </div>
+</section>

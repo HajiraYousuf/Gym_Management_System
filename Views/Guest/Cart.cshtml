@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Your Cart";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale ahaan (Sample Data) - Halkan waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var cartItems = ViewBag.CartItems as List<dynamic> ?? new List<dynamic>();
+    bool isCartEmpty = !cartItems.Any();
+    decimal subtotal = cartItems.Sum(item => (decimal)(item.TotalPrice ?? 0m));
+    decimal shipping = isCartEmpty ? 0.00m : 5.00m; // Tusaale khidmadda shipping-ka
+    decimal totalDue = subtotal + shipping;
+}
+
+<div class="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-800 pb-6 mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
+                    <i class="fa-solid fa-cart-shopping text-[#a3e635]"></i> Your Shopping Cart
+                </h1>
+                <p class="text-sm text-neutral-400 mt-1">Review your items before proceeding to checkout.</p>
+            </div>
+            <a href="@Url.Action("Store", "Guest")" class="inline-flex items-center gap-2 text-sm font-semibold text-[#a3e635] hover:text-[#86efac] transition-colors">
+                <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+
+        @if (isCartEmpty)
+        {
+            <!-- Empty Cart State -->
+            <div class="text-center py-16 bg-neutral-950 border border-neutral-800 rounded-3xl max-w-2xl mx-auto space-y-4">
+                <div class="w-16 h-16 bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center mx-auto text-[#a3e635] text-2xl">
+                    <i class="fa-solid fa-cart-arrow-down"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Your Cart is Empty</h2>
+                <p class="text-sm text-neutral-400">Add products from our store to see them here.</p>
+                <a href="@Url.Action("Store", "Guest")" class="inline-block px-6 py-3 rounded-xl bg-[#a3e635] text-black font-extrabold text-sm hover:bg-[#86efac] transition-all">
+                    Browse Store
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Cart Items State -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                <div class="lg:col-span-8 space-y-4">
+                    @foreach (var item in cartItems)
+                    {
+                        <div class="bg-neutral-950 border border-neutral-800 rounded-2xl p-4 sm:p-5 flex flex-col sm:grid sm:grid-cols-12 items-center gap-4">
+                            <div class="col-span-6 flex items-center gap-4 w-full">
+                                <div class="w-20 h-20 rounded-xl bg-neutral-900 border border-neutral-800 shrink-0 overflow-hidden flex items-center justify-center p-2">
+                                    <img src="@item.ProductImage" alt="@item.ProductName" class="w-full h-full object-contain" />
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#a3e635] bg-[#a3e635]/10 px-2 py-0.5 rounded-md">@item.Category</span>
+                                    <h3 class="font-bold text-white text-base mt-1">@item.ProductName</h3>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 text-center text-sm font-semibold text-neutral-300">
+                                $@string.Format("{0:F2}", item.Price)
+                            </div>
+
+                            <div class="col-span-2 flex justify-center items-center">
+                                <div class="flex items-center border border-neutral-800 bg-neutral-900 rounded-xl p-1 gap-1">
+                                    <a href="@Url.Action("DecreaseQuantity", "Guest", new { id = item.ProductID })" class="w-7 h-7 flex items-center justify-center text-neutral-400 hover:text-white">
+                                        <i class="fa-solid fa-minus text-xs"></i>
+                                    </a>
+                                    <span class="w-8 text-center text-sm font-bold text-white">@item.Quantity</span>
+                                    <a href="@Url.Action("IncreaseQuantity", "Guest", new { id = item.ProductID })" class="w-7 h-7 flex items-center justify-center text-neutral-400 hover:text-white">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 flex sm:flex-col justify-between sm:justify-center items-end gap-2">
+                                <span class="text-base font-extrabold text-[#a3e635]">$@string.Format("{0:F2}", item.TotalPrice)</span>
+                                <a href="@Url.Action("RemoveItem", "Guest", new { id = item.ProductID })" class="text-neutral-500 hover:text-red-500 text-xs">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="flex justify-between items-center pt-2">
+                        <a href="@Url.Action("ClearCart", "Guest")" class="text-xs font-semibold text-neutral-500 hover:text-neutral-300">
+                            <i class="fa-solid fa-rotate-left"></i> Clear Shopping Cart
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:col-span-4">
+                    <div class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 sticky top-28 space-y-4">
+                        <h2 class="text-lg font-bold text-white border-b border-neutral-800 pb-3 flex justify-between">
+                            Order Summary
+                            <span class="text-xs font-normal text-neutral-400">@cartItems.Sum(i => (int)i.Quantity) Items</span>
+                        </h2>
+
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between text-neutral-400">
+                                <span>Subtotal</span>
+                                <span class="font-semibold text-white">$@string.Format("{0:F2}", subtotal)</span>
+                            </div>
+                            <div class="flex justify-between text-neutral-400">
+                                <span>Estimated Shipping</span>
+                                <span class="font-semibold text-white">$@string.Format("{0:F2}", shipping)</span>
+                            </div>
+                            <div class="flex justify-between text-base font-extrabold text-white border-t border-neutral-800 pt-3">
+                                <span>Total Due</span>
+                                <span class="text-xl text-[#a3e635]">$@string.Format("{0:F2}", totalDue)</span>
+                            </div>
+                        </div>
+
+                        <a href="@Url.Action("Checkout", "Guest")" class="w-full bg-[#a3e635] hover:bg-[#86efac] text-black font-extrabold py-3.5 rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm shadow-lg shadow-[#a3e635]/10">
+                            Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>

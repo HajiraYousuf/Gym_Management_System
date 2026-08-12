@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Membership Plans";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+
+    // Tusaale xog ah (Sample Membership Plans) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
+    var membershipPlans = new List<dynamic>
+    {
+        new
+        {
+            PlanID = 1,
+            Title = "Standard Plan",
+            Price = 29.99m,
+            Features = new List<string> { "Access to gym equipment", "Locker room access", "1 Free guest pass per month", "Standard support" }
+        },
+        new
+        {
+            PlanID = 2,
+            Title = "Pro Plan",
+            Price = 49.99m,
+            Features = new List<string> { "24/7 Gym access", "Unlimited guest passes", "Free personal trainer (2 sessions)", "Nutrition guidance", "Priority support" }
+        },
+        new
+        {
+            PlanID = 3,
+            Title = "VIP Elite",
+            Price = 89.99m,
+            Features = new List<string> { "All Pro Plan features", "Dedicated 1-on-1 personal trainer", "Custom meal & diet plans", "VIP lounge & sauna access", "Free protein shakes" }
+        }
+    };
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <!-- Section Header -->
+    <div class="text-center space-y-2 mb-12">
+        <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+            MEMBERSHIP PLANS
+        </span>
+        <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight text-white">
+            Choose Your <span class="text-[#a3e635]">Plan</span>
+        </h2>
+    </div>
+
+    <!-- Pricing Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+
+        @foreach (var plan in membershipPlans)
+        {
+            <!-- Membership Card -->
+            <div class="bg-neutral-950 border border-neutral-800/80
+                rounded-3xl p-8 flex flex-col justify-between
+                transition-all duration-300 ease-in-out
+                hover:-translate-y-2 hover:bg-neutral-900
+                hover:border-neutral-700
+                hover:shadow-2xl hover:shadow-black/60">
+
+                <div>
+                    <!-- Plan Title -->
+                    <h3 class="text-xl font-extrabold uppercase tracking-wider text-center text-white mb-6">
+                        @plan.Title
+                    </h3>
+
+                    <!-- Price -->
+                    <div class="text-center mb-8">
+                        <span class="text-5xl font-black text-white">
+                            $@string.Format("{0:F2}", plan.Price)
+                        </span>
+                        <span class="text-neutral-400 text-sm">/month</span>
+                    </div>
+
+                    <!-- Features -->
+                    <ul class="space-y-4 text-sm text-neutral-300 mb-8">
+                        @foreach (var feature in plan.Features)
+                        {
+                            <li class="flex items-center gap-3">
+                                <i data-lucide="check" class="w-4 h-4 text-[#a3e635]"></i>
+                                <span>@feature</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- Join Now Button -->
+                <a href="@Url.Action("Register", "Auth", new { plan = plan.PlanID })"
+                   class="w-full py-3.5 block rounded-xl bg-[#a3e635] text-black font-extrabold text-center hover:bg-[#86efac] transition-all">
+                    Join Now
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>

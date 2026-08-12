@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "FAQ";
+    Layout = "~/Views/Layouts/GuestMaster.cshtml";
+}
+
+<!-- FAQ SECTION (FULL WIDTH) -->
+<section id="faq" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-4xl mx-auto space-y-8">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-3">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                FAQ
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Frequently Asked <span class="text-[#a3e635]">Questions</span>
+            </h2>
+            <p class="text-sm text-neutral-400 max-w-lg mx-auto">
+                Everything you need to know about FitZone services, memberships, and policies.
+            </p>
+        </div>
+
+        <!-- Search Input for FAQ -->
+        <div class="relative max-w-xl mx-auto">
+            <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"></i>
+            <input type="text"
+                   id="faqSearch"
+                   onkeyup="searchFaq()"
+                   placeholder="Search for a question..."
+                   class="w-full pl-12 pr-4 py-3.5 bg-neutral-950 border border-neutral-800 rounded-2xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#a3e635] transition-colors" />
+        </div>
+
+        <!-- Accordion List (Static HTML Items) -->
+        <div class="space-y-4 pt-2">
+
+            <!-- FAQ 1 -->
+            <div class="faq-item bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neutral-700">
+                <button type="button" onclick="toggleFaq('faq-1', 'icon-1')" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white hover:text-[#a3e635] transition-colors focus:outline-none cursor-pointer">
+                    <span class="faq-question">What are your gym hours?</span>
+                    <div class="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-[#a3e635]">
+                        <i id="icon-1" data-lucide="plus" class="w-4 h-4 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div id="faq-1" class="hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900/80 pt-3">
+                    Our gym is open 24/7 for premium members. Standard hours are Monday to Saturday from 5:00 AM to 11:00 PM.
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="faq-item bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neutral-700">
+                <button type="button" onclick="toggleFaq('faq-2', 'icon-2')" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white hover:text-[#a3e635] transition-colors focus:outline-none cursor-pointer">
+                    <span class="faq-question">Do I need to bring my own equipment?</span>
+                    <div class="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-[#a3e635]">
+                        <i id="icon-2" data-lucide="plus" class="w-4 h-4 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div id="faq-2" class="hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900/80 pt-3">
+                    No, we provide all state-of-the-art gym equipment, mats, and accessories. Just bring a water bottle and athletic shoes!
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="faq-item bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neutral-700">
+                <button type="button" onclick="toggleFaq('faq-3', 'icon-3')" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white hover:text-[#a3e635] transition-colors focus:outline-none cursor-pointer">
+                    <span class="faq-question">Can I freeze my membership?</span>
+                    <div class="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-[#a3e635]">
+                        <i id="icon-3" data-lucide="plus" class="w-4 h-4 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div id="faq-3" class="hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900/80 pt-3">
+                    Yes, you can pause or freeze your active membership for up to 3 months per year through our reception or online dashboard.
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="faq-item bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neutral-700">
+                <button type="button" onclick="toggleFaq('faq-4', 'icon-4')" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white hover:text-[#a3e635] transition-colors focus:outline-none cursor-pointer">
+                    <span class="faq-question">Do you offer personal training?</span>
+                    <div class="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-[#a3e635]">
+                        <i id="icon-4" data-lucide="plus" class="w-4 h-4 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div id="faq-4" class="hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900/80 pt-3">
+                    Yes! We have certified personal trainers available for 1-on-1 sessions included in Standard and Premium plans.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Contact Support Note -->
+        <div class="text-center pt-6">
+            <p class="text-xs sm:text-sm text-neutral-400">
+                Have more questions that aren't listed here?
+                <a href="@Url.Action("Contact", "Guest")" class="text-[#a3e635] font-bold hover:underline ml-1">
+                    Contact us
+                </a>
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- JavaScript for Accordion & Search -->
+<script>
+    function toggleFaq(id, iconId) {
+        const faq = document.getElementById(id);
+        const icon = document.getElementById(iconId);
+
+        if (faq.classList.contains('hidden')) {
+            faq.classList.remove('hidden');
+            icon.style.transform = 'rotate(45deg)';
+        } else {
+            faq.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function searchFaq() {
+        const input = document.getElementById('faqSearch').value.toLowerCase();
+        const items = document.querySelectorAll('.faq-item');
+
+        items.forEach(item => {
+            const questionText = item.querySelector('.faq-question').innerText.toLowerCase();
+            if (questionText.includes(input)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+</script>
