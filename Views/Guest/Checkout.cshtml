@@ -73,7 +73,7 @@
                     @foreach (var item in Model.CartItems)
                     {
                         <div class="flex justify-between items-center py-2 text-sm border-b border-neutral-800/60">
-                            <span class="text-neutral-400">@item.ProductName (x@item.Quantity)</span>
+                            <span class="text-neutral-400">@item.ProductName (x@(item.Quantity))</span>
                             <span class="font-bold text-white">$@string.Format("{0:F2}", item.TotalPrice)</span>
                         </div>
                     }

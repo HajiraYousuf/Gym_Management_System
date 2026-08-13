@@ -270,7 +270,6 @@ namespace GymManagementSystem.Controllers
             _context.CartItems.RemoveRange(items);
             _context.SaveChanges();
 
-            TempData["SuccessMessage"] = $"Dalabkaaga waa la aqbalay. Lambarka dalabka: {order.OrderNumber}";
             return RedirectToAction(nameof(OrderConfirmation), new { orderNumber = order.OrderNumber });
         }
 
