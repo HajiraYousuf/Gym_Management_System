@@ -1,3 +1,5 @@
+using GymManagementSystem.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // MVC SERVICES
 // =========================================================
 builder.Services.AddControllersWithViews();
+
+// =========================================================
+// AUTHENTICATION / ROLES (cookie-based)
+// =========================================================
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        options.SlidingExpiration = true;
+    });
 
 // Session-ka loo isticmaalo gaadhiga (cart) ee martida
 builder.Services.AddDistributedMemoryCache();
@@ -43,6 +59,7 @@ app.UseRouting();
 
 app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // =========================================================
@@ -50,7 +67,10 @@ app.UseAuthorization();
 // =========================================================
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Admin}/{action=Dashboard}/{id?}"
+    pattern: "{controller=Guest}/{action=HomePage}/{id?}"
 );
+
+// Tables-ka waxay si automatic ah u samaysmayaan, iyo akoonnada default-ka
+AccountSeedData.SeedAccounts(app.Services);
 
 app.Run();

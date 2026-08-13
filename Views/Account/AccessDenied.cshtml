@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Access Denied";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitZone - Access Denied</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-[#0c0c0e] border border-zinc-800 rounded-3xl p-8 text-center space-y-4">
+        <h1 class="text-2xl font-bold">Access <span class="text-[#ccff00]">Denied</span></h1>
+        <p class="text-zinc-400 text-xs">
+            Ma lihid ogolaanshaha bogga aad rabtay. Ku noqo dashboard-kaaga ama gal akoon kale.
+        </p>
+        <div class="flex gap-3 justify-center pt-2">
+            <a asp-controller="Guest" asp-action="HomePage" class="bg-[#141417] border border-zinc-800 hover:border-[#ccff00] text-xs font-semibold px-4 py-2.5 rounded-xl transition">
+                Home
+            </a>
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="bg-[#ccff00] text-black text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-lime-400 transition">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

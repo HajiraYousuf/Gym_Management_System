@@ -33,6 +33,12 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<UserProfile>(entity =>
+        {
+            entity.Property(p => p.Email).HasMaxLength(256).IsRequired();
+            entity.HasIndex(p => p.Email).IsUnique();
+        });
+
         modelBuilder.Entity<MembershipPlan>().Property(p => p.Price).HasPrecision(18, 2);
         modelBuilder.Entity<Product>().Property(p => p.Price).HasPrecision(18, 2);
 

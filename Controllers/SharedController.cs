@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using GymManagementSystem.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace GymManagementSystem.Controllers
 {
+    [Authorize]
     public class SharedController : Controller
     {
         private readonly ApplicationDbContext _context;
