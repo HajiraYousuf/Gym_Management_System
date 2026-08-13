@@ -69,6 +69,13 @@
                         </div>
                     }
 
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="p-4 rounded-xl text-sm font-semibold mb-4 bg-red-500/10 border border-red-500 text-red-400">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
                     @using (Html.BeginForm("SubmitContact", "Guest", FormMethod.Post))
                     {
                         <div class="space-y-4">

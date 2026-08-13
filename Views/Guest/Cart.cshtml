@@ -1,13 +1,10 @@
-﻿@{
+﻿@model GymManagementSystem.Models.GuestModel
+@{
     ViewData["Title"] = "Your Cart";
     Layout = "~/Views/Layouts/GuestMaster.cshtml";
 
-    // Tusaale ahaan (Sample Data) - Halkan waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
-    var cartItems = ViewBag.CartItems as List<dynamic> ?? new List<dynamic>();
-    bool isCartEmpty = !cartItems.Any();
-    decimal subtotal = cartItems.Sum(item => (decimal)(item.TotalPrice ?? 0m));
-    decimal shipping = isCartEmpty ? 0.00m : 5.00m; // Tusaale khidmadda shipping-ka
-    decimal totalDue = subtotal + shipping;
+    var cartItems = Model.CartItems;
+    var isCartEmpty = Model.IsCartEmpty;
 }
 
 <div class="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
@@ -24,6 +21,20 @@
                 <i class="fa-solid fa-arrow-left"></i> Continue Shopping
             </a>
         </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-6 p-4 rounded-xl text-sm font-semibold bg-[#a3e635]/10 border border-[#a3e635] text-[#a3e635]">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="mb-6 p-4 rounded-xl text-sm font-semibold bg-red-500/10 border border-red-500 text-red-400">
+                @TempData["ErrorMessage"]
+            </div>
+        }
 
         @if (isCartEmpty)
         {
@@ -95,21 +106,21 @@
                     <div class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 sticky top-28 space-y-4">
                         <h2 class="text-lg font-bold text-white border-b border-neutral-800 pb-3 flex justify-between">
                             Order Summary
-                            <span class="text-xs font-normal text-neutral-400">@cartItems.Sum(i => (int)i.Quantity) Items</span>
+                            <span class="text-xs font-normal text-neutral-400">@Model.TotalQuantity Items</span>
                         </h2>
 
                         <div class="space-y-3 text-sm">
                             <div class="flex justify-between text-neutral-400">
                                 <span>Subtotal</span>
-                                <span class="font-semibold text-white">$@string.Format("{0:F2}", subtotal)</span>
+                                <span class="font-semibold text-white">$@string.Format("{0:F2}", Model.Subtotal)</span>
                             </div>
                             <div class="flex justify-between text-neutral-400">
                                 <span>Estimated Shipping</span>
-                                <span class="font-semibold text-white">$@string.Format("{0:F2}", shipping)</span>
+                                <span class="font-semibold text-white">$@string.Format("{0:F2}", Model.ShippingFee)</span>
                             </div>
                             <div class="flex justify-between text-base font-extrabold text-white border-t border-neutral-800 pt-3">
                                 <span>Total Due</span>
-                                <span class="text-xl text-[#a3e635]">$@string.Format("{0:F2}", totalDue)</span>
+                                <span class="text-xl text-[#a3e635]">$@string.Format("{0:F2}", Model.TotalDue)</span>
                             </div>
                         </div>
 

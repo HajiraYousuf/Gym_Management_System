@@ -1,32 +1,7 @@
-﻿@{
+﻿@model GymManagementSystem.Models.GuestModel
+@{
     ViewData["Title"] = "Membership Plans";
     Layout = "~/Views/Layouts/GuestMaster.cshtml";
-
-    // Tusaale xog ah (Sample Membership Plans) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
-    var membershipPlans = new List<dynamic>
-    {
-        new
-        {
-            PlanID = 1,
-            Title = "Standard Plan",
-            Price = 29.99m,
-            Features = new List<string> { "Access to gym equipment", "Locker room access", "1 Free guest pass per month", "Standard support" }
-        },
-        new
-        {
-            PlanID = 2,
-            Title = "Pro Plan",
-            Price = 49.99m,
-            Features = new List<string> { "24/7 Gym access", "Unlimited guest passes", "Free personal trainer (2 sessions)", "Nutrition guidance", "Priority support" }
-        },
-        new
-        {
-            PlanID = 3,
-            Title = "VIP Elite",
-            Price = 89.99m,
-            Features = new List<string> { "All Pro Plan features", "Dedicated 1-on-1 personal trainer", "Custom meal & diet plans", "VIP lounge & sauna access", "Free protein shakes" }
-        }
-    };
 }
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -44,7 +19,7 @@
     <!-- Pricing Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
 
-        @foreach (var plan in membershipPlans)
+        @foreach (var plan in Model.MembershipPlans)
         {
             <!-- Membership Card -->
             <div class="bg-neutral-950 border border-neutral-800/80
@@ -70,18 +45,18 @@
 
                     <!-- Features -->
                     <ul class="space-y-4 text-sm text-neutral-300 mb-8">
-                        @foreach (var feature in plan.Features)
+                        @foreach (var feature in plan.Features.OrderBy(f => f.DisplayOrder))
                         {
                             <li class="flex items-center gap-3">
                                 <i data-lucide="check" class="w-4 h-4 text-[#a3e635]"></i>
-                                <span>@feature</span>
+                                <span>@feature.Description</span>
                             </li>
                         }
                     </ul>
                 </div>
 
                 <!-- Join Now Button -->
-                <a href="@Url.Action("Register", "Auth", new { plan = plan.PlanID })"
+                <a href="@Url.Action("Register", "Account", new { plan = plan.PlanID })"
                    class="w-full py-3.5 block rounded-xl bg-[#a3e635] text-black font-extrabold text-center hover:bg-[#86efac] transition-all">
                     Join Now
                 </a>

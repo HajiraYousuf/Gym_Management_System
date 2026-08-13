@@ -1,14 +1,7 @@
-﻿@{
+﻿@model GymManagementSystem.Models.GuestModel
+@{
     ViewData["Title"] = "Our Classes";
     Layout = "~/Views/Layouts/GuestMaster.cshtml";
-
-    // Tusaale xog ah (Sample Classes List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
-    var classList = new List<dynamic>
-    {
-        new { ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80", ClassName = "Strength & Lifting", TrainerName = "John Doe", Days = "Mon, Wed, Fri", TimeSlot = "08:00 AM - 10:00 AM", Icon = "dumbbell" },
-        new { ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80", ClassName = "Cardio & Burn", TrainerName = "Jane Smith", Days = "Tue, Thu, Sat", TimeSlot = "10:00 AM - 11:30 AM", Icon = "activity" },
-        new { ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80", ClassName = "CrossFit Pro", TrainerName = "Mike Johnson", Days = "Mon, Wed, Fri", TimeSlot = "04:00 PM - 06:00 PM", Icon = "target" }
-    };
 }
 
 <section id="classes" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
@@ -27,7 +20,7 @@
         <!-- Grid Container -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto justify-center">
 
-            @foreach (var item in classList)
+            @foreach (var item in Model.Classes)
             {
                 <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-5 flex flex-col items-center text-center shadow-lg shadow-black/80 transition-all duration-300 hover:-translate-y-3 hover:border-[#a3e635]">
 

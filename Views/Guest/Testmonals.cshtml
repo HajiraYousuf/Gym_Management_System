@@ -1,29 +1,7 @@
-﻿@{
+﻿@model GymManagementSystem.Models.GuestModel
+@{
     ViewData["Title"] = "Testimonials";
     Layout = "~/Views/Layouts/GuestMaster.cshtml";
-
-    // Tusaale xog ah (Sample Testimonials List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
-    var testimonialsList = new List<dynamic>
-    {
-        new
-        {
-            Feedback = "Joining FitZone completely changed my lifestyle. The trainers are certified and professional, and the equipment is top-notch!",
-            MemberName = "Ahmed Mohamed",
-            MemberImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"
-        },
-        new
-        {
-            Feedback = "The atmosphere is extremely motivating. I've lost over 10kg and gained so much strength thanks to the personalized workout plan.",
-            MemberName = "Amina Ali",
-            MemberImage = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80"
-        },
-        new
-        {
-            Feedback = "Best gym in town hands down! Clean facilities, friendly staff, and the supplement store has everything I need after a heavy workout.",
-            MemberName = "Liban Hassan",
-            MemberImage = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"
-        }
-    };
 }
 
 <!-- TESTIMONIALS SECTION -->
@@ -43,7 +21,7 @@
         <!-- Testimonials Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
 
-            @foreach (var item in testimonialsList)
+            @foreach (var item in Model.Testimonials)
             {
                 <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
                     <div class="space-y-4">
@@ -67,11 +45,10 @@
 
                             <!-- Star Rating -->
                             <div class="flex gap-1 text-[#a3e635] text-xs mt-1">
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-[#a3e635]"></i>
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    <i data-lucide="star" class="w-3.5 h-3.5 @(star <= item.Rating ? "fill-[#a3e635]" : "text-neutral-700")"></i>
+                                }
                             </div>
                         </div>
                     </div>

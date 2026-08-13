@@ -1,39 +1,7 @@
-﻿@{
+﻿@model GymManagementSystem.Models.GuestModel
+@{
     ViewData["Title"] = "Our Trainers";
     Layout = "~/Views/Layouts/GuestMaster.cshtml";
-
-    // Tusaale xog ah (Sample Trainers List) - Waxaad ku xiri kartaa Model-kaaga markaad backend-ka dhiseyso
-    var trainersList = new List<dynamic>
-    {
-        new
-        {
-            ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80",
-            TrainerName = "Sarah Jenkins",
-            Role = "Head Strength Coach",
-            Experience = "8 Years Experience"
-        },
-        new
-        {
-            ImageUrl = "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=600&q=80",
-            TrainerName = "David Miller",
-            Role = "CrossFit & Conditioning",
-            Experience = "5 Years Experience"
-        },
-        new
-        {
-            ImageUrl = "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=600&q=80",
-            TrainerName = "Alex Turner",
-            Role = "Personal Fitness Trainer",
-            Experience = "6 Years Experience"
-        },
-        new
-        {
-            ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80",
-            TrainerName = "Jessica Wong",
-            Role = "Yoga & Mobility Specialist",
-            Experience = "7 Years Experience"
-        }
-    };
 }
 
 <!-- OUR TRAINERS SECTION -->
@@ -53,7 +21,7 @@
         <!-- Trainers Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
 
-            @foreach (var trainer in trainersList)
+            @foreach (var trainer in Model.Trainers)
             {
                 <div class="group bg-neutral-950 border border-neutral-800/80 rounded-3xl p-4 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
 
