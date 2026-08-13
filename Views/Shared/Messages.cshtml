@@ -1,205 +1,182 @@
-﻿@{
-    Layout = "~/Views/layouts/AdminMaster.cshtml";
+﻿@model GymManagementSystem.Models.SharedModel
+
+@{
+    // MasterPage dinamiga ah oo ku xiran doorka (Member, Trainer, Receptionist, Admin)
+    Layout = Model.LayoutPath;
 }
 
 <!-- Main Messaging Container -->
 <div class="flex h-[calc(100vh-5rem)] bg-zinc-100 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 transition-all duration-300 rounded-3xl shadow-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/80 m-2">
 
-    <!-- SIDEBAR: Contacts / Roles List -->
+    <!-- SIDEBAR: Contacts List -->
     <div id="sidebar" class="w-full md:w-80 lg:w-96 bg-white dark:bg-zinc-900/90 backdrop-blur-xl border-r border-zinc-200 dark:border-zinc-800/80 flex flex-col transition-all duration-300">
         
-        <!-- Header & Role Filter -->
+        <!-- Header & Search Box -->
         <div class="p-5 border-b border-zinc-200 dark:border-zinc-800/80">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h2 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-lime-400 to-emerald-500 bg-clip-text text-transparent">Messages Hub</h2>
-                    <p class="text-xs text-zinc-400 mt-0.5">Xiriirka guud ee Gym-ka</p>
+                    <h2 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-lime-400 to-emerald-500 bg-clip-text text-transparent">Messages</h2>
+                    <p class="text-xs text-zinc-400 mt-0.5">Doorka: <span class="text-lime-500 font-bold">@Model.CurrentUser.Role</span></p>
                 </div>
-                <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="p-2.5 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 transition shadow-sm">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
             </div>
             
-            <!-- Search Box -->
+            <!-- Search Box (Wuxuu qariyaa dadka aan la raadinayn) -->
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-400">
                     <i class="fas fa-search text-xs"></i>
                 </span>
-                <input type="text" placeholder="Raadi qof ama door (Admin, Trainer...)" 
+                <input type="text" id="search-contact" onkeyup="filterContacts()" placeholder="Raadi qof ama door (Admin, Trainer...)" 
                        class="w-full pl-10 pr-4 py-2.5 text-xs bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 dark:focus:border-lime-500 rounded-2xl focus:outline-none transition text-zinc-800 dark:text-zinc-200 placeholder-zinc-400">
             </div>
         </div>
 
-        <!-- Contacts List (Categorized by Roles) -->
+        <!-- Contacts List (Database-driven Contacts) -->
         <div class="flex-1 overflow-y-auto p-3 space-y-2">
-            
-            <!-- Contact Item 1 (Active) -->
-            <div onclick="openChat('Aadan (Admin)', 'Admin', 'Online')" class="flex items-center gap-3.5 p-3.5 rounded-2xl cursor-pointer bg-lime-50/80 dark:bg-zinc-800/50 border border-lime-200/60 dark:border-lime-500/30 transition group">
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-lime-500 to-emerald-500 flex items-center justify-center text-zinc-950 font-bold shadow-md shadow-lime-500/20">AD</div>
-                    <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center mb-1">
-                        <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate">Aadan (Admin)</h4>
-                        <span class="text-[10px] font-medium text-lime-600 dark:text-lime-400">10:45 AM</span>
-                    </div>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">Macmiilka cusub fadlan diiwaan geli...</p>
-                </div>
-            </div>
+            @foreach (var contact in Model.Contacts)
+            {
+                bool isActive = Model.ActiveContact != null && Model.ActiveContact.Id == contact.Id;
+                string activeClass = isActive ? "bg-lime-50/80 dark:bg-zinc-800/50 border-lime-200/60 dark:border-lime-500/30" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/40 border-transparent";
 
-            <!-- Contact Item 2 -->
-            <div onclick="openChat('Khaalid (Trainer)', 'Trainer', 'Offline')" class="flex items-center gap-3.5 p-3.5 rounded-2xl cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800/40 border border-transparent transition group">
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-zinc-700 to-zinc-800 flex items-center justify-center text-zinc-200 font-bold">TR</div>
-                    <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-zinc-500 border-2 border-white dark:border-zinc-900 rounded-full"></span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center mb-1">
-                        <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-200 truncate">Khaalid (Trainer)</h4>
-                        <span class="text-[10px] font-medium text-zinc-400">Shalay</span>
+                <a href="@Url.Action("Messages", new { userId = Model.CurrentUser.Id, activeContactId = contact.Id })" 
+                   class="contact-item flex items-center gap-3.5 p-3.5 rounded-2xl cursor-pointer border transition group @activeClass"
+                   data-name="@contact.Name.ToLower()" data-role="@contact.Role.ToLower()">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-lime-500 to-emerald-500 flex items-center justify-center text-zinc-950 font-bold shadow-md shadow-lime-500/20">@contact.Avatar</div>
+                        <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 @(contact.Status == "Online" ? "bg-emerald-500" : "bg-zinc-400") border-2 border-white dark:border-zinc-900 rounded-full"></span>
                     </div>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">Tababarka CrossFit-ka maanta waa saacadee?</p>
-                </div>
-            </div>
-
-            <!-- Contact Item 3 -->
-            <div onclick="openChat('Sahra (Reception)', 'Receptionist', 'Online')" class="flex items-center gap-3.5 p-3.5 rounded-2xl cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800/40 border border-transparent transition group">
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-700 flex items-center justify-center text-white font-bold">RC</div>
-                    <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center mb-1">
-                        <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-200 truncate">Sahra (Reception)</h4>
-                        <span class="text-[10px] font-medium text-zinc-400">Sabti</span>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate">@contact.Name (@contact.Role)</h4>
+                        </div>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                            @if (!string.IsNullOrEmpty(contact.Specialization)) {
+                                @:Khibrad: @contact.Specialization
+                            } else if (!string.IsNullOrEmpty(contact.MembershipType)) {
+                                @:Nooc: @contact.MembershipType
+                            } else if (!string.IsNullOrEmpty(contact.Shift)) {
+                                @:Shift: @contact.Shift
+                            } else {
+                                @:Last seen: @contact.LastSeen
+                            }
+                        </p>
                     </div>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">Lacag-bixintii bisha waa la xaqiijiyay.</p>
-                </div>
-            </div>
-
-            <!-- Contact Item 4 -->
-            <div onclick="openChat('Maxamed (Member)', 'Member', 'Online')" class="flex items-center gap-3.5 p-3.5 rounded-2xl cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800/40 border border-transparent transition group">
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-lime-700 to-green-800 flex items-center justify-center text-white font-bold">MB</div>
-                    <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center mb-1">
-                        <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-200 truncate">Maxamed (Member)</h4>
-                        <span class="text-[10px] font-medium text-zinc-400">Jimce</span>
-                    </div>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">Ma bedeli karaa waqtiga jimicsiga?</p>
-                </div>
-            </div>
-
+                </a>
+            }
         </div>
     </div>
 
     <!-- CHAT AREA: Active Conversation -->
     <div id="chat-area" class="flex-1 flex flex-col bg-white dark:bg-zinc-900 transition-all duration-300">
         
-        <!-- Chat Header -->
-        <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md">
-            <div class="flex items-center gap-3.5">
-                <button onclick="backToSidebar()" class="md:hidden p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
-                    <i class="fas fa-arrow-left text-xs"></i>
+        @if (Model.ActiveContact != null)
+        {
+            <!-- Chat Header -->
+            <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md">
+                <div class="flex items-center gap-3.5">
+                    <button onclick="backToSidebar()" class="md:hidden p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-500 flex items-center justify-center text-zinc-950 font-bold text-sm shadow-md shadow-lime-500/10">@Model.ActiveContact.Avatar</div>
+                    <div>
+                        <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">@Model.ActiveContact.Name (@Model.ActiveContact.Role)</h3>
+                        <p class="text-xs text-emerald-500 font-medium flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2 h-2 rounded-full @(Model.ActiveContact.Status == "Online" ? "bg-emerald-500 animate-pulse" : "bg-zinc-400")"></span> 
+                            <span>
+                                @if (!string.IsNullOrEmpty(Model.ActiveContact.Specialization)) {
+                                    @:Specialized: @Model.ActiveContact.Specialization
+                                } else if (!string.IsNullOrEmpty(Model.ActiveContact.MembershipType)) {
+                                    @:Membership: @Model.ActiveContact.MembershipType
+                                } else if (!string.IsNullOrEmpty(Model.ActiveContact.Shift)) {
+                                    @:Shift: @Model.ActiveContact.Shift
+                                } else {
+                                    @:Status: @Model.ActiveContact.Status
+                                }
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages History (Database Timestamps) -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-5 bg-zinc-50/40 dark:bg-zinc-950/40" id="messages-scroll">
+                @foreach (var msg in Model.Messages)
+                {
+                    bool isMe = msg.SenderId == Model.CurrentUser.Id;
+                    if (!isMe)
+                    {
+                        <!-- Received Message -->
+                        <div class="flex items-end gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-lime-400 flex items-center justify-center text-zinc-950 text-xs font-bold shadow-sm">@Model.ActiveContact.Avatar</div>
+                            <div class="max-w-xs md:max-w-md bg-white dark:bg-zinc-900 p-4 rounded-2xl rounded-bl-sm shadow-sm border border-zinc-200/80 dark:border-zinc-800 text-sm text-zinc-800 dark:text-zinc-200">
+                                <p class="leading-relaxed">@msg.Text</p>
+                                <span class="block text-[10px] text-zinc-400 text-right mt-1.5 font-medium">@msg.Timestamp</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Sent Message -->
+                        <div class="flex items-end justify-end gap-3">
+                            <div class="max-w-xs md:max-w-md bg-gradient-to-r from-lime-500 to-emerald-500 text-zinc-950 p-4 rounded-2xl rounded-br-sm shadow-lg shadow-lime-500/10 text-sm font-medium">
+                                <p class="leading-relaxed">@msg.Text</p>
+                                <span class="block text-[10px] text-zinc-900/70 text-right mt-1.5 font-semibold">@msg.Timestamp <i class="fas fa-check-double ml-1"></i></span>
+                            </div>
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">@Model.CurrentUser.Avatar</div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- Chat Input Footer (POST to Database) -->
+            <form action="/Shared/SendMessage" method="post" class="p-4 border-t border-zinc-200 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md flex items-center gap-3">                <input type="hidden" name="senderId" value="@Model.CurrentUser.Id" />
+                <input type="hidden" name="receiverId" value="@Model.ActiveContact.Id" />
+                
+                <input type="text" name="text" placeholder="Qor fariintaada halkan..." autocomplete="off"
+                       class="flex-1 bg-zinc-100 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 dark:focus:border-lime-500 px-4 py-3 rounded-2xl text-xs focus:outline-none transition text-zinc-800 dark:text-zinc-100 placeholder-zinc-400">
+                <button type="submit" class="px-5 py-3 bg-gradient-to-r from-lime-500 to-emerald-500 text-zinc-950 rounded-2xl hover:opacity-95 transition shadow-lg shadow-lime-500/20 font-bold text-xs flex items-center gap-2">
+                    <span>Dir</span>
+                    <i class="fas fa-paperplane text-[10px]"></i>
                 </button>
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-500 flex items-center justify-center text-zinc-950 font-bold text-sm shadow-md shadow-lime-500/10" id="active-avatar">AD</div>
-                <div>
-                    <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100" id="active-name">Aadan (Admin)</h3>
-                    <p class="text-xs text-emerald-500 font-medium flex items-center gap-1.5 mt-0.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></i></span> 
-                        <span id="active-status">Online • Admin Portal</span>
-                    </p>
-                </div>
+            </form>
+        }
+        else
+        {
+            <div class="flex-1 flex items-center justify-center text-zinc-400 text-xs">
+                Fadlan dooro xiriir si aad u bilowdo wada-sheekaysiga.
             </div>
-            <div class="flex items-center gap-1.5">
-                <button class="p-2.5 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"><i class="fas fa-phone-alt text-xs"></i></button>
-                <button class="p-2.5 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"><i class="fas fa-video text-xs"></i></button>
-                <button class="p-2.5 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"><i class="fas fa-info-circle text-xs"></i></button>
-            </div>
-        </div>
-
-        <!-- Chat Messages History -->
-        <div class="flex-1 overflow-y-auto p-6 space-y-5 bg-zinc-50/40 dark:bg-zinc-950/40">
-            
-            <!-- Received Message -->
-            <div class="flex items-end gap-3">
-                <div class="w-8 h-8 rounded-xl bg-lime-400 flex items-center justify-center text-zinc-950 text-xs font-bold shadow-sm">AD</div>
-                <div class="max-w-xs md:max-w-md bg-white dark:bg-zinc-900 p-4 rounded-2xl rounded-bl-sm shadow-sm border border-zinc-200/80 dark:border-zinc-800 text-sm text-zinc-800 dark:text-zinc-200">
-                    <p class="leading-relaxed">Haye! Fadlan warbixintii maanta ee xubnaha cusub ee soo biiray soo dir galabta kahor.</p>
-                    <span class="block text-[10px] text-zinc-400 text-right mt-1.5 font-medium">10:40 AM</span>
-                </div>
-            </div>
-
-            <!-- Sent Message -->
-            <div class="flex items-end justify-end gap-3">
-                <div class="max-w-xs md:max-w-md bg-gradient-to-r from-lime-500 to-emerald-500 text-zinc-950 p-4 rounded-2xl rounded-br-sm shadow-lg shadow-lime-500/10 text-sm font-medium">
-                    <p class="leading-relaxed">Hubaal Admin! Haddaan ku guda jiraa, waxaan soo gudbin doonaa saacadooda soo socota.</p>
-                    <span class="block text-[10px] text-zinc-900/70 text-right mt-1.5 font-semibold">10:45 AM <i class="fas fa-check-double ml-1"></i></span>
-                </div>
-                <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">RC</div>
-            </div>
-
-        </div>
-
-        <!-- Chat Input Footer -->
-        <div class="p-4 border-t border-zinc-200 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md flex items-center gap-3">
-            <button class="p-3 text-zinc-400 hover:text-lime-500 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
-                <i class="fas fa-paperclip text-sm"></i>
-            </button>
-            <input type="text" placeholder="Qor fariintaada halkan..." 
-                   class="flex-1 bg-zinc-100 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 dark:focus:border-lime-500 px-4 py-3 rounded-2xl text-xs focus:outline-none transition text-zinc-800 dark:text-zinc-100 placeholder-zinc-400">
-            <button class="px-5 py-3 bg-gradient-to-r from-lime-500 to-emerald-500 text-zinc-950 rounded-2xl hover:opacity-95 transition shadow-lg shadow-lime-500/20 font-bold text-xs flex items-center gap-2">
-                <span>Dir</span>
-                <i class="fas fa-paper-plane text-[10px]"></i>
-            </button>
-        </div>
-
+        }
     </div>
 
 </div>
 
-<!-- JavaScript for Interactivity & Dark/Light Toggle -->
+<!-- JavaScript for Search Filtering & Mobile View Switcher -->
 <script>
-    // Theme Toggler
-    function toggleTheme() {
-        const html = document.documentElement;
-        const icon = document.getElementById('theme-icon');
-        if (html.classList.contains('dark')) {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            icon.className = 'fas fa-moon';
-        } else {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            icon.className = 'fas fa-sun text-yellow-400';
+    // Search Filtering: Hides non-matching contacts instantly from the left side
+    function filterContacts() {
+        const query = document.getElementById('search-contact').value.toLowerCase();
+        const contactItems = document.querySelectorAll('.contact-item');
+
+        contactItems.forEach(item => {
+            const name = item.getAttribute('data-name');
+            const role = item.getAttribute('data-role');
+            
+            if (name.includes(query) || role.includes(query)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Scroll chat to bottom on load
+    window.onload = function() {
+        const scrollContainer = document.getElementById('messages-scroll');
+        if (scrollContainer) {
+            scrollContainer.scrollTop = scrollContainer.scrollHeight;
         }
-    }
+    };
 
-    // Check Saved Theme on Load
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-        document.getElementById('theme-icon').className = 'fas fa-sun text-yellow-400';
-    } else {
-        document.documentElement.classList.remove('dark');
-        document.getElementById('theme-icon').className = 'fas fa-moon';
-    }
-
-    // Responsive Mobile View Switcher Mock
-    function openChat(name, role, status) {
-        document.getElementById('active-name').innerText = name;
-        document.getElementById('active-status').innerText = `${status} • ${role} Portal`;
-        
-        // On mobile, hide sidebar and show chat area
-        if (window.innerWidth < 768) {
-            document.getElementById('sidebar').classList.add('hidden');
-            document.getElementById('chat-area').classList.remove('hidden');
-        }
-    }
-
+    // Mobile View Switcher
     function backToSidebar() {
         if (window.innerWidth < 768) {
             document.getElementById('sidebar').classList.remove('hidden');

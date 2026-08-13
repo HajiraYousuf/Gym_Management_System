@@ -1,88 +1,67 @@
-using GymManagementSystem.Data;
-using GymManagementSystem.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace GymManagementSystem.Controllers
 {
-    //[Authorize(Roles = "Receptionist")]
     public class ReceptionistController : Controller
     {
-
-        private readonly ApplicationDbContext _context;
-
-
-
-        public ReceptionistController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-
-
-
-
-        public async Task<IActionResult> Dashboard()
+        // 1. CheckInOut
+        public IActionResult CheckInOut()
         {
             return View();
         }
 
-
-
-
-
-
-        [HttpGet]
-        public IActionResult AddMember()
+        // 2. ClassSchedule
+        public IActionResult ClassSchedule()
         {
             return View();
         }
 
-
-
-
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddMember(Member member)
+        // 3. Dashboard
+        public IActionResult Dashboard()
         {
-
-            if (ModelState.IsValid)
-            {
-
-                _context.Members.Add(member);
-
-                await _context.SaveChangesAsync();
-
-
-
-
-                // Create activity record
-                var activity = new ActivityLog
-                {
-                    Description = $"New member registered: {member.FullName}",
-                    Date = DateTime.Now
-                };
-
-
-                _context.ActivityLogs.Add(activity);
-
-                await _context.SaveChangesAsync();
-
-
-
-
-                return RedirectToAction("Index");
-            }
-
-
-
-            return View(member);
+            return View();
         }
 
+        // 4. Members
+        public IActionResult Members()
+        {
+            return View();
+        }
 
+        // 5. Memberships
+        public IActionResult Memberships()
+        {
+            return View();
+        }
 
+        // 6. Orders
+        public IActionResult Orders()
+        {
+            return View();
+        }
+
+        // 7. Payments
+        public IActionResult Payments()
+        {
+            return View();
+        }
+
+        // 8. Report
+        public IActionResult Report()
+        {
+            return View();
+        }
+
+        // 9. Reservation
+        public IActionResult Reservation()
+        {
+            return View();
+        }
+
+        // 10. VisitorLog
+        public IActionResult VisitorLog()
+        {
+            return View();
+        }
     }
 }

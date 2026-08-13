@@ -1,5 +1,6 @@
-﻿@{
-    // Helper function oo si dynamic ah u ogaanaysa bogga furan si uu menu-ka u active oo u ifo (Highlight)
+﻿@inject ApplicationDbContext _context
+@{
+    // Helper function oo si dynamic ah u ogaanaysa bogga furan si uu menu-ka u active oo u ifo
     var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
 
     string GetMenuClass(string path)
@@ -10,6 +11,11 @@
             ? "flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#13250E] bg-lime-400 font-bold text-[13px] shadow-md shadow-lime-400/20 transition"
             : "flex items-center gap-3 px-4 py-2.5 rounded-lg text-emerald-100/90 dark:text-zinc-300 text-[13px] font-medium hover:bg-[#1d3815] dark:hover:bg-zinc-900 hover:text-lime-400 dark:hover:text-lime-400 transition";
     }
+
+    // Hel Admin-ka ku jira database-ka adoo isticmaalaya ADM-01
+    var adminUser = _context.UserProfiles.FirstOrDefault(p => p.Id == "ADM-01") ?? _context.UserProfiles.FirstOrDefault(p => p.Role == "Admin");
+    string adminId = adminUser != null ? adminUser.Id : "ADM-01";
+    string adminName = adminUser != null ? adminUser.Name : "Admin";
 }
 
 <!DOCTYPE html>
@@ -106,11 +112,9 @@
 
                     <!-- Theme Toggle Button -->
                     <button id="themeToggle" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95 shrink-0">
-                        <!-- Sun Icon (Light Mode) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        <!-- Moon Icon (Dark Mode) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-400 hidden dark:block hover:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
                         </svg>
@@ -118,24 +122,23 @@
 
                     <!-- Notification Dropdown/Button -->
                     <div class="relative shrink-0">
-                        <a asp-controller="Admin" asp-action="Notification" class="w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95">
+                        <a href="/Shared/Notifications?role=Admin" class="w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400 dark:text-zinc-400 hover:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5" />
                             </svg>
                         </a>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-lime-400 text-[#13250E] dark:text-zinc-950 text-[10px] font-extrabold flex items-center justify-center shadow-md animate-pulse">8</span>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-lime-400 text-[#13250E] dark:text-zinc-950 text-[10px] font-extrabold flex items-center justify-center shadow-md animate-pulse">
+                            @_context.Notifications.Count(n => (n.TargetRole == "Admin" || n.TargetRole == "All") && !n.IsRead)
+                        </span>
                     </div>
-
-                    <div class="hidden sm:block w-px h-8 bg-[#1f3a17] dark:bg-zinc-800"></div>
-
                     
                     <div class="hidden sm:block w-px h-8 bg-[#1f3a17] dark:bg-zinc-800"></div>
 
-                    <!-- Profile Button -->
-                    <a asp-controller="Admin" asp-action="Settings" class="flex items-center gap-2.5 bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 rounded-xl p-1.5 sm:px-2.5 hover:border-lime-400 transition-all duration-200 shrink-0">
+                    <!-- Profile Button (Dynamic Admin ID & Name) -->
+                    <a href="/Shared/Profile?userId=ADM-01" class="flex items-center gap-2.5 bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 rounded-xl p-1.5 sm:px-2.5 hover:border-lime-400 transition-all duration-200 shrink-0">
                         <img src="https://i.pravatar.cc/100?img=12" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-lime-400 object-cover" alt="Profile">
                         <div class="hidden md:block text-left">
-                            <p class="text-xs text-emerald-100 dark:text-zinc-100 font-semibold leading-tight">Admin</p>
+                            <p class="text-xs text-emerald-100 dark:text-zinc-100 font-semibold leading-tight">Ahmed Ali</p>
                             <span class="text-[10px] text-lime-400 leading-none font-medium">Super Admin</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" class="hidden md:block w-3.5 h-3.5 text-lime-400/60 dark:text-zinc-500 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,8 +159,8 @@
             </div>
         </nav>
 
+        <!-- Sidebar -->
         <aside class="fixed top-[70px] left-0 z-40 w-[260px] h-[calc(100vh-70px)] bg-[#13250E] dark:bg-zinc-950 border-r border-[#1f3a17] dark:border-zinc-800 flex flex-col justify-between transition-colors duration-200">
-            
             <div class="p-4 space-y-1 overflow-y-auto flex-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#23421a] dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#2e5723] dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                 <!-- 1. DASHBOARD -->
@@ -214,7 +217,7 @@
                 <!-- 5. ATTENDANCE -->
                 <a href="@Url.Action("Attendance", "Admin")" class="@GetMenuClass("/admin/attendance")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 02 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     <span>Attendance</span>
                 </a>
@@ -246,7 +249,7 @@
                 <!-- 9. PAYMENT -->
                 <a href="@Url.Action("Payments", "Admin")" class="@GetMenuClass("/admin/payments")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 03 3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                     <span>Payment</span>
                 </a>
@@ -267,14 +270,13 @@
                     <span>Report</span>
                 </a>
 
-                <!-- 12. NOTIFICATION -->
-                <a href="@Url.Action("Notification", "Admin")" class="@GetMenuClass("/admin/notification")">
+                <!-- 12. Messages -->
+                <a href="/Shared/Messages?userId=ADM-01" class="@GetMenuClass("/Shared/Messages")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5m-9 6l3.5-3H19a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h1v3z" />
                     </svg>
-                    <span>Notification</span>
+                    <span>Messages</span>
                 </a>
-
                 <!-- 13. SETTINGS -->
                 <a href="@Url.Action("Settings", "Admin")" class="@GetMenuClass("/admin/settings")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -295,7 +297,6 @@
                     <span>Logout</span>
                 </button>
             </div>
-
         </aside>
 
         <!-- MAIN CONTENT AREA -->
@@ -342,7 +343,6 @@
 
             // ================= 2. DOM LOAD EVENTS & THEME INIT =================
             document.addEventListener("DOMContentLoaded", function() {
-                // A. Auto-expand Submenu marka boggu load gareeyo
                 var currentPath = window.location.pathname.toLowerCase();
                 if (currentPath.includes("/admin/members") || currentPath.includes("/admin/trainers") || currentPath.includes("/admin/reception")) {
                     var menu = document.getElementById('userMenu');
@@ -351,7 +351,6 @@
                     if (arrow) arrow.classList.add('rotate-180');
                 }
 
-                // B. Theme Check (Dark/Light) marka boggu load gareeyo
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');

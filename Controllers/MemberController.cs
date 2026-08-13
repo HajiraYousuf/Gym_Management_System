@@ -1,215 +1,49 @@
-using GymManagementSystem.Data;
-using GymManagementSystem.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace GymManagementSystem.Controllers
 {
-    //[Authorize(Roles = "Receptionist")]
     public class MemberController : Controller
     {
-
-        private readonly ApplicationDbContext _context;
-
-
-        public MemberController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-
-
-
-        public async Task<IActionResult> Dashboard()
-        {
-
-            return View();
-        }
-        // Display all members
-        public async Task<IActionResult> Index()
-        {
-            var members = await _context.Members.ToListAsync();
-
-            return View(members);
-        }
-
-
-
-
-
-        // Open Add Member form
-        [HttpGet]
-        public IActionResult Create()
+        // 1. Attendance
+        public IActionResult Attendance()
         {
             return View();
         }
 
-
-
-
-
-        // Save new member
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Member member)
+        // 2. ClassSchedule
+        public IActionResult ClassSchedule()
         {
-
-            if (ModelState.IsValid)
-            {
-
-                // Add member
-                _context.Members.Add(member);
-
-                await _context.SaveChangesAsync();
-
-
-
-
-                // Add activity log
-                var activity = new ActivityLog
-                {
-                    Description = $"New member registered: {member.FullName}",
-                    Date = DateTime.Now
-                };
-
-
-                _context.ActivityLogs.Add(activity);
-
-                await _context.SaveChangesAsync();
-
-
-
-
-                return RedirectToAction("Index");
-            }
-
-
-            return View(member);
+            return View();
         }
 
-
-
-
-
-
-        // Open Edit Member form
-        [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        // 3. Dashboard
+        public IActionResult Dashboard()
         {
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-
-            var member = await _context.Members.FindAsync(id);
-
-
-            if (member == null)
-            {
-                return NotFound();
-            }
-
-
-            return View(member);
-
+            return View();
         }
 
-
-
-
-
-        // Save edited member
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Member member)
+        // 4. Membership
+        public IActionResult Membership()
         {
-
-            if (id != member.Id)
-            {
-                return NotFound();
-            }
-
-
-            if (ModelState.IsValid)
-            {
-
-                _context.Update(member);
-
-                await _context.SaveChangesAsync();
-
-
-                return RedirectToAction("Index");
-
-            }
-
-
-            return View(member);
-
+            return View();
         }
 
-
-
-
-
-
-
-        // Show delete confirmation page
-        [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
+        // 5. NutritionPlans
+        public IActionResult NutritionPlans()
         {
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-
-            var member = await _context.Members
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-
-            if (member == null)
-            {
-                return NotFound();
-            }
-
-
-            return View(member);
-
+            return View();
         }
 
-
-
-
-
-
-
-        // Delete member
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        // 6. Progress
+        public IActionResult Progress()
         {
-
-            var member = await _context.Members.FindAsync(id);
-
-
-            if (member != null)
-            {
-
-                _context.Members.Remove(member);
-
-                await _context.SaveChangesAsync();
-
-            }
-
-
-            return RedirectToAction("Index");
-
+            return View();
         }
 
-
+        // 7. WorkoutPlans
+        public IActionResult WorkoutPlans()
+        {
+            return View();
+        }
     }
 }

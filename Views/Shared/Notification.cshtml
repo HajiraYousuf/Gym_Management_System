@@ -1,5 +1,7 @@
-﻿@{
-    Layout = "~/Views/layouts/AdminMaster.cshtml";
+﻿@model GymManagementSystem.Models.SharedModel
+
+@{
+    Layout = Model.LayoutPath;
     ViewData["Title"] = "Notifications Hub";
 }
 
@@ -10,80 +12,92 @@
     <div class="px-6 py-4 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800/80 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <h2 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-lime-400 to-emerald-500 bg-clip-text text-transparent">Notifications Hub</h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Manage your system alerts and activities</p>
+            <p class="text-xs text-zinc-400 mt-0.5">Doorka: <span class="text-lime-500 font-bold">@Model.CurrentUser?.Role</span> • Manage system alerts and activities</p>
         </div>
 
         <div class="flex items-center gap-3">
-            <button class="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-semibold transition">
-                <i class="fas fa-check-double text-lime-500"></i>
-                <span>Mark all as read</span>
-            </button>
+            <!-- Mark all as read Form -->
+            <form id="markAllReadForm" action="/Shared/MarkAllAsRead" method="post" class="flex items-center">
+                <input type="hidden" name="role" value="@Model.CurrentUser?.Role" />
+                <button type="submit" class="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-semibold transition shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <i class="fas fa-check-double text-lime-500"></i>
+                    <span>Mark all as read</span>
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- List Body -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-3 bg-zinc-50/40 dark:bg-zinc-950/40">
-        
-        <!-- Unread Item 1 -->
-        <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-lime-500/30 shadow-sm transition group">
-            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-lime-500 rounded-l-2xl"></div>
-            <div class="w-10 h-10 rounded-2xl bg-lime-500/10 text-lime-600 flex items-center justify-center shrink-0 font-bold text-sm">
-                <i class="fas fa-user-plus"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-1">
-                    <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">New Member Registration</h4>
-                    <span class="text-[10px] font-semibold text-lime-600">10 mins ago</span>
-                </div>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400"><strong>Maxamed (Member)</strong> has just signed up. Membership payment confirmed.</p>
-                
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-2 mt-3">
-                    <button class="px-3 py-1 rounded-lg bg-lime-500 text-zinc-950 text-[10px] font-bold hover:bg-lime-400 transition">View Profile</button>
-                    <button class="px-3 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[10px] hover:bg-zinc-200 transition">Dismiss</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Unread Item 2 -->
-        <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-lime-500/30 shadow-sm transition group">
-            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-lime-500 rounded-l-2xl"></div>
-            <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 font-bold text-sm">
-                <i class="fas fa-dumbbell"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-1">
-                    <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">Session Scheduled</h4>
-                    <span class="text-[10px] font-semibold text-lime-600">1 hour ago</span>
-                </div>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400">Trainer <strong>Khaalid</strong> has scheduled a CrossFit session for 5:00 PM today.</p>
-                
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-2 mt-3">
-                    <button class="px-3 py-1 rounded-lg bg-lime-500 text-zinc-950 text-[10px] font-bold hover:bg-lime-400 transition">Confirm</button>
-                    <button class="px-3 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[10px] hover:bg-zinc-200 transition">Details</button>
-                </div>
-            </div>
-        </div>
+        @if (Model.Notifications != null && Model.Notifications.Any())
+        {
+            @foreach (var item in Model.Notifications)
+            {
+                if (!item.IsRead)
+                {
+                    <!-- Unread Item -->
+                    <div class="relative flex items-start gap-3.5 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-lime-500/30 shadow-sm transition group overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-lime-500 rounded-l-2xl"></div>
+                        <div class="w-10 h-10 rounded-2xl @(item.Type == "workout" ? "bg-emerald-500/10 text-emerald-600" : "bg-lime-500/10 text-lime-600") flex items-center justify-center shrink-0 font-bold text-sm">
+                            <i class="fas @(item.Type == "workout" ? "fa-dumbbell" : item.Type == "financial" ? "fa-wallet" : "fa-user-plus")"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">@item.Title</h4>
+                                <span class="text-[10px] font-semibold text-lime-600">@item.Timestamp.ToString("hh:mm tt")</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400">@item.Message</p>
 
-        <!-- Read Item 3 -->
-        <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 shadow-sm transition">
-            <div class="w-10 h-10 rounded-2xl bg-zinc-200 dark:bg-zinc-800 text-zinc-500 flex items-center justify-center shrink-0 font-bold text-sm">
-                <i class="fas fa-wallet"></i>
+                            <!-- Action Buttons -->
+                            <div class="flex items-center gap-2 mt-3">
+                                <button type="button" class="px-3 py-1 rounded-lg bg-lime-500 text-zinc-950 text-[10px] font-bold hover:bg-lime-400 transition">View Details</button>
+
+                                <!-- Dismiss Form (Isku function ayay wadaagaan) -->
+                                <form action="/Shared/DismissNotification" method="post" class="inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="role" value="@Model.CurrentUser?.Role" />
+                                    <button type="submit" class="px-3 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-[10px] hover:bg-zinc-200 transition">Dismiss</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Read Item -->
+                    <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 shadow-sm transition">
+                        <div class="w-10 h-10 rounded-2xl bg-zinc-200 dark:bg-zinc-800 text-zinc-500 flex items-center justify-center shrink-0 font-bold text-sm">
+                            <i class="fas @(item.Type == "financial" ? "fa-wallet" : "fa-bell")"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-bold text-sm text-zinc-700 dark:text-zinc-300">@item.Title</h4>
+                                <span class="text-[10px] font-medium text-zinc-400">@item.Timestamp.ToString("MMM dd")</span>
+                            </div>
+                            <p class="text-xs text-zinc-400 dark:text-zinc-500">@item.Message</p>
+
+                            <!-- Remove Form (Wuxuu isticmaalayaa isla action-kii Dismiss) -->
+                            <div class="flex items-center gap-2 mt-3">
+                                <form action="/Shared/DismissNotification" method="post" class="inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="role" value="@Model.CurrentUser?.Role" />
+                                    <button type="submit" class="px-3 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-[10px] hover:bg-zinc-200 transition">Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="flex-1 flex flex-col items-center justify-center text-zinc-400 text-xs py-20 space-y-2">
+                <i class="fas fa-bell-slash text-3xl text-zinc-300 dark:text-zinc-700"></i>
+                <p>Ma jiraan ogeysiisyo hadda kuu diyaar ah.</p>
             </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-1">
-                    <h4 class="font-bold text-sm text-zinc-700 dark:text-zinc-300">Daily Financial Report</h4>
-                    <span class="text-[10px] font-medium text-zinc-400">Yesterday</span>
-                </div>
-                <p class="text-xs text-zinc-400 dark:text-zinc-500">The daily revenue report has been finalized and sent to your dashboard.</p>
-                
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-2 mt-3">
-                    <button class="px-3 py-1 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-[10px] hover:bg-zinc-300 transition">Download PDF</button>
-                </div>
-            </div>
-        </div>
+        }
 
     </div>
 </div>
