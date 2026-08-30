@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.WorkoutPlan>
+
+@{
     ViewData["Title"] = "Workout Plans";
     Layout = "~/Views/Layouts/AdminMaster.cshtml";
 }
@@ -7,26 +9,22 @@
 
     <!-- Header -->
     <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-6">
-
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 flex items-center justify-center rounded-xl bg-lime-500 text-gray-950 text-lg shadow-lg shadow-lime-500/20">
                 <i class="fa-solid fa-dumbbell"></i>
             </div>
-
             <div>
                 <div class="flex items-center gap-2">
                     <h2 class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">Workout Plans</h2>
-                    <span class="bg-lime-500 text-gray-950 font-extrabold px-2 py-0.5 rounded-md text-xs">6</span>
+                    <span class="bg-lime-500 text-gray-950 font-extrabold px-2 py-0.5 rounded-md text-xs">@(Model.Count())</span>
                 </div>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage workout programs and training plans</p>
             </div>
         </div>
-
     </div>
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-
         <!-- Total Plans -->
         <div class="group relative overflow-hidden bg-white dark:bg-gradient-to-b dark:from-[#141c17] dark:to-[#0e1410] p-6 rounded-3xl border border-gray-200 dark:border-white/[0.08] hover:border-lime-500/40 transition-all duration-300 hover:-translate-y-1 shadow-sm dark:shadow-2xl dark:shadow-black/40">
             <div class="absolute -right-8 -top-8 w-28 h-28 bg-lime-500/10 rounded-full blur-xl group-hover:bg-lime-500/20 transition-all"></div>
@@ -38,8 +36,8 @@
             </div>
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total Plans</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">24</span>
-                <span class="text-xs font-bold text-lime-600 dark:text-lime-400 flex items-center"><i class="fa-solid fa-arrow-up text-[10px] mr-1"></i>+12%</span>
+                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">@ViewBag.TotalPlans</span>
+                <span class="text-xs font-bold text-lime-600 dark:text-lime-400 flex items-center"><i class="fa-solid fa-arrow-up text-[10px] mr-1"></i>Active</span>
             </div>
             <div class="mt-4 h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden p-0.5 border border-gray-200 dark:border-white/5">
                 <div class="h-full w-[85%] bg-lime-500 rounded-full shadow-sm shadow-lime-500"></div>
@@ -57,8 +55,8 @@
             </div>
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Active Plans</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">18</span>
-                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">75% active</span>
+                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">@ViewBag.ActivePlansCount</span>
+                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Running</span>
             </div>
             <div class="mt-4 h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden p-0.5 border border-gray-200 dark:border-white/5">
                 <div class="h-full w-[75%] bg-emerald-500 rounded-full shadow-sm shadow-emerald-500"></div>
@@ -76,8 +74,8 @@
             </div>
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total Exercises</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">120</span>
-                <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 flex items-center"><i class="fa-solid fa-plus text-[10px] mr-0.5"></i>15 new</span>
+                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">@ViewBag.TotalExercisesCount</span>
+                <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 flex items-center"><i class="fa-solid fa-plus text-[10px] mr-0.5"></i>Estimated</span>
             </div>
             <div class="mt-4 h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden p-0.5 border border-gray-200 dark:border-white/5">
                 <div class="h-full w-[90%] bg-cyan-500 rounded-full shadow-sm shadow-cyan-500"></div>
@@ -95,21 +93,19 @@
             </div>
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Assigned Members</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">350</span>
-                <span class="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center"><i class="fa-solid fa-arrow-up text-[10px] mr-1"></i>+28</span>
+                <span class="text-4xl font-black tracking-tight text-gray-900 dark:text-white">@ViewBag.AssignedMembersCount</span>
+                <span class="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center"><i class="fa-solid fa-arrow-up text-[10px] mr-1"></i>Enrolled</span>
             </div>
             <div class="mt-4 h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden p-0.5 border border-gray-200 dark:border-white/5">
                 <div class="h-full w-[92%] bg-amber-500 rounded-full shadow-sm shadow-amber-500"></div>
             </div>
         </div>
-
     </div>
 
     <!-- Workout Plans Section -->
     <div class="bg-white dark:bg-[#0d120f] rounded-2xl border border-gray-200 dark:border-white/[0.06] overflow-hidden shadow-sm">
-
         <!-- List Header -->
-        <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 px-5 py-5 border-b border-gray-200 dark:border-white/[0.06]">
+        <form asp-action="Index" method="get" class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 px-5 py-5 border-b border-gray-200 dark:border-white/[0.06]">
             <div>
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">All Workout Plans</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Browse and manage available training programs</p>
@@ -119,100 +115,68 @@
                 <!-- Search -->
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-600 text-xs"></i>
-                    <input type="text"
-                           placeholder="Search plans..."
+                    <input type="text" name="searchString" value="@ViewBag.CurrentSearch" placeholder="Search plans..."
                            class="w-full sm:w-52 bg-gray-50 dark:bg-[#131a15] border border-gray-300 dark:border-white/[0.08] text-gray-900 dark:text-white text-sm rounded-xl pl-9 pr-3 py-2.5 outline-none focus:border-lime-500/40 placeholder:text-gray-400 dark:placeholder:text-gray-600 transition" />
                 </div>
 
                 <!-- Filter -->
-                <select class="bg-gray-50 dark:bg-[#131a15] border border-gray-300 dark:border-white/[0.08] text-gray-700 dark:text-gray-300 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-lime-500/40">
-                    <option>All Levels</option>
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Advanced</option>
+                <select name="levelFilter" class="bg-gray-50 dark:bg-[#131a15] border border-gray-300 dark:border-white/[0.08] text-gray-700 dark:text-gray-300 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-lime-500/40">
+                    <option value="All Levels">All Levels</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
                 </select>
+
+                <button type="submit" class="px-4 py-2.5 bg-lime-500 hover:bg-lime-400 text-gray-950 font-bold rounded-xl text-xs transition cursor-pointer">Filter</button>
             </div>
-        </div>
+        </form>
 
         <!-- Plans List -->
         <div class="p-4 space-y-3">
-
-            <!-- Plan 1 -->
-            <div class="group bg-gray-50 dark:bg-[#131a15] p-4 rounded-xl border border-gray-200 dark:border-white/[0.06] hover:border-lime-500/30 hover:bg-gray-100 dark:hover:bg-[#171f19] transition-all duration-300">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-4 min-w-0">
-                        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=100" alt="Workout" class="w-16 h-16 rounded-xl object-cover shrink-0 ring-1 ring-gray-200 dark:ring-white/10" />
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base font-bold text-gray-900 dark:text-white block truncate">Muscle Gain Plan</span>
-                                <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 bg-lime-100 dark:bg-lime-500/10 px-2 py-1 rounded-md">ACTIVE</span>
+            @if (!Model.Any())
+            {
+                <div class="text-center py-8 text-gray-500 dark:text-gray-400 text-sm">No workout plans found.</div>
+            }
+            else
+            {
+                @foreach (var plan in Model)
+                {
+                    <div class="group bg-gray-50 dark:bg-[#131a15] p-4 rounded-xl border border-gray-200 dark:border-white/[0.06] hover:border-lime-500/30 hover:bg-gray-100 dark:hover:bg-[#171f19] transition-all duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-16 h-16 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center text-lime-600 dark:text-lime-400 shrink-0">
+                                    <i class="fa-solid fa-dumbbell text-2xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-base font-bold text-gray-900 dark:text-white block truncate">@plan.Title</span>
+                                        <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 bg-lime-100 dark:bg-lime-500/10 px-2 py-1 rounded-md">@plan.TargetGoal.ToUpper()</span>
+                                    </div>
+                                    <span class="text-sm text-lime-600 dark:text-lime-400 font-semibold block mt-1">@plan.DifficultyLevel</span>
+                                    <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                        <span><i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i>@plan.DaysPerWeek Days/Week</span>
+                                        <span><i class="fa-regular fa-calendar text-lime-500 mr-1"></i>@plan.DurationWeeks Weeks Program</span>
+                                        <span><i class="fa-solid fa-clock text-lime-500 mr-1"></i>@plan.SessionDurationMinutes Mins/Session</span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-sm text-lime-600 dark:text-lime-400 font-semibold block mt-1">Intermediate</span>
-                            <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                <span><i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i>12 Exercises</span>
-                                <span><i class="fa-regular fa-calendar text-lime-500 mr-1"></i>12 Weeks Program</span>
-                                <span><i class="fa-solid fa-users text-lime-500 mr-1"></i>85 Members</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openPlanDetails('@plan.Title', '@plan.DifficultyLevel', '@plan.DaysPerWeek Days/Week', '@plan.DurationWeeks Weeks Program', '@plan.SessionDurationMinutes Mins/Session', '@(string.IsNullOrEmpty(plan.Notes) ? "No additional notes provided." : plan.Notes)')" class="flex items-center justify-center gap-2 border border-lime-300 dark:border-lime-500/20 text-lime-700 dark:text-lime-400 hover:bg-lime-500 hover:text-gray-950 text-xs font-bold px-4 py-2.5 rounded-xl transition shrink-0 cursor-pointer">
+                                    View Details <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </button>
+                                <form asp-action="DeleteWorkout" asp-route-id="@plan.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this workout plan?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="p-2.5 bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white rounded-xl transition cursor-pointer" title="Delete Plan">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <button type="button" onclick="openPlanDetails('Muscle Gain Plan', 'Intermediate', '12 Exercises', '12 Weeks Program', '85 Members', 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=100', 'A comprehensive intermediate program designed to maximize muscle hypertrophy through progressive overload and structured split routines.')" class="flex items-center justify-center gap-2 border border-lime-300 dark:border-lime-500/20 text-lime-700 dark:text-lime-400 hover:bg-lime-500 hover:text-gray-950 text-xs font-bold px-4 py-2.5 rounded-xl transition shrink-0 cursor-pointer">
-                        View Details <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Plan 2 -->
-            <div class="group bg-gray-50 dark:bg-[#131a15] p-4 rounded-xl border border-gray-200 dark:border-white/[0.06] hover:border-lime-500/30 hover:bg-gray-100 dark:hover:bg-[#171f19] transition-all duration-300">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-4 min-w-0">
-                        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=100" alt="Workout" class="w-16 h-16 rounded-xl object-cover shrink-0 ring-1 ring-gray-200 dark:ring-white/10" />
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base font-bold text-gray-900 dark:text-white block truncate">Weight Loss Plan</span>
-                                <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 bg-lime-100 dark:bg-lime-500/10 px-2 py-1 rounded-md">ACTIVE</span>
-                            </div>
-                            <span class="text-sm text-lime-600 dark:text-lime-400 font-semibold block mt-1">Beginner</span>
-                            <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                <span><i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i>10 Exercises</span>
-                                <span><i class="fa-regular fa-calendar text-lime-500 mr-1"></i>08 Weeks Program</span>
-                                <span><i class="fa-solid fa-users text-lime-500 mr-1"></i>72 Members</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" onclick="openPlanDetails('Weight Loss Plan', 'Beginner', '10 Exercises', '08 Weeks Program', '72 Members', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=100', 'An energetic fat burning and cardiovascular endurance routine tailored for beginners aiming to tone up and lose weight safely.')" class="flex items-center justify-center gap-2 border border-lime-300 dark:border-lime-500/20 text-lime-700 dark:text-lime-400 hover:bg-lime-500 hover:text-gray-950 text-xs font-bold px-4 py-2.5 rounded-xl transition shrink-0 cursor-pointer">
-                        View Details <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Plan 3 -->
-            <div class="group bg-gray-50 dark:bg-[#131a15] p-4 rounded-xl border border-gray-200 dark:border-white/[0.06] hover:border-lime-500/30 hover:bg-gray-100 dark:hover:bg-[#171f19] transition-all duration-300">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-4 min-w-0">
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100" alt="Workout" class="w-16 h-16 rounded-xl object-cover shrink-0 ring-1 ring-gray-200 dark:ring-white/10" />
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base font-bold text-gray-900 dark:text-white block truncate">Strength Building</span>
-                                <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 bg-lime-100 dark:bg-lime-500/10 px-2 py-1 rounded-md">ACTIVE</span>
-                            </div>
-                            <span class="text-sm text-lime-600 dark:text-lime-400 font-semibold block mt-1">Advanced</span>
-                            <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                <span><i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i>15 Exercises</span>
-                                <span><i class="fa-regular fa-calendar text-lime-500 mr-1"></i>10 Weeks Program</span>
-                                <span><i class="fa-solid fa-users text-lime-500 mr-1"></i>64 Members</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" onclick="openPlanDetails('Strength Building', 'Advanced', '15 Exercises', '10 Weeks Program', '64 Members', 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100', 'Heavy compound lifting routine engineered for advanced athletes looking to peak their maximal strength thresholds.')" class="flex items-center justify-center gap-2 border border-lime-300 dark:border-lime-500/20 text-lime-700 dark:text-lime-400 hover:bg-lime-500 hover:text-gray-950 text-xs font-bold px-4 py-2.5 rounded-xl transition shrink-0 cursor-pointer">
-                        View Details <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </button>
-                </div>
-            </div>
-
+                }
+            }
         </div>
-
     </div>
-
 </div>
 
 <!-- DETAIL POPUP MODAL -->
@@ -233,20 +197,17 @@
 
         <!-- Modal Body -->
         <div class="p-6 space-y-4 text-xs text-gray-700 dark:text-gray-300">
-            <div class="flex items-center gap-4">
-                <img id="modalPlanImg" src="" alt="Plan Image" class="w-20 h-20 rounded-xl object-cover border border-gray-200 dark:border-gray-800" />
-                <div>
-                    <span id="modalPlanLevel" class="inline-block bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 font-semibold px-2.5 py-1 rounded-md mb-2"></span>
-                    <div class="flex flex-wrap gap-3 text-gray-500 dark:text-gray-400">
-                        <span id="modalPlanEx"><i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i></span>
-                        <span id="modalPlanWeeks"><i class="fa-regular fa-calendar text-lime-500 mr-1"></i></span>
-                        <span id="modalPlanMembers"><i class="fa-solid fa-users text-lime-500 mr-1"></i></span>
-                    </div>
+            <div>
+                <span id="modalPlanLevel" class="inline-block bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 font-semibold px-2.5 py-1 rounded-md mb-2"></span>
+                <div class="flex flex-wrap gap-3 text-gray-500 dark:text-gray-400">
+                    <span id="modalPlanEx"><i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i></span>
+                    <span id="modalPlanWeeks"><i class="fa-regular fa-calendar text-lime-500 mr-1"></i></span>
+                    <span id="modalPlanMembers"><i class="fa-solid fa-clock text-lime-500 mr-1"></i></span>
                 </div>
             </div>
 
             <div>
-                <span class="font-semibold text-gray-900 dark:text-white block mb-1">Description:</span>
+                <span class="font-semibold text-gray-900 dark:text-white block mb-1">Trainer Notes / Description:</span>
                 <p id="modalPlanDesc" class="bg-gray-50 dark:bg-gray-950 p-3.5 rounded-xl border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 leading-relaxed"></p>
             </div>
         </div>
@@ -260,13 +221,12 @@
 
 <!-- JavaScript for Modal Control -->
 <script>
-    function openPlanDetails(title, level, exercises, weeks, members, imgSrc, description) {
+    function openPlanDetails(title, level, exercises, weeks, duration, description) {
         document.getElementById('modalPlanTitle').innerText = title;
         document.getElementById('modalPlanLevel').innerText = level;
         document.getElementById('modalPlanEx').innerHTML = '<i class="fa-solid fa-dumbbell text-lime-500 mr-1"></i>' + exercises;
         document.getElementById('modalPlanWeeks').innerHTML = '<i class="fa-regular fa-calendar text-lime-500 mr-1"></i>' + weeks;
-        document.getElementById('modalPlanMembers').innerHTML = '<i class="fa-solid fa-users text-lime-500 mr-1"></i>' + members;
-        document.getElementById('modalPlanImg').src = imgSrc;
+        document.getElementById('modalPlanMembers').innerHTML = '<i class="fa-solid fa-clock text-lime-500 mr-1"></i>' + duration;
         document.getElementById('modalPlanDesc').innerText = description;
 
         document.getElementById('planDetailModal').classList.remove('hidden');

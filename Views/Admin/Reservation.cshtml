@@ -1,6 +1,14 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.GymReservation>
+
+@{
     ViewData["Title"] = "Reservation Management";
     Layout = "~/Views/layouts/AdminMaster.cshtml";
+
+    // Tirakoobka Dynamic-ka ah (Summary Cards)
+    var totalReservations = Model != null ? Model.Count() : 0;
+    var pendingCount = Model != null ? Model.Count(r => r.Status == "Pending") : 0;
+    var confirmedCount = Model != null ? Model.Count(r => r.Status == "Confirmed") : 0;
+    var cancelledCount = Model != null ? Model.Count(r => r.Status == "Cancelled" || r.Status == "Declined") : 0;
 }
 
 <!-- Lucide Icons CDN -->
@@ -20,12 +28,16 @@
                     <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage member bookings, classes, personal training and room reservations.</p>
                 </div>
             </div>
-            
-          </div>
 
-        <!-- 2. Summary Cards -->
+            <button type="button" onclick="openCreateModal()" class="px-5 py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-extrabold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                New Reservation
+            </button>
+        </div>
+
+        <!-- 2. Summary Cards (Dynamic) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
+
             <!-- Total Reservations -->
             <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm hover:border-lime-500/40 transition-all">
                 <div class="flex items-center justify-between mb-3">
@@ -37,7 +49,7 @@
                         <i data-lucide="calendar-days" class="w-5 h-5"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-black text-zinc-900 dark:text-white">48</div>
+                <div class="text-3xl font-black text-zinc-900 dark:text-white">@totalReservations</div>
             </div>
 
             <!-- Pending -->
@@ -51,7 +63,7 @@
                         <i data-lucide="clock" class="w-5 h-5"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-black text-zinc-900 dark:text-white">12</div>
+                <div class="text-3xl font-black text-zinc-900 dark:text-white">@pendingCount</div>
             </div>
 
             <!-- Confirmed -->
@@ -65,7 +77,7 @@
                         <i data-lucide="check-circle-2" class="w-5 h-5"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-black text-zinc-900 dark:text-white">30</div>
+                <div class="text-3xl font-black text-zinc-900 dark:text-white">@confirmedCount</div>
             </div>
 
             <!-- Cancelled -->
@@ -79,7 +91,7 @@
                         <i data-lucide="x-circle" class="w-5 h-5"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-black text-zinc-900 dark:text-white">6</div>
+                <div class="text-3xl font-black text-zinc-900 dark:text-white">@cancelledCount</div>
             </div>
 
         </div>
@@ -88,39 +100,23 @@
         <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-4 shadow-sm space-y-3 lg:space-y-0 lg:flex lg:items-center lg:gap-3">
             <div class="relative flex-1">
                 <i data-lucide="search" class="w-4 h-4 text-zinc-400 absolute left-4 top-3.5"></i>
-                <input type="text" placeholder="Search member or reservation ID..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400" />
+                <input type="text" id="txtSearchReservation" onkeyup="searchReservationsTable()" placeholder="Search member, ID or class..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-3">
                 <div class="relative">
-                    <select class="w-full lg:w-auto bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-lime-500 font-medium cursor-pointer appearance-none">
-                        <option>All Reservation Types</option>
-                        <option>Class Reservation</option>
-                        <option>PT Reservation</option>
-                        <option>Room Reservation</option>
+                    <select id="filterStatus" onchange="filterReservationsTable()" class="w-full lg:w-auto bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-lime-500 font-medium cursor-pointer appearance-none">
+                        <option value="">All Status</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
                     <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 absolute right-3.5 top-3.5 pointer-events-none"></i>
                 </div>
-
-                <div class="relative">
-                    <select class="w-full lg:w-auto bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-lime-500 font-medium cursor-pointer appearance-none">
-                        <option>All Status</option>
-                        <option>Confirmed</option>
-                        <option>Pending</option>
-                        <option>Cancelled</option>
-                        <option>Completed</option>
-                    </select>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 absolute right-3.5 top-3.5 pointer-events-none"></i>
-                </div>
-
-                <button type="button" class="px-6 py-3 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-800 dark:text-zinc-200 text-sm font-bold transition-all cursor-pointer">
-                    Search
-                </button>
             </div>
         </div>
 
-        
-        <!-- 5. Reservations Table -->
+        <!-- 5. Reservations Table (Dynamic Loop) -->
         <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl shadow-sm overflow-hidden">
             <div class="px-6 py-5 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center">
                 <div>
@@ -130,12 +126,12 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full min-w-[1000px] text-left text-sm">
+                <table class="w-full min-w-[1000px] text-left text-sm" id="reservationTable">
                     <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider border-b border-zinc-200 dark:border-zinc-800">
                         <tr>
                             <th class="px-6 py-4">Reservation ID</th>
                             <th class="px-6 py-4">Member</th>
-                            <th class="px-6 py-4">Service</th>
+                            <th class="px-6 py-4">Class</th>
                             <th class="px-6 py-4">Trainer</th>
                             <th class="px-6 py-4">Date</th>
                             <th class="px-6 py-4">Time</th>
@@ -144,105 +140,119 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800/60 font-medium">
-                        
-                        <!-- Row 1 -->
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                            <td class="px-6 py-4 font-mono font-bold text-lime-600 dark:text-lime-400">#RES-1024</td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-zinc-900 dark:text-white">Ahmed Ali</div>
-                                <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Member #M-2045</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-zinc-800 dark:text-zinc-200">Yoga Class</div>
-                                <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Class Reservation</div>
-                            </td>
-                            <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">Sarah Khan</td>
-                            <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">21 May 2025</td>
-                            <td class="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-300 whitespace-nowrap">09:00 AM</td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span> Confirmed
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end items-center gap-1.5">
-                                    <button type="button" onclick="openDetailsModal('#RES-1024', 'Ahmed Ali', 'Member #M-2045', 'Yoga Class', 'Sarah Khan', '21 May 2025', '09:00 AM', 'Confirmed')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit">
-                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
 
-                        <!-- Row 2 -->
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                            <td class="px-6 py-4 font-mono font-bold text-lime-600 dark:text-lime-400">#RES-1025</td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-zinc-900 dark:text-white">Aisha Mohamed</div>
-                                <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Member #M-2046</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-zinc-800 dark:text-zinc-200">Personal Training</div>
-                                <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">PT Reservation</div>
-                            </td>
-                            <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">Ali Ahmed</td>
-                            <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">21 May 2025</td>
-                            <td class="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-300 whitespace-nowrap">10:00 AM</td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pending
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end items-center gap-1.5">
-                                    <button type="button" onclick="openDetailsModal('#RES-1025', 'Aisha Mohamed', 'Member #M-2046', 'Personal Training', 'Ali Ahmed', '21 May 2025', '10:00 AM', 'Pending')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit">
-                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var res in Model)
+                            {
+                                <tr class="reservation-row hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors" data-status="@res.Status">
+                                    <td class="px-6 py-4 font-mono font-bold text-lime-600 dark:text-lime-400">@res.ReservationNumber</td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-zinc-900 dark:text-white">@res.MemberName</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-zinc-800 dark:text-zinc-200">@res.ClassName</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">@res.TrainerName</td>
+                                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">@res.ReservationDate.ToString("dd MMM yyyy")</td>
+                                    <td class="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-300 whitespace-nowrap">@res.ReservationDate.ToString("hh:mm tt")</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold
+                                            @(res.Status == "Confirmed" ? "bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20" :
+                                              res.Status == "Pending" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20" :
+                                              "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20")">
+                                            <span class="w-1.5 h-1.5 rounded-full @(res.Status == "Confirmed" ? "bg-lime-500" : res.Status == "Pending" ? "bg-amber-500" : "bg-rose-500")"></span>
+                                            @res.Status
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex justify-end items-center gap-1.5">
+                                            <!-- View Details Button -->
+                                            <button type="button" onclick="openDetailsModal('@res.ReservationNumber', '@res.MemberName', '@res.ClassName', '@res.TrainerName', '@res.ReservationDate.ToString("dd MMM yyyy")', '@res.ReservationDate.ToString("hh:mm tt")', '@res.Status')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </button>
 
-                        <!-- Row 3 -->
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                            <td class="px-6 py-4 font-mono font-bold text-lime-600 dark:text-lime-400">#RES-1026</td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-zinc-900 dark:text-white">Omar Yusuf</div>
-                                <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Member #M-2047</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-zinc-800 dark:text-zinc-200">CrossFit Class</div>
-                                <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Class Reservation</div>
-                            </td>
-                            <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">Hassan Y.</td>
-                            <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">21 May 2025</td>
-                            <td class="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-300 whitespace-nowrap">11:00 AM</td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span> Confirmed
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end items-center gap-1.5">
-                                    <button type="button" onclick="openDetailsModal('#RES-1026', 'Omar Yusuf', 'Member #M-2047', 'CrossFit Class', 'Hassan Y.', '21 May 2025', '11:00 AM', 'Confirmed')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit">
-                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-8 text-zinc-400">Wali ma jiraan wax boos-qabasho ah oo diiwaangashan.</td>
+                            </tr>
+                        }
 
                     </tbody>
                 </table>
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- Modal: Create New Reservation -->
+<div id="createModal" class="fixed inset-0 z-50 hidden bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-6 my-8">
+        <div class="flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 pb-4">
+            <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Create New Reservation</h3>
+            <button type="button" onclick="closeCreateModal()" class="text-zinc-400 hover:text-rose-500 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <form asp-action="CreateReservation" method="post" class="space-y-4 text-sm">
+            <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Member Name *</label>
+                <input type="text" name="MemberName" required placeholder="Tusaale: Ahmed Mohamed" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Class Name *</label>
+                    <select name="ClassName" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
+                        <option value="">-- Dooro Fasalka --</option>
+                        @if (ViewBag.ClassList != null)
+                        {
+                            foreach (var gymClass in ViewBag.ClassList)
+                            {
+                                <option value="@gymClass.Name">@gymClass.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Trainer Name *</label>
+                    <select name="TrainerName" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
+                        <option value="">-- Dooro Tababaraha --</option>
+                        @if (ViewBag.TrainerList != null)
+                        {
+                            foreach (var trainer in ViewBag.TrainerList)
+                            {
+                                <option value="@trainer.Name">@trainer.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Reservation Date & Time *</label>
+                <input type="datetime-local" name="ReservationDate" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Initial Status *</label>
+                <select name="Status" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                <button type="button" onclick="closeCreateModal()" class="px-5 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-xs rounded-xl transition-all cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 bg-lime-500 hover:bg-lime-400 text-zinc-950 font-extrabold text-xs rounded-xl transition-all cursor-pointer">Save Reservation</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -261,22 +271,18 @@
             </div>
             <button type="button" onclick="closeDetailsModal()" class="text-zinc-400 hover:text-rose-500 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
-        
+
         <div class="space-y-4 text-sm">
-            <div class="grid grid-cols-2 gap-4 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800/80">
+            <div class="grid grid-cols-1 gap-4 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800/80">
                 <div>
                     <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Member Name</span>
                     <span class="font-bold text-zinc-900 dark:text-white" id="modalMemberName">-</span>
-                </div>
-                <div>
-                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Member ID</span>
-                    <span class="font-mono text-xs text-zinc-600 dark:text-zinc-300" id="modalMemberId">-</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 px-2">
                 <div>
-                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Service / Class</span>
+                    <span class="block text-xs font-bold uppercase text-zinc-400 mb-1">Class / Service</span>
                     <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalService">-</span>
                 </div>
                 <div>
@@ -319,10 +325,9 @@
     }
 
     // Details Modal Actions
-    function openDetailsModal(resId, memberName, memberId, service, trainer, date, time, status) {
+    function openDetailsModal(resId, memberName, service, trainer, date, time, status) {
         document.getElementById('modalResId').innerText = resId;
         document.getElementById('modalMemberName').innerText = memberName;
-        document.getElementById('modalMemberId').innerText = memberId;
         document.getElementById('modalService').innerText = service;
         document.getElementById('modalTrainer').innerText = trainer;
         document.getElementById('modalDate').innerText = date;
@@ -349,8 +354,33 @@
         document.body.style.overflow = 'auto';
     }
 
+    // Search Reservations Table
+    function searchReservationsTable() {
+        const input = document.getElementById('txtSearchReservation').value.toLowerCase();
+        const rows = document.querySelectorAll('.reservation-row');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+
+    // Filter Status Dropdown
+    function filterReservationsTable() {
+        const selectedStatus = document.getElementById('filterStatus').value.toLowerCase();
+        const rows = document.querySelectorAll('.reservation-row');
+
+        rows.forEach(row => {
+            const status = row.getAttribute('data-status').toLowerCase();
+            if (selectedStatus === "" || status === selectedStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
     // Initialize Lucide Icons
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         if (window.lucide) {
             lucide.createIcons();
         }

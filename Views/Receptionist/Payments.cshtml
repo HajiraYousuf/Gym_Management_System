@@ -1,6 +1,14 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.Payment>
+
+@{
     ViewData["Title"] = "Unified Payment Ledger & Collections";
     Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+
+    // Tirakoobka Dynamic-ka ah (Card-yada sare)
+    var totalCollectionsToday = Model != null ? Model.Where(p => p.PaymentDate.Date == DateTime.Today).Sum(p => p.AmountPaid) : 0;
+    var successfulPaymentsCount = Model != null ? Model.Count(p => p.Status == "Paid") : 0;
+    var pendingBalancesSum = Model != null ? Model.Where(p => p.Status == "Pending" || p.Status == "Partial" || p.Status == "Overdue").Sum(p => p.AmountDue - p.AmountPaid) : 0;
+    var receiptsIssuedCount = Model != null ? Model.Count(p => !string.IsNullOrEmpty(p.ReceiptNumber)) : 0;
 }
 
 <!-- FontAwesome CDN -->
@@ -25,14 +33,14 @@
         </button>
     </div>
 
-    <!-- 1. TOP SUMMARY CARDS -->
+    <!-- 1. TOP SUMMARY CARDS (DYNAMIC) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <!-- Card 1 -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-emerald-600 dark:text-lime-400 font-bold block">Today's Collections</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">$1,450</h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">$@totalCollectionsToday</h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Collected Today</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 flex items-center justify-center text-xl">
@@ -44,7 +52,7 @@
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">Payments Received</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">18</h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@successfulPaymentsCount</h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Successful Invoices</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 flex items-center justify-center text-xl">
@@ -56,7 +64,7 @@
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold block">Pending Balances</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">$210</h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">$@pendingBalancesSum</h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Awaiting Collection</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400 flex items-center justify-center text-xl">
@@ -68,7 +76,7 @@
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-blue-600 dark:text-blue-400 font-bold block">Receipts Issued</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">18</h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@receiptsIssuedCount</h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Total Generated</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl">
@@ -100,14 +108,14 @@
         </div>
     </div>
 
-    <!-- 3. PAYMENT LEDGER TABLE -->
+    <!-- 3. PAYMENT LEDGER TABLE (DYNAMIC LOOP) -->
     <div class="bg-white dark:bg-zinc-900/80 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
         <div class="p-5 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
             <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-emerald-600 dark:text-lime-400"></i>
                 Financial Transactions & Ledgers
             </h3>
-            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-lime-400/10 dark:text-lime-400 font-bold">PAYMENTS.ASPX</span>
+            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-lime-400/10 dark:text-lime-400 font-bold">DATABASE CONNECTED</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -127,77 +135,50 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-zinc-800/80 text-xs font-medium text-slate-800 dark:text-zinc-200">
                     
-                    <!-- Row 1: Paid -->
-                    <tr class="payment-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="paid">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">REC-8041</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">INV-2026-091</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Mohamed Abdi</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Membership</td>
-                        <td class="py-4 px-4 font-semibold text-slate-700 dark:text-zinc-300">ZAAD</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$80</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">05 Aug • 10:15 AM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Paid</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('REC-8041', 'INV-2026-091', 'Mohamed Abdi', 'Membership', 'ZAAD', '$80', '05 Aug 2026 • 10:15 AM', 'Paid')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openReceiptModal('REC-8041', 'INV-2026-091', 'Mohamed Abdi', 'Membership', 'ZAAD', '$80', '05 Aug 2026')" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg transition cursor-pointer">Print</button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2: Partial -->
-                    <tr class="payment-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="partial">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">REC-8039</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">INV-2026-088</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Hassan Omar</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Renewal</td>
-                        <td class="py-4 px-4 font-semibold text-slate-700 dark:text-zinc-300">EVC Plus</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$100 / $150</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">04 Aug • 04:20 PM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400">Partial</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('REC-8039', 'INV-2026-088', 'Hassan Omar', 'Renewal', 'EVC Plus', '$100 / $150', '04 Aug 2026 • 04:20 PM', 'Partial')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openRecordPaymentModalWithData('Hassan Omar', 'Renewal', '$50')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-lime-400/10 dark:hover:bg-lime-400/20 text-emerald-600 dark:text-lime-400 font-bold rounded-lg transition cursor-pointer">Pay Due</button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 3: Pending -->
-                    <tr class="payment-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="pending">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">—</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">INV-2026-095</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Amina Ahmed</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Membership</td>
-                        <td class="py-4 px-4 font-semibold text-slate-400">—</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$40</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">05 Aug • 11:00 AM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">Pending</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('—', 'INV-2026-095', 'Amina Ahmed', 'Membership', '—', '$40', '05 Aug 2026 • 11:00 AM', 'Pending')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openRecordPaymentModalWithData('Amina Ahmed', 'Membership', '$40')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-lime-400/10 dark:hover:bg-lime-400/20 text-emerald-600 dark:text-lime-400 font-bold rounded-lg transition cursor-pointer">Collect</button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 4: Overdue -->
-                    <tr class="payment-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="overdue">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">REC-8040</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">INV-2026-012</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Khalid Hassan</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Membership</td>
-                        <td class="py-4 px-4 font-semibold text-slate-700 dark:text-zinc-300">Cash</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$30</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">01 Aug • Overdue</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400">Overdue</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('REC-8040', 'INV-2026-012', 'Khalid Hassan', 'Membership', 'Cash', '$30', '01 Aug 2026', 'Overdue')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openRecordPaymentModalWithData('Khalid Hassan', 'Membership', '$30')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-lime-400/10 dark:hover:bg-lime-400/20 text-emerald-600 dark:text-lime-400 font-bold rounded-lg transition cursor-pointer">Collect</button>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var pay in Model)
+                        {
+                            <tr class="payment-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="@pay.Status.ToLower()">
+                                <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">@(string.IsNullOrEmpty(pay.ReceiptNumber) ? "—" : pay.ReceiptNumber)</td>
+                                <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">@pay.Reference</td>
+                                <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">@pay.MemberName</td>
+                                <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">@pay.PaymentFor</td>
+                                <td class="py-4 px-4 font-semibold text-slate-700 dark:text-zinc-300">@(string.IsNullOrEmpty(pay.Method) ? "—" : pay.Method)</td>
+                                <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                                    @(pay.Status == "Partial" ? $"${pay.AmountPaid} / ${pay.AmountDue}" : $"${pay.AmountPaid}")
+                                </td>
+                                <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">@pay.PaymentDate.ToString("dd MMM yyyy • hh:mm tt")</td>
+                                <td class="py-4 px-4 text-center">
+                                    <span class="px-2.5 py-0.5 rounded text-[10px] font-bold 
+                                        @(pay.Status == "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400" :
+                                          pay.Status == "Partial" ? "bg-amber-100 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400" :
+                                          pay.Status == "Overdue" ? "bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400" :
+                                          "bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300")">
+                                        @pay.Status
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-right space-x-1.5">
+                                    <button onclick="openViewModal('@pay.ReceiptNumber', '@pay.Reference', '@pay.MemberName', '@pay.PaymentFor', '@pay.Method', '$@pay.AmountPaid', '@pay.PaymentDate.ToString("dd MMM yyyy")', '@pay.Status')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
+                                    
+                                    @if (pay.Status == "Paid")
+                                    {
+                                        <button onclick="openReceiptModal('@pay.ReceiptNumber', '@pay.Reference', '@pay.MemberName', '@pay.PaymentFor', '@pay.Method', '$@pay.AmountPaid', '@pay.PaymentDate.ToString("dd MMM yyyy")')" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg transition cursor-pointer">Print</button>
+                                    }
+                                    else
+                                    {
+                                        <button onclick="openRecordPaymentModalWithData('@pay.MemberName', '@pay.PaymentFor', '@pay.AmountDue')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-lime-400/10 dark:hover:bg-lime-400/20 text-emerald-600 dark:text-lime-400 font-bold rounded-lg transition cursor-pointer">Collect</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center py-6 text-slate-400">Wali ma jiraan wax lacag-bixinayaal ah (Payments) oo la diiwaangeliyay.</td>
+                        </tr>
+                    }
 
                 </tbody>
             </table>
@@ -206,7 +187,7 @@
 
 </div>
 
-<!-- 2. RECORD NEW PAYMENT MODAL -->
+<!-- 2. RECORD NEW PAYMENT MODAL (POST to Controller) -->
 <div id="recordPaymentModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 text-xs my-8">
         
@@ -220,18 +201,18 @@
             </button>
         </div>
 
-        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Payment recorded successfully! Receipt generated.'); closeRecordPaymentModal();">
+        <form asp-action="RecordPayment" method="post" class="space-y-4">
             
             <div class="space-y-1">
                 <label class="block font-bold text-slate-700 dark:text-zinc-400">Member / Order</label>
-                <input type="text" id="modalSearchMember" placeholder="Search Member, Order ID..." value="Amina Ahmed - MEM-9021"
+                <input type="text" id="modalSearchMember" name="MemberName" placeholder="Search Member, Order ID..." required
                     class="w-full h-10 px-3.5 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none transition" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Payment For</label>
-                    <select id="modalPaymentFor" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
+                    <select id="modalPaymentFor" name="PaymentFor" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
                         <option value="Membership">Membership</option>
                         <option value="Renewal">Renewal</option>
                         <option value="Order">Order</option>
@@ -239,43 +220,41 @@
                 </div>
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Reference</label>
-                    <input type="text" value="INV-2026-095" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
+                    <input type="text" name="Reference" value="INV-@DateTime.Now.ToString("yyyy-fff")" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Amount Due</label>
-                    <div id="modalAmountDue" class="h-10 px-3 bg-slate-100 dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-xl flex items-center font-mono font-bold text-slate-500 dark:text-zinc-400">
-                        $40.00
-                    </div>
+                    <input type="number" step="0.01" id="modalAmountDue" name="AmountDue" value="40.00" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono font-bold" />
                 </div>
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Amount Paid</label>
-                    <input type="text" id="modalAmountPaid" value="$40.00" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono font-bold" />
+                    <input type="number" step="0.01" id="modalAmountPaid" name="AmountPaid" value="40.00" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono font-bold" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Payment Method</label>
-                    <select class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
-                        <option>ZAAD</option>
-                        <option>eDahab</option>
-                        <option>EVC Plus</option>
-                        <option>Cash</option>
-                        <option>Credit/Debit Card</option>
+                    <select name="Method" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
+                        <option value="ZAAD">ZAAD</option>
+                        <option value="eDahab">eDahab</option>
+                        <option value="EVC Plus">EVC Plus</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Credit/Debit Card">Credit/Debit Card</option>
                     </select>
                 </div>
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Payment Date</label>
-                    <input type="text" value="11 Aug 2026" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
+                    <input type="date" name="PaymentDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
                 </div>
             </div>
 
             <div class="space-y-1">
                 <label class="block font-bold text-slate-700 dark:text-zinc-400">Notes (Optional)</label>
-                <textarea rows="2" placeholder="Add transaction comments..." class="w-full p-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none resize-none"></textarea>
+                <textarea name="Notes" rows="2" placeholder="Add transaction comments..." class="w-full p-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none resize-none"></textarea>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-zinc-800">
@@ -300,14 +279,14 @@
         </div>
 
         <div class="space-y-2.5 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950">
-            <div class="flex justify-between"><span class="text-slate-500">Receipt #:</span> <strong id="viewReceiptNo" class="font-mono text-slate-900 dark:text-white">REC-8041</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Reference:</span> <strong id="viewReference" class="font-mono text-slate-900 dark:text-white">INV-2026-091</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Member:</span> <strong id="viewMember" class="text-slate-900 dark:text-white">Mohamed Abdi</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Payment For:</span> <strong id="viewPaymentFor" class="text-slate-900 dark:text-white">Membership</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Method:</span> <strong id="viewMethod" class="text-slate-900 dark:text-white">ZAAD</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Amount:</span> <strong id="viewAmount" class="font-mono text-emerald-600 dark:text-lime-400">$80</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Date:</span> <strong id="viewDate" class="font-mono text-slate-900 dark:text-white">05 Aug 2026</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Status:</span> <strong id="viewStatus" class="text-emerald-600 dark:text-lime-400">Paid</strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Receipt #:</span> <strong id="viewReceiptNo" class="font-mono text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Reference:</span> <strong id="viewReference" class="font-mono text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Member:</span> <strong id="viewMember" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Payment For:</span> <strong id="viewPaymentFor" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Method:</span> <strong id="viewMethod" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Amount:</span> <strong id="viewAmount" class="font-mono text-emerald-600 dark:text-lime-400"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Date:</span> <strong id="viewDate" class="font-mono text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Status:</span> <strong id="viewStatus" class="text-emerald-600 dark:text-lime-400"></strong></div>
         </div>
 
         <div class="flex justify-end pt-2 border-t border-slate-200 dark:border-zinc-800">
@@ -336,10 +315,10 @@
             </div>
 
             <div class="border-t border-dashed border-zinc-400 pt-2 space-y-1">
-                <div class="flex justify-between"><span>Receipt #:</span> <strong id="rcptNo">REC-8041</strong></div>
-                <div class="flex justify-between"><span>Ref:</span> <strong id="rcptRef">INV-2026-091</strong></div>
-                <div class="flex justify-between"><span>Member:</span> <strong id="rcptMember">Mohamed Abdi</strong></div>
-                <div class="flex justify-between"><span>Date:</span> <span id="rcptDate">05 Aug 2026</span></div>
+                <div class="flex justify-between"><span>Receipt #:</span> <strong id="rcptNo"></strong></div>
+                <div class="flex justify-between"><span>Ref:</span> <strong id="rcptRef"></strong></div>
+                <div class="flex justify-between"><span>Member:</span> <strong id="rcptMember"></strong></div>
+                <div class="flex justify-between"><span>Date:</span> <span id="rcptDate"></span></div>
             </div>
 
             <div class="border-t border-dashed border-zinc-400 pt-2">
@@ -352,16 +331,16 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td id="rcptDesc" class="py-1">Gym Membership</td>
-                            <td id="rcptDescAmount" class="py-1 text-right">$80</td>
+                            <td id="rcptDesc" class="py-1">Gym Payment</td>
+                            <td id="rcptDescAmount" class="py-1 text-right"></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="border-t border-dashed border-zinc-400 pt-2 space-y-1 font-bold">
-                <div class="flex justify-between text-xs"><span>TOTAL PAID:</span> <span id="rcptTotal">$80</span></div>
-                <div class="flex justify-between text-[10px] font-normal text-zinc-600"><span>Method:</span> <span id="rcptMethod">ZAAD</span></div>
+                <div class="flex justify-between text-xs"><span>TOTAL PAID:</span> <span id="rcptTotal"></span></div>
+                <div class="flex justify-between text-[10px] font-normal text-zinc-600"><span>Method:</span> <span id="rcptMethod"></span></div>
                 <div class="flex justify-between text-[10px] font-normal text-zinc-600"><span>Status:</span> <span class="text-emerald-600 font-bold">PAID</span></div>
             </div>
 
@@ -381,73 +360,73 @@
     </div>
 </div>
 
-<!-- JavaScript Controls -->
+<!-- JavaScript Controls & Filtering -->
 <script>
-    // Record Payment Modal
+    function filterPaymentsTable() {
+        let statusFilter = document.getElementById('filterStatus').value.toLowerCase();
+        let searchInput = document.getElementById('txtSearchPayment').value.toLowerCase();
+        let rows = document.querySelectorAll('.payment-row');
+
+        rows.forEach(row => {
+            let rowStatus = row.getAttribute('data-status');
+            let rowText = row.innerText.toLowerCase();
+
+            let matchesStatus = (statusFilter === 'all' || rowStatus === statusFilter);
+            let matchesSearch = (rowText.includes(searchInput));
+
+            if (matchesStatus && matchesSearch) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
     function openRecordPaymentModal() {
         document.getElementById('recordPaymentModal').classList.remove('hidden');
     }
+    
     function openRecordPaymentModalWithData(memberName, paymentFor, dueAmount) {
         document.getElementById('modalSearchMember').value = memberName;
         document.getElementById('modalPaymentFor').value = paymentFor;
-        document.getElementById('modalAmountDue').innerText = dueAmount + '.00';
-        document.getElementById('modalAmountPaid').value = dueAmount + '.00';
+        document.getElementById('modalAmountDue').value = dueAmount;
+        document.getElementById('modalAmountPaid').value = dueAmount;
         document.getElementById('recordPaymentModal').classList.remove('hidden');
     }
+    
     function closeRecordPaymentModal() {
         document.getElementById('recordPaymentModal').classList.add('hidden');
     }
 
-    // View Modal
     function openViewModal(receipt, ref, member, paymentFor, method, amount, date, status) {
-        document.getElementById('viewReceiptNo').innerText = receipt;
+        document.getElementById('viewReceiptNo').innerText = receipt || '—';
         document.getElementById('viewReference').innerText = ref;
         document.getElementById('viewMember').innerText = member;
         document.getElementById('viewPaymentFor').innerText = paymentFor;
-        document.getElementById('viewMethod').innerText = method;
+        document.getElementById('viewMethod').innerText = method || '—';
         document.getElementById('viewAmount').innerText = amount;
         document.getElementById('viewDate').innerText = date;
         document.getElementById('viewStatus').innerText = status;
         document.getElementById('viewPaymentModal').classList.remove('hidden');
     }
+    
     function closeViewModal() {
         document.getElementById('viewPaymentModal').classList.add('hidden');
     }
 
-    // Thermal Receipt Modal (80mm width)
     function openReceiptModal(receipt, ref, member, paymentFor, method, amount, date) {
-        document.getElementById('rcptNo').innerText = receipt;
+        document.getElementById('rcptNo').innerText = receipt || 'REC-000';
         document.getElementById('rcptRef').innerText = ref;
         document.getElementById('rcptMember').innerText = member;
         document.getElementById('rcptDesc').innerText = 'Gym ' + paymentFor;
         document.getElementById('rcptDescAmount').innerText = amount;
         document.getElementById('rcptTotal').innerText = amount;
-        document.getElementById('rcptMethod').innerText = method;
+        document.getElementById('rcptMethod').innerText = method || 'Cash';
         document.getElementById('rcptDate').innerText = date;
         document.getElementById('receiptModal').classList.remove('hidden');
     }
-    function closeReceiptModal() {
-        document.getElementById('receiptModal').classList.add('hidden');
-    }
-
-    // Filter & Search Engine
-    function filterPaymentsTable() {
-        const query = document.getElementById('txtSearchPayment').value.toLowerCase();
-        const statusFilter = document.getElementById('filterStatus').value;
-        const rows = document.querySelectorAll('.payment-row');
-
-        rows.forEach(row => {
-            const rowText = row.innerText.toLowerCase();
-            const rowStatus = row.getAttribute('data-status');
-
-            const matchesSearch = rowText.includes(query);
-            const matchesStatus = (statusFilter === 'all' || rowStatus === statusFilter);
-
-            if (matchesSearch && matchesStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
+    
+    function closeReceiptModal() { 
+        document.getElementById('receiptModal').classList.add('hidden'); 
     }
 </script>

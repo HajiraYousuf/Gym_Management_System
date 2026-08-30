@@ -1,0 +1,331 @@
+﻿@model IEnumerable<GymManagementSystem.Models.ClassSchedule>
+
+@{
+    ViewData["Title"] = "Class Schedule Manager";
+    Layout = "~/Views/layouts/AdminMaster.cshtml";
+}
+
+<div class="space-y-8 pt-4 pb-12 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-[#050505] text-zinc-900 dark:text-zinc-100 min-h-screen transition-colors duration-200">
+
+    <!-- 1. Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Class Schedule Manager</h1>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage training sessions, schedules, timings, and assigned trainers.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer">
+                <i data-lucide="download" class="w-4 h-4 text-zinc-500 dark:text-zinc-400"></i>
+                Export Schedules
+            </button>
+            <button type="button" onclick="openAddScheduleModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add New Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Stat Cards Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Total Sessions</p>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white mt-1">@Model.Count()</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">All scheduled classes</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20">
+                <i data-lucide="calendar" class="w-6 h-6"></i>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Scheduled</p>
+                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">@Model.Count(s => s.Status == "Scheduled")</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Upcoming classes</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                <i data-lucide="clock" class="w-6 h-6"></i>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Completed</p>
+                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">@Model.Count(s => s.Status == "Completed")</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Finished sessions</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-500/20">
+                <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Cancelled</p>
+                <h3 class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">@Model.Count(s => s.Status == "Cancelled")</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Cancelled programs</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-500/20">
+                <i data-lucide="x-circle" class="w-6 h-6"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Schedule Table -->
+    <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-lg font-bold text-zinc-900 dark:text-white tracking-wide">Active Class Timetable</h2>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Master list of scheduled training events and assigned trainers.</p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-zinc-700 dark:text-zinc-200">
+                <thead class="bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                    <tr>
+                        <th scope="col" class="py-4 px-5 rounded-l-xl">Class Name</th>
+                        <th scope="col" class="py-4 px-5">Trainer</th>
+                        <th scope="col" class="py-4 px-5">Date</th>
+                        <th scope="col" class="py-4 px-5">Time</th>
+                        <th scope="col" class="py-4 px-5">Location</th>
+                        <th scope="col" class="py-4 px-5">Capacity</th>
+                        <th scope="col" class="py-4 px-5">Status</th>
+                        <th scope="col" class="py-4 px-5 text-center rounded-r-xl">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800/60 font-medium">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white flex items-center gap-3 text-base">
+                                    <div class="w-9 h-9 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold border border-lime-500/20 shrink-0">
+                                        <i data-lucide="dumbbell" class="w-5 h-5"></i>
+                                    </div>
+                                    @item.ClassName
+                                </td>
+                                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300 font-semibold">
+                                    @item.TrainerName
+                                </td>
+                                <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">
+                                    @item.Date.ToString("yyyy-MM-dd")
+                                </td>
+                                <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">
+                                    @item.StartTime.ToString(@"hh\:mm") - @item.EndTime.ToString(@"hh\:mm")
+                                </td>
+                                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">
+                                    @item.Location
+                                </td>
+                                <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">
+                                    @item.Capacity Persons
+                                </td>
+                                <td class="py-4 px-5">
+                                    <span class="px-3 py-1 rounded-md text-xs font-bold border @(item.Status == "Scheduled" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : item.Status == "Completed" ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20")">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-center">
+                                    <div class="flex justify-center items-center gap-2">
+                                        <button type="button" onclick="openEditScheduleModal('@item.Id', '@item.ClassName', '@item.TrainerName', '@item.Date.ToString("yyyy-MM-dd")', '@item.StartTime.ToString(@"hh\:mm")', '@item.EndTime.ToString(@"hh\:mm")', '@item.Location', '@item.Capacity', '@item.Status')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Schedule">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                        </button>
+                                        <button type="button" onclick="openDeleteScheduleModal('@item.Id', '@item.ClassName')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Schedule">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-8 text-zinc-500">No class schedules found in database.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 1: ADD / EDIT SCHEDULE MODAL         -->
+<!-- ========================================== -->
+<div id="scheduleModal" class="fixed inset-0 z-50 hidden bg-zinc-950/70 backdrop-blur-sm overflow-y-auto flex items-center justify-center p-4">
+    <div class="relative bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-8 transform transition-all">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold border border-lime-500/20">
+                    <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 id="scheduleModalTitle" class="text-lg font-bold text-zinc-900 dark:text-white">Add New Schedule</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Schedule a new training session or class time.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeScheduleModal()" class="text-zinc-400 hover:text-rose-500 p-2 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form asp-action="SaveSchedule" method="POST">
+            <input type="hidden" id="ScheduleId" name="Id" value="0" />
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Class Name <span class="text-lime-500">*</span></label>
+                        <input type="text" id="inputScheduleClassName" name="ClassName" required placeholder="e.g. Strength Training" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Trainer Name <span class="text-lime-500">*</span></label>
+                        <select id="inputTrainerName" name="TrainerName" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
+                            <option value="">-- Select Trainer --</option>
+                            @if (ViewBag.TrainerList is List<string> trainerList && trainerList.Any())
+                            {
+                                foreach (var trainer in trainerList)
+                                {
+                                    <option value="@trainer">@trainer</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Date <span class="text-lime-500">*</span></label>
+                        <input type="date" id="inputScheduleDate" name="Date" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Start Time <span class="text-lime-500">*</span></label>
+                        <input type="time" id="inputStartTime" name="StartTime" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">End Time <span class="text-lime-500">*</span></label>
+                        <input type="time" id="inputEndTime" name="EndTime" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Location</label>
+                        <input type="text" id="inputLocation" name="Location" value="Weight Training Area" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Capacity <span class="text-lime-500">*</span></label>
+                        <input type="number" id="inputScheduleCapacity" name="Capacity" value="15" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Status <span class="text-lime-500">*</span></label>
+                        <select id="inputScheduleStatus" name="Status" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                <button type="button" onclick="closeScheduleModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">Save Schedule</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL 2: DELETE CONFIRMATION POP-UP        -->
+<!-- ========================================== -->
+<div id="deleteScheduleModal" class="fixed inset-0 z-50 hidden bg-zinc-950/70 backdrop-blur-sm overflow-y-auto flex items-center justify-center p-4">
+    <div class="relative bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+        <form asp-action="DeleteSchedule" method="POST">
+            <input type="hidden" id="deleteScheduleId" name="id" value="" />
+            <div class="p-6 text-center space-y-4">
+                <div class="w-14 h-14 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto border border-rose-500/20">
+                    <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Delete Class Schedule?</h3>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+                        Are you sure you want to delete <span id="deleteScheduleName" class="font-bold text-zinc-900 dark:text-white"></span>? This action cannot be undone.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                <button type="button" onclick="closeDeleteScheduleModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors w-1/2 cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-colors cursor-pointer w-1/2 shadow-lg shadow-rose-500/10">
+                    Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- JAVASCRIPT FUNCTIONS                       -->
+<!-- ========================================== -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+
+    function openAddScheduleModal() {
+        document.getElementById('scheduleModalTitle').innerText = "Add New Schedule";
+        document.getElementById('ScheduleId').value = "0";
+        document.getElementById('inputScheduleClassName').value = "";
+        document.getElementById('inputTrainerName').value = "";
+        document.getElementById('inputScheduleDate').value = "";
+        document.getElementById('inputStartTime').value = "";
+        document.getElementById('inputEndTime').value = "";
+        document.getElementById('inputLocation').value = "Weight Training Area";
+        document.getElementById('inputScheduleCapacity').value = "15";
+        document.getElementById('inputScheduleStatus').value = "Scheduled";
+
+        document.getElementById('scheduleModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function openEditScheduleModal(id, className, trainerName, date, startTime, endTime, location, capacity, status) {
+        document.getElementById('scheduleModalTitle').innerText = "Edit Schedule: " + className;
+        document.getElementById('ScheduleId').value = id;
+        document.getElementById('inputScheduleClassName').value = className;
+        document.getElementById('inputTrainerName').value = trainerName;
+        document.getElementById('inputScheduleDate').value = date;
+        document.getElementById('inputStartTime').value = startTime;
+        document.getElementById('inputEndTime').value = endTime;
+        document.getElementById('inputLocation').value = location;
+        document.getElementById('inputScheduleCapacity').value = capacity;
+        document.getElementById('inputScheduleStatus').value = status;
+
+        document.getElementById('scheduleModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeScheduleModal() {
+        document.getElementById('scheduleModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openDeleteScheduleModal(id, className) {
+        document.getElementById('deleteScheduleId').value = id;
+        document.getElementById('deleteScheduleName').innerText = className;
+        document.getElementById('deleteScheduleModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteScheduleModal() {
+        document.getElementById('deleteScheduleModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+</script>

@@ -1,6 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Reports & Analytics";
     Layout = "~/Views/layouts/AdminMaster.cshtml";
+
+    var totalMembers = ViewBag.TotalMembers ?? 0;
+    var totalRevenue = ViewBag.TotalRevenue ?? 0m;
+    var attendanceToday = ViewBag.AttendanceToday ?? 0;
+    var activeMembers = ViewBag.ActiveMembers ?? 0;
+    var selectedDate = ViewBag.SelectedDate ?? DateTime.Today.ToString("yyyy-MM-dd");
+
+    var classesList = ViewBag.ClassesList as IEnumerable<dynamic> ?? new List<dynamic>();
 }
 
 <!-- FontAwesome & Chart.js CDN -->
@@ -22,32 +30,32 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3">
-                <input type="date" id="txtReportDate" class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-3.5 py-2.5 outline-none focus:border-lime-500 font-medium cursor-pointer" />
-                
-                <button type="button" class="px-4 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 text-sm font-black transition cursor-pointer shadow-sm">
-                    Generate Report
-                </button>
-                
+            <!-- FORM -->
+            <form method="get" asp-action="Report" class="flex flex-wrap items-center gap-3">
+                <input type="date" name="reportDate" value="@selectedDate" id="txtReportDate" class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-3.5 py-2.5 outline-none focus:border-lime-500 font-medium cursor-pointer" />
+
+                <!-- EXCEL EXPORT -->
+                <a asp-action="ExportToExcel" asp-route-reportDate="@selectedDate" class="px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </a>
+
+                <!-- PDF / PRINT -->
                 <button type="button" onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-800 text-sm font-semibold transition cursor-pointer">
-                    <i class="fa-solid fa-print mr-1.5"></i> Print
+                    <i class="fa-solid fa-print mr-1.5"></i> Print / PDF
                 </button>
-            </div>
+            </form>
         </div>
 
         <!-- STAT CARDS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            
             <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Members</p>
-                        <h3 class="mt-2 text-3xl font-black text-zinc-900 dark:text-white">1,248</h3>
-                        <p class="mt-2 text-xs text-lime-600 dark:text-lime-400 font-bold">+12.5% this month</p>
+                        <h3 class="mt-2 text-3xl font-black text-zinc-900 dark:text-white">@totalMembers</h3>
+                        <p class="mt-2 text-xs text-lime-600 dark:text-lime-400 font-bold">Registered records</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20"><i class="fa-solid fa-users"></i></div>
                 </div>
             </div>
 
@@ -55,12 +63,10 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Revenue</p>
-                        <h3 class="mt-2 text-3xl font-black text-amber-600 dark:text-amber-400">$14,250</h3>
-                        <p class="mt-2 text-xs text-amber-600 dark:text-amber-400 font-bold">+18.4% this month</p>
+                        <h3 class="mt-2 text-3xl font-black text-amber-600 dark:text-amber-400">$@string.Format("{0:N2}", totalRevenue)</h3>
+                        <p class="mt-2 text-xs text-amber-600 dark:text-amber-400 font-bold">Verified income flow</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20"><i class="fa-solid fa-wallet"></i></div>
                 </div>
             </div>
 
@@ -68,12 +74,10 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Attendance Today</p>
-                        <h3 class="mt-2 text-3xl font-black text-blue-600 dark:text-blue-400">312</h3>
-                        <p class="mt-2 text-xs text-blue-600 dark:text-blue-400 font-bold">89.7% attendance rate</p>
+                        <h3 class="mt-2 text-3xl font-black text-blue-600 dark:text-blue-400">@attendanceToday</h3>
+                        <p class="mt-2 text-xs text-blue-600 dark:text-blue-400 font-bold">Today's check-ins</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-500/20">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-calendar-check"></i></div>
                 </div>
             </div>
 
@@ -81,124 +85,44 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Active Membership</p>
-                        <h3 class="mt-2 text-3xl font-black text-purple-600 dark:text-purple-400">890</h3>
-                        <p class="mt-2 text-xs text-purple-600 dark:text-purple-400 font-bold">71.3% of total members</p>
+                        <h3 class="mt-2 text-3xl font-black text-purple-600 dark:text-purple-400">@activeMembers</h3>
+                        <p class="mt-2 text-xs text-purple-600 dark:text-purple-400 font-bold">Current active plans</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-500/20">
-                        <i class="fa-solid fa-id-card"></i>
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-500/20"><i class="fa-solid fa-id-card"></i></div>
                 </div>
             </div>
-
         </div>
 
-        <!-- ROW 1: REVENUE OVERVIEW & MEMBERSHIP -->
+        <!-- ROW 1: REVENUE & MEMBERSHIP CHARTS -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-            <!-- REVENUE CHART -->
             <div class="xl:col-span-2 bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-                    <div>
-                        <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Revenue Overview</h2>
-                        <p class="text-sm text-zinc-500 dark:text-zinc-400">Annual revenue performance (12 Months)</p>
-                    </div>
-                    <button type="button" class="px-4 py-2 rounded-xl bg-lime-500/10 hover:bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-sm font-bold transition cursor-pointer">
-                        Export Revenue
-                    </button>
-                </div>
+                <h2 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Revenue Overview</h2>
                 <div class="h-[280px]">
                     <canvas id="revenueChart"></canvas>
                 </div>
             </div>
 
-            <!-- MEMBERSHIP DOUGHNUT -->
             <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Membership Overview</h2>
-                            <p class="text-sm text-zinc-500 dark:text-zinc-400">Active plans distribution</p>
-                        </div>
-                    </div>
-                    <div class="h-[180px] flex justify-center">
-                        <canvas id="membershipChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2.5 mt-4">
-                    <div class="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 rounded-xl px-3.5 py-2.5 border border-zinc-200 dark:border-zinc-800">
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Basic</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white">420</span>
-                    </div>
-                    <div class="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 rounded-xl px-3.5 py-2.5 border border-zinc-200 dark:border-zinc-800">
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Standard</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white">310</span>
-                    </div>
-                    <div class="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 rounded-xl px-3.5 py-2.5 border border-zinc-200 dark:border-zinc-800">
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Premium</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white">110</span>
-                    </div>
-                    <div class="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 rounded-xl px-3.5 py-2.5 border border-zinc-200 dark:border-zinc-800">
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">VIP</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white">50</span>
-                    </div>
+                <h2 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Membership Overview</h2>
+                <div class="h-[180px] flex justify-center">
+                    <canvas id="membershipChart"></canvas>
                 </div>
             </div>
-
         </div>
 
         <!-- ROW 2: ATTENDANCE & CLASS PERFORMANCE -->
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-            <!-- ATTENDANCE OVERVIEW -->
             <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-                    <div>
-                        <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Attendance Overview</h2>
-                        <p class="text-sm text-zinc-500 dark:text-zinc-400">Today's member attendance report</p>
-                    </div>
-                    <button type="button" class="px-4 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-sm font-bold transition cursor-pointer">
-                        Export Attendance
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                    <div class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Present</p>
-                        <p class="text-xl font-black text-lime-600 dark:text-lime-400 mt-1">280</p>
-                    </div>
-                    <div class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Absent</p>
-                        <p class="text-xl font-black text-rose-600 dark:text-rose-400 mt-1">22</p>
-                    </div>
-                    <div class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Late</p>
-                        <p class="text-xl font-black text-amber-600 dark:text-amber-400 mt-1">10</p>
-                    </div>
-                    <div class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3">
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Rate</p>
-                        <p class="text-xl font-black text-blue-600 dark:text-blue-400 mt-1">89.7%</p>
-                    </div>
-                </div>
-
+                <h2 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Attendance Overview</h2>
                 <div class="h-[230px]">
                     <canvas id="attendanceChart"></canvas>
                 </div>
             </div>
 
-            <!-- CLASS PERFORMANCE -->
             <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                 <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                        <div>
-                            <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Class Performance</h2>
-                            <p class="text-sm text-zinc-500 dark:text-zinc-400">Capacity and member participation</p>
-                        </div>
-                        <button type="button" class="px-4 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-sm font-bold transition cursor-pointer">
-                            Export Report
-                        </button>
-                    </div>
-
+                    <h2 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Class Performance</h2>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Capacity and member participation</p>
                     <div class="h-[180px] mb-3">
                         <canvas id="classChart"></canvas>
                     </div>
@@ -210,156 +134,116 @@
                             <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 uppercase font-bold">
                                 <th class="py-2.5 px-2">Class</th>
                                 <th class="py-2.5 px-2">Trainer</th>
-                                <th class="py-2.5 px-2">Members</th>
-                                <th class="py-2.5 px-2">Capacity</th>
                                 <th class="py-2.5 px-2">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-medium">
+                            @if (classesList.Any())
+                            {
+                                foreach (var cls in classesList)
+                                {
+                                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
+                                        <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">@cls.Name</td>
+                                        <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">@cls.TrainerName</td>
+                                        <td class="py-2.5 px-2">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20">Active</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="py-4 text-center text-zinc-500">No active classes found in database.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 3: EXTRA DYNAMIC INSIGHTS (NEW TABLES) -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <!-- Membership Plans Breakdown -->
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
+                <h2 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Membership Plans Summary</h2>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Active pricing tiers and details</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 uppercase font-bold">
+                                <th class="py-2.5 px-2">Plan Name</th>
+                                <th class="py-2.5 px-2">Type</th>
+                                <th class="py-2.5 px-2">Duration</th>
+                                <th class="py-2.5 px-2 text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-medium">
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
-                                <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">Strength & Cond.</td>
-                                <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">Ali Ahmed</td>
-                                <td class="py-2.5 px-2 font-bold text-lime-600 dark:text-lime-400">18</td>
-                                <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">25</td>
-                                <td class="py-2.5 px-2">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20">Active</span>
-                                </td>
+                                <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">VIP Elite</td>
+                                <td class="py-2.5 px-2 text-purple-600 dark:text-purple-400">VIP</td>
+                                <td class="py-2.5 px-2">30 Days</td>
+                                <td class="py-2.5 px-2 text-right font-bold text-zinc-900 dark:text-white">$89.99</td>
                             </tr>
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
-                                <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">Yoga & Relaxation</td>
-                                <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">Sarah Khan</td>
-                                <td class="py-2.5 px-2 font-bold text-lime-600 dark:text-lime-400">12</td>
-                                <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">20</td>
-                                <td class="py-2.5 px-2">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20">Active</span>
-                                </td>
+                                <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">Pro Plan</td>
+                                <td class="py-2.5 px-2 text-emerald-600 dark:text-emerald-400">Pro</td>
+                                <td class="py-2.5 px-2">30 Days</td>
+                                <td class="py-2.5 px-2 text-right font-bold text-zinc-900 dark:text-white">$49.99</td>
                             </tr>
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
-                                <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">Zumba Dance</td>
-                                <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">Maryam Ali</td>
-                                <td class="py-2.5 px-2 font-bold text-amber-600 dark:text-amber-400">20</td>
-                                <td class="py-2.5 px-2 text-zinc-500 dark:text-zinc-400">20</td>
-                                <td class="py-2.5 px-2">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">Full</span>
-                                </td>
+                                <td class="py-2.5 px-2 font-bold text-zinc-900 dark:text-white">Standard Plan</td>
+                                <td class="py-2.5 px-2 text-blue-600 dark:text-blue-400">Standard</td>
+                                <td class="py-2.5 px-2">30 Days</td>
+                                <td class="py-2.5 px-2 text-right font-bold text-zinc-900 dark:text-white">$29.99</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-        </div>
-
-        <!-- ROW 3: RECENT REPORTS AT THE BOTTOM -->
-        <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <!-- Quick Summary Guidelines -->
+            <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                 <div>
-                    <h2 class="text-lg font-bold text-zinc-900 dark:text-white">Recent Reports</h2>
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400">View and manage generated gym performance reports.</p>
+                    <h2 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">Quick Performance Notes</h2>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Key insights based on current metrics</p>
+                    <ul class="space-y-3 text-xs text-zinc-600 dark:text-zinc-300 font-medium">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-lime-500"></i>
+                            <span>Revenue flow is stable across all registered payment methods.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-lime-500"></i>
+                            <span>VIP Elite plans are currently generating the highest subscription share.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-lime-500"></i>
+                            <span>Daily attendance trends show consistent peak hours in the morning and evening shifts.</span>
+                        </li>
+                    </ul>
                 </div>
-
-                <div class="flex flex-wrap gap-3">
-                    <input type="text" placeholder="Search reports..." class="w-full sm:w-48 bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm text-zinc-900 dark:text-zinc-200 placeholder-zinc-400 outline-none focus:border-lime-500" />
-
-                    <select class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm text-zinc-700 dark:text-zinc-300 outline-none focus:border-lime-500 font-medium cursor-pointer">
-                        <option>All Reports</option>
-                        <option>Memberships</option>
-                        <option>Trainers</option>
-                        <option>Workouts</option>
-                        <option>Nutrition</option>
-                        <option>Sales</option>
-                        <option>Inventory</option>
-                    </select>
+                <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-center text-xs text-zinc-500">
+                    <span>System Status: <strong class="text-emerald-500">Optimal</strong></span>
+                    <span>Last Updated: @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</span>
                 </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 uppercase text-xs font-bold">
-                            <th class="py-3 px-3">Report Name</th>
-                            <th class="py-3 px-3">Type</th>
-                            <th class="py-3 px-3">Generated Date</th>
-                            <th class="py-3 px-3 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-medium">
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
-                            <td class="py-3 px-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-id-card"></i>
-                                    </div>
-                                    <span class="font-bold text-zinc-900 dark:text-white">Membership Expiry Report</span>
-                                </div>
-                            </td>
-                            <td class="py-3 px-3 text-zinc-500 dark:text-zinc-400">Memberships</td>
-                            <td class="py-3 px-3 text-zinc-500 dark:text-zinc-400 font-mono text-xs">Jul 26, 2026</td>
-                            <td class="py-3 px-3">
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 cursor-pointer transition">View</button>
-                                    <button type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-lime-500/10 hover:bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/25 cursor-pointer transition">Download</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
-                            <td class="py-3 px-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-user-ninja"></i>
-                                    </div>
-                                    <span class="font-bold text-zinc-900 dark:text-white">Trainer Performance Report</span>
-                                </div>
-                            </td>
-                            <td class="py-3 px-3 text-zinc-500 dark:text-zinc-400">Trainers</td>
-                            <td class="py-3 px-3 text-zinc-500 dark:text-zinc-400 font-mono text-xs">Jul 25, 2026</td>
-                            <td class="py-3 px-3">
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 cursor-pointer transition">View</button>
-                                    <button type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-lime-500/10 hover:bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/25 cursor-pointer transition">Download</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
-                            <td class="py-3 px-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-dumbbell"></i>
-                                    </div>
-                                    <span class="font-bold text-zinc-900 dark:text-white">Workout Plan Report</span>
-                                </div>
-                            </td>
-                            <td class="py-3 px-3 text-zinc-500 dark:text-zinc-400">Fitness & Training</td>
-                            <td class="py-3 px-3 text-zinc-500 dark:text-zinc-400 font-mono text-xs">Jul 24, 2026</td>
-                            <td class="py-3 px-3">
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 cursor-pointer transition">View</button>
-                                    <button type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-lime-500/10 hover:bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/25 cursor-pointer transition">Download</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
     </div>
 </div>
 
-<!-- CHARTS INITIALIZATION SCRIPT -->
+<!-- SCRIPTS TO LOAD DYNAMIC DATA -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const isDark = document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
         const textColor = isDark ? "#a1a1aa" : "#71717a";
         const gridColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)";
 
         Chart.defaults.color = textColor;
         Chart.defaults.font.family = "Inter, sans-serif";
-        Chart.defaults.font.size = 12;
 
-        /* =========================
-           REVENUE CHART
-        ========================= */
+        // 1. Revenue Chart
         const revenueCtx = document.getElementById("revenueChart");
         if (revenueCtx) {
             new Chart(revenueCtx, {
@@ -368,40 +252,28 @@
                     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                     datasets: [{
                         label: "Revenue",
-                        data: [8200, 9600, 10800, 12100, 13900, 14250, 15800, 16200, 15900, 17400, 18100, 19500],
+                        data: @Html.Raw(ViewBag.MonthlyRevenueData ?? "[0,0,0,0,0,0,0,0,0,0,0,0]"),
                         borderColor: "#84cc16",
                         backgroundColor: "rgba(132, 204, 22, 0.08)",
                         borderWidth: 3,
                         fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: "#84cc16"
+                        tension: 0.4
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: gridColor }, border: { display: false } },
-                        y: { grid: { color: gridColor }, border: { display: false } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
-        /* =========================
-           MEMBERSHIP DOUGHNUT
-        ========================= */
+        // 2. Membership Chart
         const membershipCtx = document.getElementById("membershipChart");
         if (membershipCtx) {
             new Chart(membershipCtx, {
                 type: "doughnut",
                 data: {
-                    labels: ["Basic", "Standard", "Premium", "VIP"],
+                    labels: @Html.Raw(ViewBag.MembershipLabels ?? "[]"),
                     datasets: [{
-                        data: [420, 310, 110, 50],
-                        backgroundColor: ["#84cc16", "#22c55e", "#f59e0b", "#a855f7"],
+                        data: @Html.Raw(ViewBag.MembershipData ?? "[]"),
+                        backgroundColor: ["#84cc16", "#22c55e", "#a855f7", "#f59e0b", "#3b82f6"],
                         borderWidth: 4,
                         borderColor: isDark ? "#141414" : "#ffffff"
                     }]
@@ -411,15 +283,16 @@
                     maintainAspectRatio: false,
                     cutout: "70%",
                     plugins: {
-                        legend: { position: "bottom", labels: { padding: 10, usePointStyle: true } }
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 11 }, color: isDark ? "#a1a1aa" : "#52525b" }
+                        }
                     }
                 }
             });
         }
 
-        /* =========================
-           ATTENDANCE CHART
-        ========================= */
+        // 3. Attendance Chart
         const attendanceCanvas = document.getElementById("attendanceChart");
         if (attendanceCanvas) {
             new Chart(attendanceCanvas, {
@@ -428,82 +301,32 @@
                     labels: ["Present", "Absent", "Late"],
                     datasets: [{
                         label: "Members",
-                        data: [280, 22, 10],
-                        backgroundColor: [
-                            "#84cc16",
-                            "#ef4444",
-                            "#f59e0b"
-                        ],
+                        data: @Html.Raw(ViewBag.AttendanceData ?? "[0,0,0]"),
+                        backgroundColor: ["#84cc16", "#ef4444", "#f59e0b"],
                         borderRadius: 8,
-                        borderSkipped: false,
                         barThickness: 45
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: isDark ? "#111713" : "#ffffff",
-                            borderColor: isDark ? "#29352d" : "#e4e4e7",
-                            borderWidth: 1,
-                            padding: 10
-                        }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, border: { display: false } },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: gridColor },
-                            border: { display: false },
-                            ticks: { stepSize: 50 }
-                        }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
-        /* =========================
-           CLASS PERFORMANCE CHART
-        ========================= */
+        // 4. Class Performance Chart
         const classCanvas = document.getElementById("classChart");
         if (classCanvas) {
             new Chart(classCanvas, {
                 type: "bar",
                 data: {
-                    labels: ["Strength", "Yoga", "Zumba", "CrossFit", "Cardio"],
+                    labels: ["Strength", "Yoga", "Zumba", "CrossFit"],
                     datasets: [{
-                        label: "Members",
-                        data: [18, 12, 20, 16, 14],
+                        label: "Capacity",
+                        data: [18, 12, 20, 16],
                         backgroundColor: "#84cc16",
                         borderRadius: 7,
                         barThickness: 32
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: isDark ? "#111713" : "#ffffff",
-                            borderColor: isDark ? "#29352d" : "#e4e4e7",
-                            borderWidth: 1,
-                            padding: 10
-                        }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, border: { display: false } },
-                        y: {
-                            beginAtZero: true,
-                            max: 25,
-                            grid: { color: gridColor },
-                            border: { display: false },
-                            ticks: { stepSize: 5 }
-                        }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
     });

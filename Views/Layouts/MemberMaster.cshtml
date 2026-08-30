@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject ApplicationDbContext _context
+@{
     // Helper function oo si dynamic ah u ogaanaysa bogga furan si uu menu-ka u active oo u ifo (Highlight)
     var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
 
@@ -18,7 +19,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FitZone Gym Management</title>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tailwind CSS CDN -->
@@ -26,9 +27,9 @@
 
     <!-- Tailwind Config -->
     <script>
-        tailwind.config = {
-            darkMode: 'class'
-        }
+            tailwind.config = {
+                darkMode: 'class'
+            }
     </script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -50,7 +51,7 @@
                     <a href="@Url.Action("Dashboard", "Member")" class="flex items-center gap-3 group">
                         <div class="w-11 h-11 rounded-xl bg-lime-400 flex items-center justify-center shadow-lg shadow-lime-400/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 10v4m3-6v8m10-8v8m3-6v4M7 12h10"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 10v4m3-6v8m10-8v8m3-6v4M7 12h10" />
                             </svg>
                         </div>
                         <div>
@@ -67,7 +68,7 @@
                     <div class="hidden md:flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-[#1a3313] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-700 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10" />
                             </svg>
                         </div>
                         <div>
@@ -81,7 +82,7 @@
                 <div class="hidden md:flex flex-1 justify-center px-8">
                     <div class="relative w-full max-w-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
                         </svg>
                         <input type="text" placeholder="Search members, payments, classes..." class="w-full h-11 pl-11 pr-4 rounded-xl bg-[#1c3815] dark:bg-zinc-900 border border-[#2b5420] dark:border-zinc-700 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-lime-400 transition" />
                     </div>
@@ -95,33 +96,34 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-400 hidden dark:block hover:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
                         </svg>
                     </button>
 
                     <!-- Notification -->
-                    <div class="relative">
-                        <a href="@Url.Action("Notifications", "Member")" class="w-10 h-10 rounded-xl bg-[#1c3815] dark:bg-zinc-900 border border-[#2b5420] dark:border-zinc-700 hover:border-lime-400 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5"/>
+                    <div class="relative shrink-0">
+                        <a href="/Shared/Notifications?role=Member" class="w-10 h-10 rounded-xl bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 hover:border-lime-400 flex items-center justify-center transition-all duration-200 active:scale-95">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-lime-400 dark:text-zinc-400 hover:text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14V11a6 6 0 10-12 0v3a2 2 0 01-.6 1.4L4 17h5" />
                             </svg>
                         </a>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-lime-400 text-black text-[10px] font-bold flex items-center justify-center">
-                            8
+                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-lime-400 text-[#13250E] dark:text-zinc-950 text-[10px] font-extrabold flex items-center justify-center shadow-md animate-pulse">
+                            @(_context != null ? _context.Notifications.Count(n => (n.TargetRole == "Member" || n.TargetRole == "All") && !n.IsRead) : 0)
                         </span>
                     </div>
 
-                    <div class="hidden sm:block w-px h-8 bg-[#23451A] dark:bg-zinc-700"></div>
+                    <div class="hidden sm:block w-px h-8 bg-[#1f3a17] dark:bg-zinc-800"></div>
 
-                    
                     <div class="hidden sm:block w-px h-8 bg-[#23451A] dark:bg-zinc-700"></div>
 
                     <!-- Profile -->
-                    <a href="@Url.Action("Profile", "Member")" class="flex items-center gap-3 bg-[#1c3815] dark:bg-zinc-900 border border-[#2b5420] dark:border-zinc-700 rounded-xl px-2 py-1.5 hover:border-lime-400 transition">
-                        <img src="https://i.pravatar.cc/100?img=12" class="w-9 h-9 rounded-lg border border-lime-400 object-cover" alt="Profile">
+                    <a href="@Url.Action("Profile", "Shared", new { role = "Member" })" class="flex items-center gap-3 bg-[#1c3815] dark:bg-zinc-900 border border-[#2b5420] dark:border-zinc-700 rounded-xl px-2 py-1.5 hover:border-lime-400 transition">
+                        <img src="@(ViewBag.MemberAvatar ?? "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(ViewBag.MemberName ?? "Member") + "&background=a3e635&color=000")"
+                             class="w-9 h-9 rounded-lg border border-lime-400 object-cover"
+                             alt="Profile">
                         <div class="text-left hidden sm:block">
-                            <p class="text-sm text-white font-semibold">Hajira Yousuf</p>
-                            <span class="text-[11px] text-lime-400 font-medium">Member</span>
+                            <p class="text-sm text-white font-semibold">@(ViewBag.MemberName ?? "Member")</p>
+                            <span class="text-[11px] text-lime-400 font-medium">@(ViewBag.MemberRole ?? "Member")</span>
                         </div>
                     </a>
                 </div>
@@ -136,7 +138,7 @@
                 <div class="p-3 mx-3 my-3 bg-[#1a3313] dark:bg-zinc-900/60 border border-[#274b1e] dark:border-zinc-800/80 rounded-2xl flex items-center gap-3 shrink-0">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop" alt="Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-lime-400/30" />
                     <div class="truncate">
-                        <h2 class="text-xs font-semibold text-white truncate">Hajira Yousuf</h2>
+                        <h2 class="text-xs font-semibold text-white truncate">@(ViewBag.MemberName ?? "Member!")</h2>
                         <span class="inline-flex items-center gap-1 text-[10px] text-lime-400 font-medium">
                             <i data-lucide="check-circle-2" class="w-3 h-3"></i> Member
                         </span>
@@ -158,13 +160,13 @@
                         <span>Membership</span>
                     </a>
 
-                    <!-- 3. Workout Plans (Waa WorkoutPlans.cshtml) -->
+                    <!-- 3. Workout Plans -->
                     <a href="@Url.Action("WorkoutPlans", "Member")" class="@GetMenuClass("/member/workoutplans")">
                         <i data-lucide="activity" class="w-4 h-4"></i>
                         <span>Workout Plans</span>
                     </a>
 
-                    <!-- 4. Nutrition Plans (Waa NutritionPlans.cshtml) -->
+                    <!-- 4. Nutrition Plans -->
                     <a href="@Url.Action("NutritionPlans", "Member")" class="@GetMenuClass("/member/nutritionplans")">
                         <i data-lucide="utensils" class="w-4 h-4"></i>
                         <span>Nutrition Plans</span>
@@ -182,10 +184,15 @@
                         <span>Attendance</span>
                     </a>
 
-                    <!-- 7. Progress (Waa progress.cshtml) -->
+                    <!-- 7. Progress -->
                     <a href="@Url.Action("Progress", "Member")" class="@GetMenuClass("/member/progress")">
                         <i data-lucide="line-chart" class="w-4 h-4"></i>
                         <span>Progress</span>
+                    </a>
+
+                    <a href="@Url.Action("Messages", "Shared", new { role = "member" })" class="@GetMenuClass("/shared/messages")">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                        <span>Messages</span>
                     </a>
 
                 </nav>
@@ -239,57 +246,57 @@
 
     <!-- JavaScript -->
     <script>
-        lucide.createIcons();
+            lucide.createIcons();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+
+            function toggleTheme() {
+                const html = document.documentElement;
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
             }
-        });
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (sidebar && overlay) {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
             }
-        }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar && overlay) {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
+            // Logout Popup Modal Functions
+            function openLogoutModal() {
+                const modal = document.getElementById('logoutModal');
+                const content = document.getElementById('logoutModalContent');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
             }
-        }
 
-        // Logout Popup Modal Functions
-        function openLogoutModal() {
-            const modal = document.getElementById('logoutModal');
-            const content = document.getElementById('logoutModalContent');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeLogoutModal() {
-            const modal = document.getElementById('logoutModal');
-            const content = document.getElementById('logoutModalContent');
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
-        }
+            function closeLogoutModal() {
+                const modal = document.getElementById('logoutModal');
+                const content = document.getElementById('logoutModalContent');
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 200);
+            }
     </script>
 </body>
 </html>

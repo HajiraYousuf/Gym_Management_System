@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.NutritionPlan>
+
+@{
     ViewData["Title"] = "Nutrition Management";
     Layout = "~/Views/layouts/AdminMaster.cshtml";
 }
@@ -14,7 +16,7 @@
             <div>
                 <div class="flex items-center gap-2.5">
                     <h2 class="text-xl md:text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Nutrition Dashboard</h2>
-                    <span class="bg-lime-400/10 border border-lime-400/30 text-lime-600 dark:text-lime-400 font-extrabold px-2.5 py-1 rounded-full text-xs">7 Active</span>
+                    <span class="bg-lime-400/10 border border-lime-400/30 text-lime-600 dark:text-lime-400 font-extrabold px-2.5 py-1 rounded-full text-xs">@ViewBag.ActivePlansCount Active</span>
                 </div>
                 <p class="text-sm text-zinc-500 dark:text-gray-400 mt-0.5">Manage, track and analyze member nutrition programs</p>
             </div>
@@ -33,8 +35,8 @@
             </div>
             <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-gray-400">Total Plans</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-2xl font-black text-zinc-900 dark:text-white">16</span>
-                <span class="text-xs font-bold text-lime-600 dark:text-lime-400"><i class="fa-solid fa-arrow-up text-[10px] mr-0.5"></i>+12%</span>
+                <span class="text-2xl font-black text-zinc-900 dark:text-white">@ViewBag.TotalPlans</span>
+                <span class="text-xs font-bold text-lime-600 dark:text-lime-400"><i class="fa-solid fa-arrow-up text-[10px] mr-0.5"></i>Active</span>
             </div>
         </div>
 
@@ -48,8 +50,8 @@
             </div>
             <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-gray-400">Active Plans</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-2xl font-black text-zinc-900 dark:text-white">12</span>
-                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">75% rate</span>
+                <span class="text-2xl font-black text-zinc-900 dark:text-white">@ViewBag.ActivePlansCount</span>
+                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Running</span>
             </div>
         </div>
 
@@ -63,8 +65,8 @@
             </div>
             <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-gray-400">Assigned Members</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-2xl font-black text-zinc-900 dark:text-white">250</span>
-                <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400"><i class="fa-solid fa-arrow-up text-[10px] mr-0.5"></i>+24 wk</span>
+                <span class="text-2xl font-black text-zinc-900 dark:text-white">@ViewBag.AssignedMembersCount</span>
+                <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400">Total</span>
             </div>
         </div>
 
@@ -78,39 +80,33 @@
             </div>
             <p class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-gray-400">Avg Daily Calories</p>
             <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-2xl font-black text-zinc-900 dark:text-white">2,150</span>
+                <span class="text-2xl font-black text-zinc-900 dark:text-white">@ViewBag.AvgCalories</span>
                 <span class="text-xs font-bold text-amber-600 dark:text-amber-400">kcal / day</span>
             </div>
         </div>
     </div>
 
     <!-- 3. SEARCH & FILTER BAR -->
-    <div class="bg-white dark:bg-[#0e1410] p-3 rounded-xl border border-zinc-200 dark:border-white/[0.08] mb-6 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 shadow-sm">
+    <form asp-action="Index" method="get" class="bg-white dark:bg-[#0e1410] p-3 rounded-xl border border-zinc-200 dark:border-white/[0.08] mb-6 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 shadow-sm">
         <div class="relative w-full sm:w-80">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-sm"></i>
-            <input type="text" placeholder="Search by Plan ID, name..." 
-                class="w-full bg-zinc-100 dark:bg-[#141d17] border border-zinc-300 dark:border-white/10 text-sm text-zinc-800 dark:text-white placeholder-zinc-400 dark:placeholder-gray-500 rounded-xl pl-9 pr-3 py-2 focus:outline-none focus:border-lime-500 dark:focus:border-lime-400/50" />
+            <input type="text" name="searchString" value="@ViewBag.CurrentSearch" placeholder="Search by Plan ID, name..."
+                   class="w-full bg-zinc-100 dark:bg-[#141d17] border border-zinc-300 dark:border-white/10 text-sm text-zinc-800 dark:text-white placeholder-zinc-400 dark:placeholder-gray-500 rounded-xl pl-9 pr-3 py-2 focus:outline-none focus:border-lime-500 dark:focus:border-lime-400/50" />
         </div>
 
         <div class="flex items-center gap-2.5 w-full sm:w-auto flex-wrap sm:flex-nowrap">
-            <select class="bg-zinc-100 dark:bg-[#141d17] border border-zinc-300 dark:border-white/10 text-sm text-zinc-700 dark:text-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-lime-500 dark:focus:border-lime-400/50 w-full sm:w-auto">
+            <select name="goalFilter" class="bg-zinc-100 dark:bg-[#141d17] border border-zinc-300 dark:border-white/10 text-sm text-zinc-700 dark:text-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-lime-500 dark:focus:border-lime-400/50 w-full sm:w-auto">
                 <option value="All">All Goals</option>
-                <option value="WeightLoss">Weight Loss</option>
-                <option value="MuscleGain">Muscle Gain</option>
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="Muscle Building">Muscle Building</option>
                 <option value="Maintenance">Maintenance</option>
             </select>
 
-            <select class="bg-zinc-100 dark:bg-[#141d17] border border-zinc-300 dark:border-white/10 text-sm text-zinc-700 dark:text-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-lime-500 dark:focus:border-lime-400/50 w-full sm:w-auto">
-                <option value="All">All Status</option>
-                <option value="Active">Active</option>
-                <option value="Draft">Draft</option>
-            </select>
-
-            <button type="button" class="w-full sm:w-auto bg-zinc-200 hover:bg-zinc-300 dark:bg-white/5 dark:hover:bg-white/10 text-zinc-800 dark:text-gray-200 border border-zinc-300 dark:border-white/10 font-bold px-4 py-2 rounded-xl text-sm transition-all cursor-pointer">
+            <button type="submit" class="w-full sm:w-auto bg-zinc-200 hover:bg-zinc-300 dark:bg-white/5 dark:hover:bg-white/10 text-zinc-800 dark:text-gray-200 border border-zinc-300 dark:border-white/10 font-bold px-4 py-2 rounded-xl text-sm transition-all cursor-pointer">
                 Filter
             </button>
         </div>
-    </div>
+    </form>
 
     <!-- 4. NUTRITION PLANS TABLE -->
     <div class="bg-white dark:bg-[#0e1410] rounded-2xl border border-zinc-200 dark:border-white/[0.08] overflow-hidden shadow-xl mb-6">
@@ -119,7 +115,7 @@
                 <h3 class="text-base font-extrabold text-zinc-900 dark:text-white">Nutrition Plans Overview</h3>
                 <p class="text-xs text-zinc-500 dark:text-gray-400">Complete listing of active and drafted dietary programs</p>
             </div>
-            <span class="text-xs font-bold text-lime-600 dark:text-lime-400 bg-lime-400/10 border border-lime-400/20 px-2.5 py-1 rounded-md">4 Total Plans</span>
+            <span class="text-xs font-bold text-lime-600 dark:text-lime-400 bg-lime-400/10 border border-lime-400/20 px-2.5 py-1 rounded-md">@(Model.Count()) Total Plans</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -131,130 +127,65 @@
                         <th class="p-4">Goal Type</th>
                         <th class="p-4">Daily Calories</th>
                         <th class="p-4">Macro Breakdown (P/C/F)</th>
-                        <th class="p-4 text-center">Assigned Members</th>
-                        <th class="p-4">Created / Updated</th>
+                        <th class="p-4 text-center">Duration</th>
+                        <th class="p-4">Created At</th>
                         <th class="p-4">Status</th>
                         <th class="p-4 pr-5 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-200 dark:divide-white/[0.04]">
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.02] transition-colors">
-                        <td class="p-4 pl-5 font-mono text-lime-600 dark:text-lime-400 font-bold text-sm">#NP-101</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120" alt="Meal" class="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-zinc-300 dark:ring-white/10" />
-                                <span class="font-extrabold text-zinc-900 dark:text-white text-sm">Weight Loss Shred</span>
-                            </div>
-                        </td>
-                        <td class="p-4"><span class="bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-md text-xs font-bold">Weight Loss</span></td>
-                        <td class="p-4 font-bold text-zinc-900 dark:text-white text-sm">1,800 kcal</td>
-                        <td class="p-4 text-xs">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">140g P</span> • 
-                            <span class="text-cyan-600 dark:text-cyan-400 font-bold">150g C</span> • 
-                            <span class="text-amber-600 dark:text-amber-400 font-bold">50g F</span>
-                        </td>
-                        <td class="p-4 text-center font-bold text-zinc-900 dark:text-white text-sm">112 Members</td>
-                        <td class="p-4 text-xs">
-                            <span class="block text-zinc-800 dark:text-gray-200">Created: 01/08/2026</span>
-                            <span class="block text-zinc-500 dark:text-gray-400">Updated: 03/08/2026</span>
-                        </td>
-                        <td class="p-4">
-                            <span class="bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-400/20 px-2.5 py-1 rounded-md font-bold text-xs">Active</span>
-                        </td>
-                        <!-- Actions Column Fixed with whitespace-nowrap and flex alignment -->
-                        <td class="p-4 pr-5 text-right whitespace-nowrap">
-                            <div class="inline-flex items-center gap-1.5">
-                                <button type="button" onclick="openDetailsModal('Weight Loss Shred', '#NP-101', '1,800 kcal', '140g P • 150g C • 50g F', '112 Members', 'Active')" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 p-1.5 hover:bg-cyan-400/10 rounded-lg transition-all cursor-pointer" title="View Details">
-                                    <i class="fa-solid fa-eye text-base"></i>
-                                </button>
-                                <button type="button" class="text-zinc-500 dark:text-gray-400 hover:text-lime-600 dark:hover:text-lime-400 p-1.5 hover:bg-zinc-200 dark:hover:bg-white/5 rounded-lg transition-all cursor-pointer" title="Edit Plan">
-                                    <i class="fa-solid fa-pen-to-square text-base"></i>
-                                </button>
-                                <button type="button" class="text-rose-600 dark:text-rose-400 hover:text-rose-500 dark:hover:text-rose-300 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer" title="Delete Plan" onclick="return confirm('Are you sure?');">
-                                    <i class="fa-solid fa-trash text-base"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.02] transition-colors">
-                        <td class="p-4 pl-5 font-mono text-lime-600 dark:text-lime-400 font-bold text-sm">#NP-102</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=120" alt="Meal" class="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-zinc-300 dark:ring-white/10" />
-                                <span class="font-extrabold text-zinc-900 dark:text-white text-sm">Muscle Gain Bulk</span>
-                            </div>
-                        </td>
-                        <td class="p-4"><span class="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 px-2.5 py-1 rounded-md text-xs font-bold">Muscle Gain</span></td>
-                        <td class="p-4 font-bold text-zinc-900 dark:text-white text-sm">2,800 kcal</td>
-                        <td class="p-4 text-xs">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">200g P</span> • 
-                            <span class="text-cyan-600 dark:text-cyan-400 font-bold">300g C</span> • 
-                            <span class="text-amber-600 dark:text-amber-400 font-bold">70g F</span>
-                        </td>
-                        <td class="p-4 text-center font-bold text-zinc-900 dark:text-white text-sm">85 Members</td>
-                        <td class="p-4 text-xs">
-                            <span class="block text-zinc-800 dark:text-gray-200">Created: 28/07/2026</span>
-                            <span class="block text-zinc-500 dark:text-gray-400">Updated: 02/08/2026</span>
-                        </td>
-                        <td class="p-4">
-                            <span class="bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-400/20 px-2.5 py-1 rounded-md font-bold text-xs">Active</span>
-                        </td>
-                        <td class="p-4 pr-5 text-right whitespace-nowrap">
-                            <div class="inline-flex items-center gap-1.5">
-                                <button type="button" onclick="openDetailsModal('Muscle Gain Bulk', '#NP-102', '2,800 kcal', '200g P • 300g C • 70g F', '85 Members', 'Active')" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 p-1.5 hover:bg-cyan-400/10 rounded-lg transition-all cursor-pointer" title="View Details">
-                                    <i class="fa-solid fa-eye text-base"></i>
-                                </button>
-                                <button type="button" class="text-zinc-500 dark:text-gray-400 hover:text-lime-600 dark:hover:text-lime-400 p-1.5 hover:bg-zinc-200 dark:hover:bg-white/5 rounded-lg transition-all cursor-pointer" title="Edit Plan">
-                                    <i class="fa-solid fa-pen-to-square text-base"></i>
-                                </button>
-                                <button type="button" class="text-rose-600 dark:text-rose-400 hover:text-rose-500 dark:hover:text-rose-300 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer" title="Delete Plan" onclick="return confirm('Are you sure?');">
-                                    <i class="fa-solid fa-trash text-base"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- Row 3 -->
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.02] transition-colors">
-                        <td class="p-4 pl-5 font-mono text-lime-600 dark:text-lime-400 font-bold text-sm">#NP-103</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=120" alt="Meal" class="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-zinc-300 dark:ring-white/10" />
-                                <span class="font-extrabold text-zinc-900 dark:text-white text-sm">Maintenance Balance</span>
-                            </div>
-                        </td>
-                        <td class="p-4"><span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md text-xs font-bold">Maintenance</span></td>
-                        <td class="p-4 font-bold text-zinc-900 dark:text-white text-sm">2,100 kcal</td>
-                        <td class="p-4 text-xs">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">150g P</span> • 
-                            <span class="text-cyan-600 dark:text-cyan-400 font-bold">210g C</span> • 
-                            <span class="text-amber-600 dark:text-amber-400 font-bold">60g F</span>
-                        </td>
-                        <td class="p-4 text-center font-bold text-zinc-900 dark:text-white text-sm">40 Members</td>
-                        <td class="p-4 text-xs">
-                            <span class="block text-zinc-800 dark:text-gray-200">Created: 15/07/2026</span>
-                            <span class="block text-zinc-500 dark:text-gray-400">Updated: 20/07/2026</span>
-                        </td>
-                        <td class="p-4">
-                            <span class="bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-400/20 px-2.5 py-1 rounded-md font-bold text-xs">Active</span>
-                        </td>
-                        <td class="p-4 pr-5 text-right whitespace-nowrap">
-                            <div class="inline-flex items-center gap-1.5">
-                                <button type="button" onclick="openDetailsModal('Maintenance Balance', '#NP-103', '2,100 kcal', '150g P • 210g C • 60g F', '40 Members', 'Active')" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 p-1.5 hover:bg-cyan-400/10 rounded-lg transition-all cursor-pointer" title="View Details">
-                                    <i class="fa-solid fa-eye text-base"></i>
-                                </button>
-                                <button type="button" class="text-zinc-500 dark:text-gray-400 hover:text-lime-600 dark:hover:text-lime-400 p-1.5 hover:bg-zinc-200 dark:hover:bg-white/5 rounded-lg transition-all cursor-pointer" title="Edit Plan">
-                                    <i class="fa-solid fa-pen-to-square text-base"></i>
-                                </button>
-                                <button type="button" class="text-rose-600 dark:text-rose-400 hover:text-rose-500 dark:hover:text-rose-300 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer" title="Delete Plan" onclick="return confirm('Are you sure?');">
-                                    <i class="fa-solid fa-trash text-base"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center p-6 text-zinc-500">No nutrition plans found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var plan in Model)
+                        {
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 pl-5 font-mono text-lime-600 dark:text-lime-400 font-bold text-sm">#NP-@plan.Id</td>
+                                <td class="p-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-lg bg-lime-400/10 border border-lime-400/20 flex items-center justify-center text-lime-600 dark:text-lime-400 shrink-0">
+                                            <i class="fa-solid fa-utensils"></i>
+                                        </div>
+                                        <span class="font-extrabold text-zinc-900 dark:text-white text-sm">@plan.Title</span>
+                                    </div>
+                                </td>
+                                <td class="p-4">
+                                    <span class="bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-md text-xs font-bold">@plan.TargetGoal</span>
+                                </td>
+                                <td class="p-4 font-bold text-zinc-900 dark:text-white text-sm">@plan.Calories.ToString("N0") kcal</td>
+                                <td class="p-4 text-xs">
+                                    <span class="text-lime-600 dark:text-lime-400 font-bold">@(plan.Protein)g P</span> •
+                                    <span class="text-cyan-600 dark:text-cyan-400 font-bold">@(plan.Carbs)g C</span> •
+                                    <span class="text-amber-600 dark:text-amber-400 font-bold">@(plan.Fats)g F</span>
+                                </td>
+                                <td class="p-4 text-center font-bold text-zinc-900 dark:text-white text-sm">@plan.DurationWeeks Weeks</td>
+                                <td class="p-4 text-xs">
+                                    <span class="block text-zinc-800 dark:text-gray-200">@plan.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td class="p-4">
+                                    <span class="bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-400/20 px-2.5 py-1 rounded-md font-bold text-xs">Active</span>
+                                </td>
+                                <td class="p-4 pr-5 text-right whitespace-nowrap">
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <button type="button" onclick="openDetailsModal('@plan.Title', '#NP-@plan.Id', '@plan.Calories kcal', '@plan.Protein g P • @plan.Carbs g C • @plan.Fats g F', '@plan.DurationWeeks Weeks', 'Active')" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 p-1.5 hover:bg-cyan-400/10 rounded-lg transition-all cursor-pointer" title="View Details">
+                                            <i class="fa-solid fa-eye text-base"></i>
+                                        </button>
+                                        <form asp-action="Delete" asp-route-id="@plan.Id" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this plan?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="text-rose-600 dark:text-rose-400 hover:text-rose-500 dark:hover:text-rose-300 p-1.5 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer" title="Delete Plan">
+                                                <i class="fa-solid fa-trash text-base"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
         </div>
@@ -266,7 +197,7 @@
 <!-- ========================================== -->
 <div id="detailsModal" class="fixed inset-0 bg-zinc-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-        
+
         <!-- Modal Header -->
         <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950/50">
             <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -297,7 +228,7 @@
                 <span id="modalMacros" class="text-sm font-bold text-zinc-900 dark:text-white"></span>
             </div>
             <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-                <span class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Assigned Members</span>
+                <span class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Duration</span>
                 <span id="modalMembers" class="text-sm font-bold text-zinc-900 dark:text-white"></span>
             </div>
             <div class="flex items-center justify-between">

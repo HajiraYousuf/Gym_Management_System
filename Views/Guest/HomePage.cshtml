@@ -13,97 +13,786 @@
 
 <!-- 1. HERO SECTION -->
 <section id="home" class="relative min-h-[calc(100vh-80px)] flex flex-col justify-between pt-12 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden border-b border-neutral-900">
-    
     <!-- Hero Main Content (Grid) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
-      
-      <!-- Left Column: Text & Call to Action -->
-      <div class="lg:col-span-6 space-y-6 z-10">
-        <div class="inline-block">
-          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[1.05]">
-            Stronger <br />
-            <span class="text-[#a3e635]">Every Day</span>
-          </h1>
+        <!-- Left Column: Text & Call to Action -->
+        <div class="lg:col-span-6 space-y-6 z-10">
+            <div class="inline-block">
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[1.05]">
+                    BUILD STRENGTH.  <br />
+                    <span class="text-[#a3e635]">BUILD CONFIDENCE.</span>
+                </h1>
+            </div>
+
+            <p class="text-neutral-400 text-base sm:text-lg max-w-md leading-relaxed">
+                Stay stronger. Become your best self with IronCore Gym. <br class="hidden sm:inline" />
+                Join the best gym in town.
+            </p>
+
+            <!-- Navigation Buttons -->
+            <div class="flex flex-wrap gap-4 pt-2">
+                <a href="@Url.Action("Register", "Account")"
+                   class="px-8 py-3.5 rounded-lg bg-[#a3e635] text-black font-extrabold flex items-center gap-2 hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/20">
+                    Join Now
+                </a>
+
+                <a href="@Url.Action("Memberships", "Guest")"
+                   class="px-8 py-3.5 rounded-lg bg-neutral-900/90 border border-neutral-700 text-white font-bold flex items-center gap-2 hover:bg-neutral-800 transition-all">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Explore Memberships
+                </a>
+            </div>
         </div>
 
-        <p class="text-neutral-400 text-base sm:text-lg max-w-md leading-relaxed">
-          Build your body. Boost your mind. <br class="hidden sm:inline" />
-          Join the best gym in town.
-        </p>
-
-        <!-- Navigation Buttons -->
-        <div class="flex flex-wrap gap-4 pt-2">
-          <a href="@Url.Action("Register", "Account")" 
-             class="px-8 py-3.5 rounded-lg bg-[#a3e635] text-black font-extrabold flex items-center gap-2 hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/20">
-            Join Now
-          </a>
-
-          <a href="@Url.Action("Login", "Account")" 
-             class="px-8 py-3.5 rounded-lg bg-neutral-900/90 border border-neutral-700 text-white font-bold flex items-center gap-2 hover:bg-neutral-800 transition-all">
-            <i data-lucide="lock" class="w-4 h-4"></i> Login
-          </a>
+        <!-- Right Column: Hero Image with Gradient Overlay -->
+        <div class="lg:col-span-6 relative flex justify-center items-center">
+            <div class="absolute inset-0 bg-[#a3e635]/10 blur-3xl rounded-full"></div>
+            <div class="relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1000&q=80"
+                     alt="Gym Athlete"
+                     class="w-full h-full object-cover object-center" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            </div>
         </div>
-      </div>
-
-      <!-- Right Column: Hero Image with Gradient Overlay -->
-      <div class="lg:col-span-6 relative flex justify-center items-center">
-        <!-- Glow Behind Image -->
-        <div class="absolute inset-0 bg-[#a3e635]/10 blur-3xl rounded-full"></div>
-        
-        <!-- Main Image Container -->
-        <div class="relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
-          <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1000&q=80" 
-               alt="Gym Athlete" 
-               class="w-full h-full object-cover object-center" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-        </div>
-      </div>
-
     </div>
 
     <!-- Bottom Feature Bar -->
     <div class="mt-12 pt-8 border-t border-neutral-800/60 grid grid-cols-2 lg:grid-cols-4 gap-6">
-      
-      <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
-        <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
-          <i data-lucide="dumbbell" class="w-6 h-6"></i>
+        <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
+            <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
+                <i data-lucide="dumbbell" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-white">Modern Equipment</h4>
+                <p class="text-xs text-neutral-400">State of the art machines</p>
+            </div>
         </div>
-        <div>
-          <h4 class="font-bold text-sm text-white">Modern Equipment</h4>
-          <p class="text-xs text-neutral-400">State of the art machines</p>
-        </div>
-      </div>
 
-      <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
-        <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
-          <i data-lucide="user-check" class="w-6 h-6"></i>
+        <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
+            <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
+                <i data-lucide="user-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-white">Expert Trainers</h4>
+                <p class="text-xs text-neutral-400">Certified & experienced</p>
+            </div>
         </div>
-        <div>
-          <h4 class="font-bold text-sm text-white">Expert Trainers</h4>
-          <p class="text-xs text-neutral-400">Certified & experienced</p>
-        </div>
-      </div>
 
-      <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
-        <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
-          <i data-lucide="target" class="w-6 h-6"></i>
+        <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
+            <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
+                <i data-lucide="target" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-white">Personalized Plans</h4>
+                <p class="text-xs text-neutral-400">Achieve your goals</p>
+            </div>
         </div>
-        <div>
-          <h4 class="font-bold text-sm text-white">Personalized Plans</h4>
-          <p class="text-xs text-neutral-400">Achieve your goals</p>
-        </div>
-      </div>
 
-      <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
-        <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
-          <i data-lucide="headset" class="w-6 h-6"></i>
+        <div class="flex items-center gap-4 p-3 rounded-xl bg-neutral-950/50 border border-neutral-900">
+            <div class="p-3 rounded-lg bg-neutral-900 text-[#a3e635] shrink-0">
+                <i data-lucide="headset" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-white">Friendly Support</h4>
+                <p class="text-xs text-neutral-400">We are here for you</p>
+            </div>
         </div>
-        <div>
-          <h4 class="font-bold text-sm text-white">Friendly Support</h4>
-          <p class="text-xs text-neutral-400">We are here for you</p>
+    </div>
+</section>
+
+<section id="about" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-16">
+
+        <!-- Top Grid: Text Content & Image -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+            <!-- Left Column: Content -->
+            <div class="lg:col-span-6 space-y-6">
+                <!-- Subheading -->
+                <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                    ABOUT US
+                </span>
+
+                <!-- Main Heading -->
+                <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-tight">
+                    We're Here to <br />
+                    <span class="text-[#a3e635]">Transform You</span>
+                </h2>
+
+                <!-- Description Paragraph -->
+                <p class="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-xl">
+                At IronCore Gym, we believe fitness is more than exercise. It's about discipline, confidence, health, and becoming stronger every day.
+                </p>
+            </div>
+
+            <!-- Right Column: Image -->
+            <div class="lg:col-span-6 flex justify-center lg:justify-end">
+                <div class="relative w-full max-w-lg aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80"
+                         alt="Female Gym Athlete"
+                         class="w-full h-full object-cover object-center" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </div>
+            </div>
+
         </div>
-      </div>
+
+        <!-- Bottom Grid: 4 Feature Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <!-- Card 1: Our Mission -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Mission</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        To empower people to live healthier lives.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 2: Our Vision -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="eye" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Vision</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        To be the leading fitness community.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3: Our Services -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Services</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        Training, nutrition guidance & more.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 4: Our Support -->
+            <div class="p-6 rounded-2xl bg-neutral-950/80 border border-neutral-900/80 space-y-4 hover:border-neutral-800 transition-all">
+                <div class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                    <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white mb-1">Our Support</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        We support you every step of the way.
+                    </p>
+                </div>
+            </div>
+
+        </div>
 
     </div>
+</section>
 
+
+<section id="Memberships" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        <!-- Success / Error Alerts -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-8 p-4 bg-lime-400/10 border border-lime-400/20 text-lime-400 rounded-2xl text-sm font-bold text-center">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="mb-8 p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl text-sm font-bold text-center">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2 mb-12">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                MEMBERSHIP PLANS
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight text-white">
+                Choose the membership that fits your  <span class="text-[#a3e635]">Goals.</span>
+            </h2>
+        </div>
+
+        <!-- Pricing Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+
+            @foreach (var plan in Model.MembershipPlans)
+            {
+                <!-- Membership Card -->
+                <div class="bg-neutral-950 border border-neutral-800/80
+                    rounded-3xl p-8 flex flex-col justify-between
+                    transition-all duration-300 ease-in-out
+                    hover:-translate-y-2 hover:bg-neutral-900
+                    hover:border-neutral-700
+                    hover:shadow-2xl hover:shadow-black/60">
+
+                    <div>
+                        <!-- Plan Title -->
+                        <h3 class="text-xl font-extrabold uppercase tracking-wider text-center text-white mb-6">
+                            @plan.Name
+                        </h3>
+
+                        <!-- Price -->
+                        <div class="text-center mb-8">
+                            <span class="text-5xl font-black text-white">
+                                $@string.Format("{0:F2}", plan.Price)
+                            </span>
+                            <span class="text-neutral-400 text-sm">/month</span>
+                        </div>
+
+                        <!-- Features -->
+                        <ul class="space-y-4 text-sm text-neutral-300 mb-8">
+
+                            @if (!string.IsNullOrEmpty(plan.Features))
+                            {
+                                @foreach (var feature in plan.Features.Split('|'))
+                                {
+                                    <li class="flex items-center gap-3">
+                                        <i data-lucide="check" class="w-4 h-4 text-[#a3e635]"></i>
+                                        <span>@feature.Trim()</span>
+                                    </li>
+                                }
+                            }
+
+                        </ul>
+                    </div>
+
+                    <!-- Join Now Button (Triggers Modal) -->
+                    <button type="button" onclick="openJoinModal('@plan.Name', '@plan.Price')"
+                            class="w-full py-3.5 block rounded-xl bg-[#a3e635] text-black font-extrabold text-center hover:bg-[#86efac] transition-all cursor-pointer">
+                        Join Now
+                    </button>
+
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- ================= MEMBERSHIP REQUEST MODAL ================= -->
+    <div id="joinModal" class="fixed inset-0 z-50 hidden bg-neutral-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-neutral-900 border border-neutral-800 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-6 my-8 text-white">
+
+            <div class="flex justify-between items-center border-b border-neutral-800 pb-4">
+                <div>
+                    <h3 class="text-lg font-black uppercase tracking-wider text-white">Confirm Membership Request</h3>
+                    <p class="text-xs text-neutral-400 mt-0.5" id="modalPlanSubtitle">Selected Plan: -</p>
+                </div>
+                <button type="button" onclick="closeJoinModal()" class="w-9 h-9 rounded-xl bg-neutral-800 text-neutral-400 hover:text-rose-500 flex items-center justify-center cursor-pointer transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form asp-action="SubmitMembershipRequest" method="post" class="space-y-4 text-xs">
+                <input type="hidden" id="modalPlanNameInput" name="planName" />
+
+                <div class="p-4 bg-neutral-950 rounded-2xl border border-neutral-800 text-neutral-300">
+                    <p class="font-bold text-white mb-1">Xusuusin:</p>
+                    <p class="text-[11px] text-neutral-400">Codsigaaga waxaa lagugu xiri doonaa koontadaada (Account) aad ku soo gashay. Receptionist-ka ayaa hubin doona lacag bixintaada.</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold uppercase text-neutral-400 mb-1.5">Payment Method</label>
+                    <select name="paymentMethod" class="w-full h-11 bg-neutral-950 border border-neutral-800 focus:border-[#a3e635] rounded-xl px-3 text-white text-xs outline-none transition">
+                        <option value="EVC Plus">EVC Plus</option>
+                        <option value="Zaad">Zaad Service</option>
+                        <option value="Cash">Cash at Reception</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-neutral-800">
+                    <button type="button" onclick="closeJoinModal()" class="px-5 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-bold rounded-xl transition cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-[#a3e635] hover:bg-[#86efac] text-neutral-950 font-extrabold rounded-xl shadow-md transition cursor-pointer">Submit Request</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <!-- Modal Script -->
+    <script>
+            function openJoinModal(planName, planPrice) {
+                document.getElementById('modalPlanNameInput').value = planName;
+                document.getElementById('modalPlanSubtitle').innerText = "Selected Plan: " + planName + " ($" + planPrice + "/month)";
+                document.getElementById('joinModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeJoinModal() {
+                document.getElementById('joinModal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+    </script>
+    </section>
+<section id="classes" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                OUR CLASSES
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Find the Class <span class="text-[#a3e635]">You Love</span>
+            </h2>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto justify-center">
+
+            @foreach (var item in Model.Classes)
+            {
+                <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-5 flex flex-col items-center text-center shadow-lg shadow-black/80 transition-all duration-300 hover:-translate-y-3 hover:border-[#a3e635]">
+
+                    <!-- Image Container -->
+                    <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-5 border border-neutral-900">
+                        <img src="@item.ImageUrl"
+                             alt="@item.Name"
+                             class="w-full h-full object-cover" />
+
+                        <!-- Icon Badge -->
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 w-10 h-10 rounded-xl bg-neutral-950/90 backdrop-blur-md border border-neutral-800 flex items-center justify-center text-[#a3e635]">
+                            <i data-lucide="@item.IconName" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <h3 class="text-xl font-extrabold uppercase text-white mb-2">
+                        @item.Name
+                    </h3>
+
+                    <p class="text-xs text-neutral-400 mb-2">
+                        Trainer: <span class="text-neutral-200 font-bold">@item.TrainerName</span>
+                    </p>
+
+                    <p class="text-sm text-neutral-400 font-medium">@item.Days</p>
+                    <p class="text-sm font-bold text-[#a3e635] mt-1">@item.TimeSlot</p>
+
+                </div>
+            }
+        </div>
+
+        <div class="text-center pt-6">
+            <a href="@Url.Action("Classes", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all">
+                View All Classes
+            </a>
+        </div>
+
+    </div>
+</section>
+<section id="store" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-10">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                OUR STORE
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Shop <span class="text-[#a3e635]">Top Products</span>
+            </h2>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto pt-4">
+
+            @foreach (var product in Model.Products)
+            {
+                <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-5 flex flex-col justify-between text-center transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
+                    <div>
+                        <!-- Product Image Container -->
+                        <div class="w-full aspect-square rounded-2xl bg-neutral-900/50 p-4 flex items-center justify-center mb-4 border border-neutral-900 overflow-hidden">
+                            <img src="@product.ProductImage"
+                                 alt="@product.ProductName"
+                                 class="max-h-full object-contain" />
+                        </div>
+                        <!-- Title & Price -->
+                        <h3 class="text-base font-bold text-white mb-1">
+                            @product.ProductName
+                        </h3>
+                        <p class="text-lg font-black text-[#a3e635] mb-5">
+                            $@string.Format("{0:N2}", product.Price)
+                        </p>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <a href="@Url.Action("AddToCart", "Guest", new { id = product.ProductID })"
+                       class="w-full py-2.5 rounded-xl bg-[#a3e635] text-black font-extrabold text-xs hover:bg-[#86efac] transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                    </a>
+                </div>
+            }
+
+        </div>
+
+        <!-- View Cart Link -->
+        <div class="text-center pt-4">
+            <a href="@Url.Action("Store", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-1">
+                View All Products
+            </a>
+        </div>
+
+    </div>
+</section>
+<section id="trainers" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                OUR TRAINERS
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Meet Our <span class="text-[#a3e635]">Experts</span>
+            </h2>
+        </div>
+
+        <!-- Trainers Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+
+            @foreach (var trainer in Model.Trainers)
+            {
+                <div class="group bg-neutral-950 border border-neutral-800/80 rounded-3xl p-4 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
+
+                    <!-- Image Container -->
+                    <div class="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 border border-neutral-900">
+                        <img src="@trainer.ImageUrl"
+                             alt="@trainer.TrainerName"
+                             class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    </div>
+
+                    <!-- Info -->
+                    <h3 class="text-lg font-extrabold text-white">
+                        @trainer.TrainerName
+                    </h3>
+                    <p class="text-xs text-neutral-400 mt-1 font-medium">
+                        @trainer.Role
+                    </p>
+                    <p class="text-xs text-[#a3e635] mt-0.5 font-semibold">
+                        @trainer.Experience
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- View All Trainers Link -->
+        <div class="text-center pt-4">
+            <a href="@Url.Action("Trainers", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-1">
+                View All Trainers
+            </a>
+        </div>
+
+    </div>
+</section>
+<section id="gallery" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-10">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                GALLERY
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Moments That <span class="text-[#a3e635]">Inspire</span>
+            </h2>
+        </div>
+
+        <!-- Dynamic Gallery Image Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto pt-4">
+
+            @foreach (var item in Model.GalleryImages)
+            {
+                <div class="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-950 border border-neutral-900 cursor-pointer">
+                    <img src="@item.ImageUrl"
+                         alt="@item.Title"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+
+                    <!-- Hover Overlay -->
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+                        <i data-lucide="zoom-in" class="w-8 h-8 text-[#a3e635] mb-2"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider text-white">@item.Title</span>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <!-- View More Photos Link -->
+        <div class="text-center pt-4">
+            <a href="@Url.Action("Gallery", "Guest")"
+               class="inline-block px-8 py-3.5 rounded-xl bg-[#a3e635] text-black font-extrabold hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-1">
+                View More Photos
+            </a>
+        </div>
+
+    </div>
+</section>
+<section id="testimonials" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                TESTIMONIALS
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                What Our <span class="text-[#a3e635]">Members</span> Say
+            </h2>
+        </div>
+
+        <!-- Testimonials Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+            @foreach (var item in Model.Testimonials)
+            {
+                <div class="bg-neutral-950 border border-neutral-800/80 rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-neutral-700 hover:shadow-2xl">
+                    <div class="space-y-4">
+                        <!-- Quote Icon -->
+                        <div class="text-[#a3e635]">
+                            <i data-lucide="quote" class="w-8 h-8 rotate-180 fill-[#a3e635]/20"></i>
+                        </div>
+                        <!-- Feedback Text -->
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            @item.Feedback
+                        </p>
+                    </div>
+
+                    <!-- Divider Line & Member Info -->
+                    <div class="pt-6 mt-6 border-t border-neutral-900 flex items-center gap-4">
+                        <img src="@item.MemberImage"
+                             alt="@item.MemberName"
+                             class="w-12 h-12 rounded-full object-cover border-2 border-[#a3e635]" />
+                        <div>
+                            <h4 class="text-sm font-bold text-white">@item.MemberName</h4>
+
+                            <!-- Star Rating -->
+                            <div class="flex gap-1 text-[#a3e635] text-xs mt-1">
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    <i data-lucide="star" class="w-3.5 h-3.5 @(star <= item.Rating ? "fill-[#a3e635]" : "text-neutral-700")"></i>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+</section>
+
+<!-- FAQ SECTION (FULL WIDTH) -->
+<section id="faq" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-4xl mx-auto space-y-8">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-3">
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                FAQ
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight">
+                Frequently Asked <span class="text-[#a3e635]">Questions</span>
+            </h2>
+            <p class="text-sm text-neutral-400 max-w-lg mx-auto">
+                Everything you need to know about FitZone services, memberships, and policies.
+            </p>
+        </div>
+
+        <!-- Search Input for FAQ -->
+        <div class="relative max-w-xl mx-auto">
+            <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"></i>
+            <input type="text"
+                   id="faqSearch"
+                   onkeyup="searchFaq()"
+                   placeholder="Search for a question..."
+                   class="w-full pl-12 pr-4 py-3.5 bg-neutral-950 border border-neutral-800 rounded-2xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#a3e635] transition-colors" />
+        </div>
+
+        <!-- Accordion List (Dynamic from database) -->
+        <div class="space-y-4 pt-2">
+
+            @foreach (var faq in Model.Faqs)
+            {
+                <div class="faq-item bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neutral-700">
+                    <button type="button" onclick="toggleFaq('faq-@faq.FaqID', 'icon-@faq.FaqID')" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white hover:text-[#a3e635] transition-colors focus:outline-none cursor-pointer">
+                        <span class="faq-question">@faq.Question</span>
+                        <div class="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-[#a3e635]">
+                            <i id="icon-@faq.FaqID" data-lucide="plus" class="w-4 h-4 transition-transform duration-300"></i>
+                        </div>
+                    </button>
+                    <div id="faq-@faq.FaqID" class="hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900/80 pt-3">
+                        @faq.Answer
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <!-- Contact Support Note -->
+        <div class="text-center pt-6">
+            <p class="text-xs sm:text-sm text-neutral-400">
+                Have more questions that aren't listed here?
+                <a href="@Url.Action("Contact", "Guest")" class="text-[#a3e635] font-bold hover:underline ml-1">
+                    Contact us
+                </a>
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- JavaScript for Accordion & Search -->
+<script>
+    function toggleFaq(id, iconId) {
+        const faq = document.getElementById(id);
+        const icon = document.getElementById(iconId);
+
+        if (faq.classList.contains('hidden')) {
+            faq.classList.remove('hidden');
+            icon.style.transform = 'rotate(45deg)';
+        } else {
+            faq.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function searchFaq() {
+        const input = document.getElementById('faqSearch').value.toLowerCase();
+        const items = document.querySelectorAll('.faq-item');
+
+        items.forEach(item => {
+            const questionText = item.querySelector('.faq-question').innerText.toLowerCase();
+            if (questionText.includes(input)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+</script>
+<section id="contact" class="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
+
+            <!-- Left Column: Info Details (Static) -->
+            <div class="lg:col-span-5 space-y-8">
+                <div class="space-y-2">
+                    <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#a3e635]">
+                        CONTACT US
+                    </span>
+                    <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight leading-tight">
+                        We'd Love to <br />
+                        Hear From <span class="text-[#a3e635]">You</span>
+                    </h2>
+                </div>
+
+                <div class="space-y-6 pt-2">
+
+                    <!-- Item 1: Address -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-[#a3e635] shrink-0">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-neutral-400 font-medium">Our Location</p>
+                            <p class="text-sm font-bold text-white">123 Fitness Ave, Gym City</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Email -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-[#a3e635] shrink-0">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-neutral-400 font-medium">Email Us</p>
+                            <p class="text-sm font-bold text-white">support@ironcoregym.com</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Phone -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-[#a3e635] shrink-0">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-neutral-400 font-medium">Call Us</p>
+                            <p class="text-sm font-bold text-white">+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Column: Contact Form -->
+            <div class="lg:col-span-7">
+                <div class="space-y-4 bg-neutral-950 p-8 rounded-3xl border border-neutral-800/80 shadow-2xl">
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="p-4 rounded-xl text-sm font-semibold mb-4 bg-[#a3e635]/10 border border-[#a3e635] text-[#a3e635]">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="p-4 rounded-xl text-sm font-semibold mb-4 bg-red-500/10 border border-red-500 text-red-400">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("SubmitContact", "Guest", FormMethod.Post))
+                    {
+                        <div class="space-y-4">
+                            <div>
+                                <input type="text" name="Name" placeholder="Your Name" required
+                                       class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors" />
+                            </div>
+
+                            <div>
+                                <input type="email" name="Email" placeholder="Your Email" required
+                                       class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors" />
+                            </div>
+
+                            <div>
+                                <input type="text" name="Subject" placeholder="Subject" required
+                                       class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors" />
+                            </div>
+
+                            <div>
+                                <textarea name="Message" rows="4" placeholder="Your Message" required
+                                          class="w-full px-5 py-3.5 rounded-xl bg-black border border-neutral-800 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#a3e635] transition-colors resize-none"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                    class="w-full py-4 rounded-xl bg-[#a3e635] text-black font-extrabold text-sm hover:bg-[#86efac] transition-all shadow-lg shadow-[#a3e635]/10 hover:-translate-y-0.5 cursor-pointer">
+                                Send Message
+                            </button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </section>

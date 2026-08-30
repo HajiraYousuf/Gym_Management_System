@@ -1,13 +1,31 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.WorkoutPlan>
+
+@{
     ViewData["Title"] = "Workout Plans";
     Layout = "~/Views/layouts/TrainerMaster.cshtml";
+
+    var membersList = ViewBag.MembersList as List<GymManagementSystem.Models.UserProfile> ?? new List<GymManagementSystem.Models.UserProfile>();
 }
 
 <!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <div class="space-y-6 min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 p-4 md:p-6 transition-colors duration-300">
-    
+
+    <!-- TempData Alerts -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="p-4 rounded-xl bg-lime-400/20 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-xs font-bold">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="p-4 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-500 text-xs font-bold">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-5">
         <div>
@@ -26,13 +44,12 @@
             <button type="button" onclick="openAddModal()" class="bg-lime-400 hover:bg-lime-500 text-black font-extrabold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-lime-500/20 transition-all w-full sm:w-auto cursor-pointer">
                 <i class="fas fa-plus"></i> Create Workout Plan
             </button>
+
         </div>
     </div>
 
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <!-- Total Plans -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-lime-100 dark:bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 flex items-center justify-center text-lg">
@@ -40,11 +57,10 @@
                 </div>
                 <span class="text-xs font-mono font-bold text-zinc-400">Total</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">18</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.TotalPlans</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Active Workout Routines</p>
         </div>
 
-        <!-- Assigned Plans -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center text-lg">
@@ -52,11 +68,10 @@
                 </div>
                 <span class="text-xs font-mono font-bold text-blue-500">Assigned</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">14</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.AssignedCount</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Assigned to Trainees</p>
         </div>
 
-        <!-- Muscle Building -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center text-lg">
@@ -64,11 +79,10 @@
                 </div>
                 <span class="text-xs font-mono font-bold text-purple-500">Popular</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">8</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.HypertrophyCount</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Hypertrophy Plans</p>
         </div>
 
-        <!-- Completion Rate -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-lg">
@@ -79,22 +93,19 @@
             <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">88%</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Adherence Rate</p>
         </div>
-
     </div>
 
     <!-- Filter & Search Section -->
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
-        <!-- Search Input -->
+    <form method="get" asp-action="WorkoutPlans" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
         <div class="relative w-full md:w-80">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-400">
                 <i class="fas fa-search text-xs"></i>
             </span>
-            <input type="text" placeholder="Search workout plan name..." class="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 transition-all font-medium" />
+            <input type="text" name="search" placeholder="Search workout plan name..." value="@Context.Request.Query["search"]" class="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 transition-all font-medium" />
         </div>
 
-        <!-- Filters Dropdown Group -->
         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <select class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
+            <select name="goalFilter" onchange="this.form.submit()" class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
                 <option value="">All Goals</option>
                 <option value="muscle">Muscle Building</option>
                 <option value="weightloss">Weight Loss</option>
@@ -102,14 +113,14 @@
                 <option value="endurance">Endurance</option>
             </select>
 
-            <select class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
+            <select name="levelFilter" onchange="this.form.submit()" class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
                 <option value="">All Levels</option>
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
                 <option value="advanced">Advanced</option>
             </select>
         </div>
-    </div>
+    </form>
 
     <!-- Workout Plans Table -->
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden">
@@ -126,277 +137,245 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-xs">
-                    
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td class="p-4 flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 font-bold flex items-center justify-center text-xs">
-                                <i class="fas fa-dumbbell"></i>
-                            </div>
-                            <div>
-                                <span class="font-bold text-zinc-900 dark:text-white block">Hypertrophy Upper Split</span>
-                                <span class="text-[11px] text-zinc-400 font-mono">4 Days/wk • 60 Min</span>
-                            </div>
-                        </td>
-                        <td class="p-4 font-medium text-zinc-700 dark:text-zinc-300">Muscle Building</td>
-                        <td class="p-4">
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">Intermediate</span>
-                        </td>
-                        <td class="p-4 font-mono font-bold text-zinc-800 dark:text-zinc-200">4 Weeks</td>
-                        <td class="p-4 font-bold text-zinc-900 dark:text-white">Ahmed Ali (#MEM-8801)</td>
-                        <td class="p-4 text-right space-x-2">
-                            <button type="button" onclick="openDetailModal()" title="View Plan Details" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
-                                <i class="fas fa-eye text-xs"></i>
-                            </button>
-                            <button type="button" onclick="openAddModal()" title="Edit Plan" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
-                                <i class="fas fa-pen text-xs"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var plan in Model)
+                        {
+                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
+                                <td class="p-4 flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 font-bold flex items-center justify-center text-xs">
+                                        <i class="fas fa-dumbbell"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-zinc-900 dark:text-white block">@plan.Title</span>
+                                        <span class="text-[11px] text-zinc-400 font-mono">@plan.DaysPerWeek Days/wk • @plan.SessionDurationMinutes Min</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 font-medium text-zinc-700 dark:text-zinc-300">@plan.TargetGoal</td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">@plan.DifficultyLevel</span>
+                                </td>
+                                <td class="p-4 font-mono font-bold text-zinc-800 dark:text-zinc-200">@plan.DurationWeeks Weeks</td>
+                                <td class="p-4 font-bold text-zinc-900 dark:text-white">@(string.IsNullOrEmpty(plan.AssignedMemberId) ? "Unassigned" : "#MEM-" + plan.AssignedMemberId)</td>
+                                <!-- Table Action Column -->
+                                <td class="p-4 text-right space-x-2">
+                                    <!-- View -->
+                                    <button type="button" onclick="openDetailModal('@plan.Id', '@plan.Title', ...)" class="...">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </button>
+    
+                                    <!-- Edit -->
+                                    <button type="button" onclick="openEditModal(@plan.Id, '@plan.Title', '@plan.TargetGoal', '@plan.DifficultyLevel', @plan.DurationWeeks, @plan.DaysPerWeek, @plan.SessionDurationMinutes, '@plan.AssignedMemberId', '@plan.Notes')" title="Edit Plan" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
+                                        <i class="fas fa-pen text-xs"></i>
+                                    </button>
 
+                                    <!-- Delete -->
+                                    <form asp-action="DeleteWorkoutPlan" method="post" class="inline-block" onsubmit="return confirm('Ma hubtaa in aad tirtirto plan-kan?');">
+                                        <input type="hidden" name="id" value="@plan.Id" />
+                                        <button type="submit" class="p-2 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">
+                                            <i class="fas fa-trash text-xs"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="p-6 text-center text-zinc-400">No workout plans found.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
-
-        <!-- Pagination Footer -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
-            <span class="text-zinc-500 dark:text-zinc-400 font-medium">Showing workout plans (1 to 1 of 18 entries)</span>
-            <div class="flex items-center gap-2">
-                <button type="button" class="px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">Previous</button>
-                <button type="button" class="px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">Next</button>
-            </div>
-        </div>
     </div>
-
 </div>
 
 <!-- ==================== ASSIGN WORKOUT PLAN MODAL ==================== -->
 <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl my-8">
-        
-        <!-- Modal Header -->
-        <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
-            <h3 id="modalTitle" class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-lime-500"></i>
-                <span>Assign Workout Plan</span>
-            </h3>
-            <button type="button" onclick="closeAssignModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-        </div>
+        <form asp-action="AssignWorkout" method="post">
+            <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-lime-500"></i> Assign Workout Plan
+                </h3>
+                <button type="button" onclick="closeAssignModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
 
-        <!-- Modal Body / Form -->
-        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
-            <div>
-                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Member <span class="text-rose-500">*</span></label>
-                <div class="relative">
-                    <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 transition appearance-none cursor-pointer">
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <div>
+                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Member <span class="text-rose-500">*</span></label>
+                    <select name="memberId" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
                         <option value="">Choose member...</option>
-                        <option value="8801">Ahmed Ali (#MEM-8801)</option>
-                        <option value="8802">Mohamed Omar (#MEM-8802)</option>
-                        <option value="8803">Fadumo Hassan (#MEM-8803)</option>
+                        @foreach (var mem in membersList)
+                        {
+                            <option value="@mem.Id">@mem.Name (#MEM-@mem.Id)</option>
+                        }
                     </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-xs"></i>
                 </div>
-            </div>
 
-            <div>
-                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Workout Plan <span class="text-rose-500">*</span></label>
-                <div class="relative">
-                    <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 transition appearance-none cursor-pointer">
+                <div>
+                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Workout Plan <span class="text-rose-500">*</span></label>
+                    <select name="planId" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
                         <option value="">Choose workout plan...</option>
-                        <option value="202">Hypertrophy Upper Split (Muscle Building)</option>
-                        <option value="203">Shredded Fat Loss (Weight Loss)</option>
+                        @if (Model != null)
+                        {
+                            foreach (var p in Model)
+                            {
+                                <option value="@p.Id">@p.Title (@p.TargetGoal)</option>
+                            }
+                        }
                     </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-xs"></i>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Start Date <span class="text-rose-500">*</span></label>
+                        <input type="date" name="startDate" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                    <div>
+                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">End Date <span class="text-rose-500">*</span></label>
+                        <input type="date" name="endDate" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Start Date <span class="text-rose-500">*</span></label>
-                    <input type="date" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition dark:[color-scheme:dark]" />
-                </div>
-                <div>
-                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">End Date <span class="text-rose-500">*</span></label>
-                    <input type="date" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition dark:[color-scheme:dark]" />
+                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes</label>
+                    <textarea name="notes" rows="3" placeholder="Add specific instructions..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 resize-none"></textarea>
                 </div>
             </div>
 
-            <div>
-                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes</label>
-                <textarea rows="3" placeholder="Add specific instructions..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition resize-none"></textarea>
+            <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
+                <button type="button" onclick="closeAssignModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold cursor-pointer text-xs">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 cursor-pointer text-xs">Assign Plan</button>
             </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeAssignModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer text-xs">
-                Cancel
-            </button>
-            <button type="button" onclick="if(confirm('Ma hubtaa in aad sii wadato meelaynta plan-kan?')) { closeAssignModal(); }" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer text-xs">
-                Assign Plan
-            </button>
-        </div>
-
+        </form>
     </div>
 </div>
 
+<!-- ==================== CREATE WORKOUT PLAN MODAL ==================== -->
 <!-- ==================== CREATE / EDIT WORKOUT PLAN MODAL ==================== -->
 <div id="addModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl my-8">
-        
-        <!-- Modal Header -->
-        <div class="flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <div>
-                <h2 class="text-xl font-black text-zinc-900 dark:text-white">Create Workout Plan</h2>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Select exercises from system library and assign workout routines to members.</p>
-            </div>
-            <button type="button" onclick="closeAddModal()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black transition cursor-pointer">
-                <i class="fas fa-times text-sm"></i>
-            </button>
-        </div>
 
-        <!-- Modal Body / Form -->
-        <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
-            
-            <!-- Plan Information Group -->
-            <div class="space-y-4">
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Plan Information</h3>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Plan Name *</label>
-                        <input type="text" placeholder="e.g. Advanced Hypertrophy Split" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
+        <!-- Fiiro gaar ah: asp-action waxaan ka dhignay 'SaveWorkoutPlan' si uu labadaba u qabto -->
+        <form asp-action="SaveWorkoutPlan" method="post">
 
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Assign Member</label>
-                        <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="">Select Member...</option>
-                            <option value="8801">Ahmed Ali (#MEM-8801)</option>
-                            <option value="8802">Mohamed Omar (#MEM-8802)</option>
-                            <option value="8803">Fadumo Hassan (#MEM-8803)</option>
-                        </select>
-                    </div>
-                </div>
+            <!-- Hidden ID Field: Haddii uu 0 yahay waa Create, haddii kale waa Edit -->
+            <input type="hidden" name="Id" id="planId" value="0" />
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Target Goal</label>
-                        <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="muscle">Muscle Building</option>
-                            <option value="weightloss">Weight Loss</option>
-                            <option value="strength">Strength</option>
-                            <option value="endurance">Endurance</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Difficulty Level</label>
-                        <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Duration (Weeks)</label>
-                        <input type="number" value="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Days per Week</label>
-                        <input type="number" value="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Session Duration (Min)</label>
-                        <input type="number" value="60" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Exercise Selection Section (Dropdown & Add Setup) -->
-            <div class="space-y-4 pt-2">
-                <div class="border-b border-zinc-100 dark:border-zinc-800 pb-2">
-                    <h3 class="text-sm font-bold text-zinc-900 dark:text-white">Exercise Selection</h3>
-                    <p class="text-[11px] text-zinc-400">Select pre-configured exercises from the system library and add them to your routine.</p>
-                </div>
-
-                <!-- Exercise Dropdown & Config Inputs -->
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200/60 dark:border-zinc-800">
-                    <div class="sm:col-span-5">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Select Exercise</label>
-                        <select class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="">Choose exercise from library...</option>
-                            <option value="bench">Barbell Bench Press (Chest)</option>
-                            <option value="incline">Incline Dumbbell Fly (Upper Chest)</option>
-                            <option value="press">Overhead Barbell Press (Shoulders)</option>
-                            <option value="squat">Barbell Back Squat (Legs)</option>
-                            <option value="deadlift">Conventional Deadlift (Back)</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Sets</label>
-                        <input type="number" placeholder="4" class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 text-center" />
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Reps</label>
-                        <input type="text" placeholder="10-12" class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 text-center" />
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Rest</label>
-                        <input type="text" placeholder="90s" class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 text-center" />
-                    </div>
-                    <div class="sm:col-span-1">
-                        <button type="button" title="Add Exercise to List" class="w-full py-2 bg-lime-400 hover:bg-lime-500 text-black font-extrabold rounded-xl transition flex items-center justify-center cursor-pointer shadow-md shadow-lime-500/10">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-
-                
-            <!-- Routine & Trainer Notes Section (Single Textbox) -->
-            <div class="space-y-3 pt-2">
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Routine Notes</h3>
-                
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
                 <div>
-                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes, Warm-up & Cool-down Instructions</label>
-                    <textarea rows="4" placeholder="Enter warm-up instructions, cool-down routine, and trainer notes here..." class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500">Warm-up: 10 mins dynamic stretching. Cool-down: 5 mins static chest stretches. Ensure progressive overload on compound lifts.</textarea>
+                    <h2 id="modalHeaderTitle" class="text-xl font-black text-zinc-900 dark:text-white">Create Workout Plan</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Select exercises from system library and assign workout routines to members.</p>
                 </div>
+                <button type="button" onclick="closeAddModal()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black transition cursor-pointer">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
             </div>
 
-        </div>
+            <!-- Modal Body / Form -->
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
 
-        <!-- Modal Footer -->
-        <div class="flex justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer">
-                Cancel
-            </button>
-            <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer">
-                Save Workout Plan
-            </button>
-        </div>
+                <!-- Plan Information Group -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Plan Information</h3>
 
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Plan Name *</label>
+                            <input type="text" name="Title" id="planTitle" required placeholder="e.g. Advanced Hypertrophy Split" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Assign Member</label>
+                            <select name="AssignedMemberId" id="planMember" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
+                                <option value="">Select Member...</option>
+                                @foreach (var mem in membersList)
+                                {
+                                    <option value="@mem.Id">@mem.Name (#MEM-@mem.Id)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Target Goal</label>
+                            <select name="TargetGoal" id="planGoal" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
+                                <option value="muscle">Muscle Building</option>
+                                <option value="weightloss">Weight Loss</option>
+                                <option value="strength">Strength</option>
+                                <option value="endurance">Endurance</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Difficulty Level</label>
+                            <select name="DifficultyLevel" id="planLevel" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Duration (Weeks)</label>
+                            <input type="number" name="DurationWeeks" id="planDuration" value="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Days per Week</label>
+                            <input type="number" name="DaysPerWeek" id="planDays" value="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Session Duration (Min)</label>
+                            <input type="number" name="SessionDurationMinutes" id="planMinutes" value="60" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Routine & Trainer Notes Section -->
+                <div class="space-y-3 pt-2">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Routine Notes</h3>
+
+                    <div>
+                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes, Warm-up & Cool-down Instructions</label>
+                        <textarea name="Notes" id="planNotes" rows="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+                <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" id="saveButtonText" class="px-5 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer">
+                    Save Workout Plan
+                </button>
+            </div>
+
+        </form>
     </div>
 </div>
-
 <!-- ==================== VIEW WORKOUT PLAN DETAIL MODAL ==================== -->
 <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl my-8">
-        
-        <!-- Modal Header -->
         <div class="flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold">
                     <i class="fas fa-dumbbell"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black text-zinc-900 dark:text-white">Hypertrophy Upper Split</h2>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Assigned to: <span class="text-zinc-800 dark:text-zinc-200 font-bold">Ahmed Ali (#MEM-8801)</span></p>
+                    <h2 id="modalTitle" class="text-xl font-black text-zinc-900 dark:text-white">Plan Details</h2>
                 </div>
             </div>
             <button type="button" onclick="closeDetailModal()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black transition cursor-pointer">
@@ -404,115 +383,94 @@
             </button>
         </div>
 
-        <!-- Modal Body Content -->
         <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
-            
-            <!-- Plan Info Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-800">
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Target Goal</span>
-                    <p class="font-bold text-zinc-900 dark:text-white mt-0.5">Muscle Building</p>
+                    <p id="modalGoal" class="font-bold text-zinc-900 dark:text-white mt-0.5">-</p>
                 </div>
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Difficulty Level</span>
-                    <p class="font-bold text-amber-500 mt-0.5">Intermediate</p>
+                    <p id="modalLevel" class="font-bold text-amber-500 mt-0.5">-</p>
                 </div>
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Duration & Schedule</span>
-                    <p class="font-bold text-zinc-900 dark:text-white mt-0.5">4 Weeks (4 Days/wk)</p>
+                    <p id="modalDuration" class="font-bold text-zinc-900 dark:text-white mt-0.5">-</p>
                 </div>
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Session Time</span>
-                    <p class="font-bold text-zinc-900 dark:text-white mt-0.5">60 Minutes</p>
+                    <p id="modalTime" class="font-bold text-zinc-900 dark:text-white mt-0.5">-</p>
                 </div>
             </div>
 
-            <!-- Exercises List -->
-            <div>
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white mb-3">Routine Exercises</h3>
-                <div class="border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-zinc-50 dark:bg-zinc-950 uppercase text-[10px] font-bold text-zinc-400 border-b border-zinc-200 dark:border-zinc-800">
-                            <tr>
-                                <th class="p-3">Exercise Name</th>
-                                <th class="p-3">Muscle Group</th>
-                                <th class="p-3">Sets</th>
-                                <th class="p-3">Reps</th>
-                                <th class="p-3">Rest</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 font-medium">
-                            <tr>
-                                <td class="p-3 font-bold text-zinc-900 dark:text-white">Barbell Bench Press</td>
-                                <td class="p-3 text-zinc-500">Chest</td>
-                                <td class="p-3">4</td>
-                                <td class="p-3">10-12</td>
-                                <td class="p-3">90s</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-zinc-900 dark:text-white">Incline Dumbbell Fly</td>
-                                <td class="p-3 text-zinc-500">Upper Chest</td>
-                                <td class="p-3">3</td>
-                                <td class="p-3">12</td>
-                                <td class="p-3">60s</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-zinc-900 dark:text-white">Overhead Barbell Press</td>
-                                <td class="p-3 text-zinc-500">Shoulders</td>
-                                <td class="p-3">3</td>
-                                <td class="p-3">8-10</td>
-                                <td class="p-3">90s</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Trainer Notes & Instructions Box -->
             <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-800 space-y-2">
                 <h3 class="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <i class="fas fa-clipboard-list text-lime-500"></i> Routine Notes
                 </h3>
-                <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    Warm-up: 10 mins dynamic stretching. Cool-down: 5 mins static chest stretches. Ensure progressive overload on compound lifts.
-                </p>
+                <p id="modalNotes" class="text-zinc-600 dark:text-zinc-400 leading-relaxed">-</p>
             </div>
-
         </div>
 
-        <!-- Modal Footer -->
         <div class="flex justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer">
-                Close
-            </button>
-            <button type="button" onclick="closeDetailModal(); openAddModal();" class="px-5 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer">
-                Edit Workout Plan
-            </button>
+            <button type="button" onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer">Close</button>
         </div>
-
     </div>
 </div>
 
 <!-- Modal Control JavaScript -->
 <script>
-    function openAssignModal() {
-        document.getElementById('assignModal').classList.remove('hidden');
-    }
-    function closeAssignModal() {
-        document.getElementById('assignModal').classList.add('hidden');
-    }
+        function openAssignModal() { document.getElementById('assignModal').classList.remove('hidden'); }
+        function closeAssignModal() { document.getElementById('assignModal').classList.add('hidden'); }
 
-    function openAddModal() {
-        document.getElementById('addModal').classList.remove('hidden');
-    }
-    function closeAddModal() {
-        document.getElementById('addModal').classList.add('hidden');
-    }
-
-    function openDetailModal() {
+        function openDetailModal(title, goal, level, duration, time, notes) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalGoal').innerText = goal;
+            document.getElementById('modalLevel').innerText = level;
+        document.getElementById('modalDuration').innerText = duration;
+        document.getElementById('modalTime').innerText = time;
+        document.getElementById('modalNotes').innerText = notes || 'No special notes provided.';
         document.getElementById('detailModal').classList.remove('hidden');
-    }
-    function closeDetailModal() {
-        document.getElementById('detailModal').classList.add('hidden');
-    }
+        }
+       function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
+       // 1. Marka la rabo in la abuuro plan cusub (Create)
+function openAddModal() {
+    document.getElementById('planId').value = 0; // 0 = New Record
+    document.getElementById('modalHeaderTitle').innerText = "Create Workout Plan";
+    document.getElementById('saveButtonText').innerText = "Save Workout Plan";
+    
+    // Nadiifi foomka
+    document.getElementById('planTitle').value = "";
+    document.getElementById('planMember').value = "";
+    document.getElementById('planGoal').value = "muscle";
+    document.getElementById('planLevel').value = "beginner";
+    document.getElementById('planDuration').value = 4;
+    document.getElementById('planDays').value = 4;
+    document.getElementById('planMinutes').value = 60;
+    document.getElementById('planNotes').placeholder = "Warm-up: 10 mins dynamic stretching. Cool-down: 5 mins static chest stretches.";
+
+    document.getElementById('addModal').classList.remove('hidden');
+}
+
+// 2. Marka la rabo in wax laga beddelo plan jiray (Edit)
+function openEditModal(id, title, goal, level, duration, days, minutes, memberId, notes) {
+    document.getElementById('planId').value = id; // ID-ga saxda ah ee la tafatirayo
+    document.getElementById('modalHeaderTitle').innerText = "Edit Workout Plan";
+    document.getElementById('saveButtonText').innerText = "Update Workout Plan";
+
+    // Buuxi foomka xogtiisa hore
+    document.getElementById('planTitle').value = title;
+    document.getElementById('planGoal').value = goal;
+    document.getElementById('planLevel').value = level;
+    document.getElementById('planDuration').value = duration;
+    document.getElementById('planDays').value = days;
+    document.getElementById('planMinutes').value = minutes;
+    document.getElementById('planMember').value = memberId || "";
+    document.getElementById('planNotes').value = notes || "";
+
+    document.getElementById('addModal').classList.remove('hidden');
+}
+
+function closeAddModal() {
+    document.getElementById('addModal').classList.add('hidden');
+}
 </script>

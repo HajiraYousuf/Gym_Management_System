@@ -97,9 +97,15 @@
                         <label class="text-[11px] font-medium text-zinc-300">Password</label>
                         <div class="relative flex items-center">
                             <svg class="w-4 h-4 absolute left-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            <input asp-for="Password" type="password"
+                            <input asp-for="Password" id="passwordInput" type="password"
                                    class="w-full bg-[#141417] border border-zinc-800 rounded-xl py-2 pl-10 pr-10 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#ccff00] transition"
                                    placeholder="Create a password" />
+                            <button type="button" onclick="toggleVisibility('passwordInput', 'eyeIcon1')" class="absolute right-3.5 text-zinc-500 hover:text-[#ccff00] focus:outline-none">
+                                <svg id="eyeIcon1" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
                         </div>
                         <span asp-validation-for="Password" class="text-red-500 text-[10px]"></span>
                     </div>
@@ -109,9 +115,15 @@
                         <label class="text-[11px] font-medium text-zinc-300">Confirm Password</label>
                         <div class="relative flex items-center">
                             <svg class="w-4 h-4 absolute left-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            <input asp-for="ConfirmPassword" type="password"
+                            <input asp-for="ConfirmPassword" id="confirmPasswordInput" type="password"
                                    class="w-full bg-[#141417] border border-zinc-800 rounded-xl py-2 pl-10 pr-10 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#ccff00] transition"
                                    placeholder="Confirm your password" />
+                            <button type="button" onclick="toggleVisibility('confirmPasswordInput', 'eyeIcon2')" class="absolute right-3.5 text-zinc-500 hover:text-[#ccff00] focus:outline-none">
+                                <svg id="eyeIcon2" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
                         </div>
                         <span asp-validation-for="ConfirmPassword" class="text-red-500 text-[10px]"></span>
                     </div>
@@ -166,5 +178,28 @@
 
         </form>
     </div>
+
+    <!-- JavaScript Script -->
+    <script>
+            function toggleVisibility(inputId, iconId) {
+                const field = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    // Eyestrike Icon (isha oo xiran)
+                    icon.innerHTML = `
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a10.038 10.038 0 013.122-.387c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m-6.168-2.13a3 3 0 11-4.243-4.243M3 3l18 18" />
+                            `;
+                } else {
+                    field.type = 'password';
+                    // Eye Icon (isha oo furan)
+                    icon.innerHTML = `
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            `;
+                }
+            }
+    </script>
 </body>
 </html>

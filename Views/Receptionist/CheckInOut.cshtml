@@ -1,6 +1,12 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.AttendanceRecord>
+
+@{
     ViewData["Title"] = "Check-In & Check-Out Terminal";
     Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+
+    var currentlyInside = ViewBag.CurrentlyInsideList as List<GymManagementSystem.Models.AttendanceRecord> ?? new List<GymManagementSystem.Models.AttendanceRecord>();
+    var recentExits = ViewBag.RecentExits as List<GymManagementSystem.Models.AttendanceRecord> ?? new List<GymManagementSystem.Models.AttendanceRecord>();
+    var allMembers = ViewBag.AllMembers as List<GymManagementSystem.Models.UserProfile> ?? new List<GymManagementSystem.Models.UserProfile>();
 }
 
 <!-- FontAwesome CDN -->
@@ -26,13 +32,13 @@
         <div class="flex items-center gap-4">
             <div class="px-4 py-2.5 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-200 dark:border-zinc-800 text-right">
                 <span class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-zinc-500 font-semibold block">Today's Check-ins</span>
-                <span class="text-xl font-bold text-emerald-600 dark:text-lime-400">142</span>
+                <span class="text-xl font-bold text-emerald-600 dark:text-lime-400">@ViewBag.TodaysCheckIns</span>
             </div>
             <div class="px-4 py-2.5 bg-slate-50 dark:bg-zinc-950 rounded-xl border border-slate-200 dark:border-zinc-800 text-right">
                 <span class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-zinc-500 font-semibold block">Currently Inside</span>
                 <div class="flex items-center gap-1.5 justify-end">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400">38</span>
+                    <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400">@ViewBag.CurrentlyInsideCount</span>
                 </div>
             </div>
         </div>
@@ -61,54 +67,25 @@
                     </button>
                 </div>
 
-                <!-- SELECTABLE MEMBER RESULTS DROPDOWN (HIDDEN UNTIL TYPING) -->
+                <!-- SELECTABLE MEMBER RESULTS DROPDOWN (DYNAMIC FROM DATABASE) -->
                 <div id="memberSearchResults" class="hidden border border-slate-200 dark:border-zinc-800 rounded-xl bg-slate-50 dark:bg-black/90 max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800/80 shadow-xl">
-                    
-                    <!-- Result Item 1 -->
-                    <div class="member-item p-3.5 hover:bg-emerald-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" onclick="selectMember('Farhiya Ahmed Hassan', 'MEM-1021', '+252 63 444 1111', 'Standard', 'Active')">
-                        <div class="space-y-0.5">
-                            <h4 class="font-bold text-xs text-slate-900 dark:text-white">Farhiya Ahmed Hassan</h4>
-                            <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-emerald-600 dark:text-lime-400">MEM-1021</span> | Phone: +252 63 444 1111</p>
-                            <div class="flex items-center gap-2 pt-1">
-                                <span class="text-[9px] px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 rounded font-bold">Plan: Standard</span>
-                                <span class="text-[9px] px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400 rounded font-bold">Status: Active</span>
+                    @foreach (var member in allMembers)
+                    {
+                        <div class="member-item p-3.5 hover:bg-emerald-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" 
+                             onclick="selectMember('@member.Name', '@member.Id', '@member.Phone', 'Standard Plan', 'Active')">
+                            <div class="space-y-0.5">
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">@member.Name</h4>
+                                <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-emerald-600 dark:text-lime-400">@member.Id</span> | Phone: @member.Phone</p>
+                                <div class="flex items-center gap-2 pt-1">
+                                    <span class="text-[9px] px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 rounded font-bold">Role: @member.Role</span>
+                                    <span class="text-[9px] px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400 rounded font-bold">Status: Active</span>
+                                </div>
                             </div>
+                            <button type="button" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
+                                Select
+                            </button>
                         </div>
-                        <button type="button" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
-                            Select
-                        </button>
-                    </div>
-
-                    <!-- Result Item 2 -->
-                    <div class="member-item p-3.5 hover:bg-emerald-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" onclick="selectMember('Farhiya Abdi Jama', 'MEM-2045', '+252 61 555 2222', 'VIP Premium', 'Active')">
-                        <div class="space-y-0.5">
-                            <h4 class="font-bold text-xs text-slate-900 dark:text-white">Farhiya Abdi Jama</h4>
-                            <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-emerald-600 dark:text-lime-400">MEM-2045</span> | Phone: +252 61 555 2222</p>
-                            <div class="flex items-center gap-2 pt-1">
-                                <span class="text-[9px] px-2 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 rounded font-bold">Plan: VIP Premium</span>
-                                <span class="text-[9px] px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400 rounded font-bold">Status: Active</span>
-                            </div>
-                        </div>
-                        <button type="button" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
-                            Select
-                        </button>
-                    </div>
-
-                    <!-- Result Item 3 (Expired Demo) -->
-                    <div class="member-item p-3.5 hover:bg-red-50/50 dark:hover:bg-zinc-800/50 transition flex items-center justify-between cursor-pointer" onclick="selectExpiredMember('Mustafa Osman Ali', 'MEM-1029', '+252 61 444 8899', 'Basic Monthly', 'Expired')">
-                        <div class="space-y-0.5">
-                            <h4 class="font-bold text-xs text-slate-900 dark:text-white">Mustafa Osman Ali</h4>
-                            <p class="text-[10px] text-slate-500 dark:text-zinc-400">ID: <span class="font-mono text-red-600">MEM-1029</span> | Phone: +252 61 444 8899</p>
-                            <div class="flex items-center gap-2 pt-1">
-                                <span class="text-[9px] px-2 py-0.5 bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 rounded font-bold">Plan: Basic Monthly</span>
-                                <span class="text-[9px] px-2 py-0.5 bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400 rounded font-bold">Status: Expired</span>
-                            </div>
-                        </div>
-                        <button type="button" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-[10px] uppercase rounded-lg transition shadow-sm">
-                            Select
-                        </button>
-                    </div>
-
+                    }
                 </div>
             </div>
 
@@ -126,8 +103,8 @@
                         FH
                     </div>
                     <div class="space-y-1 text-center sm:text-left w-full">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white" id="lblSelectedName">Farhiya Ahmed Hassan</h3>
-                        <p class="text-xs text-slate-500 dark:text-zinc-400">ID: <b id="lblSelectedId" class="text-slate-800 dark:text-zinc-200">MEM-1021</b> | Phone: <span id="lblSelectedPhone">+252 63 444 1111</span></p>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white" id="lblSelectedName">Member Name</h3>
+                        <p class="text-xs text-slate-500 dark:text-zinc-400">ID: <b id="lblSelectedId" class="text-slate-800 dark:text-zinc-200">MEM-000</b> | Phone: <span id="lblSelectedPhone">+252 00 000 0000</span></p>
                         <p class="text-xs text-slate-500 dark:text-zinc-400">Active Plan: <b id="lblSelectedPlan" class="text-emerald-600 dark:text-lime-400">Standard Plan</b></p>
                     </div>
                 </div>
@@ -135,38 +112,19 @@
                 <!-- Active Terminal Buttons -->
                 <div id="activeActionButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <form asp-action="ProcessCheckIn" method="post">
-                        <input type="hidden" id="inputCheckInId" name="MemberId" value="MEM-1021" />
+                        <input type="hidden" id="inputCheckInId" name="memberId" value="" />
                         <button type="submit" class="w-full h-12 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer flex items-center justify-center gap-2">
                             <i class="fa-solid fa-arrow-right-to-bracket"></i> Check In (Enter)
                         </button>
                     </form>
 
                     <form asp-action="ProcessCheckOut" method="post">
-                        <input type="hidden" id="inputCheckOutId" name="MemberId" value="MEM-1021" />
+                        <input type="hidden" id="inputCheckOutId" name="memberId" value="" />
                         <button type="submit" class="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer flex items-center justify-center gap-2">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Check Out (Exit)
                         </button>
                     </form>
                 </div>
-
-                <!-- ACCESS DENIED SECTION (HIDDEN BY DEFAULT, SHOWN WHEN EXPIRED) -->
-                <div id="accessDeniedSection" class="hidden space-y-4 pt-2">
-                    <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400 flex items-center gap-3">
-                        <i class="fa-solid fa-circle-xmark text-2xl"></i>
-                        <div>
-                            <h4 class="font-bold text-xs">Access Denied: Membership Expired</h4>
-                            <p class="text-[11px] opacity-90">This member cannot enter until their subscription is renewed.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <a id="lnkRenewMembership" href="#" 
-                            class="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow-md flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-arrows-rotate"></i>
-                            <span>Renew Membership Now</span>
-                        </a>
-                    </div>
-                </div>
-
             </div>
 
         </div>
@@ -174,54 +132,48 @@
         <!-- RIGHT COLUMN: CURRENTLY INSIDE & RECENT EXITS LOG (5 COLS) -->
         <div class="lg:col-span-5 space-y-6">
             
-            <!-- CURRENTLY INSIDE QUICK LIST -->
+            <!-- CURRENTLY INSIDE QUICK LIST (DYNAMIC) -->
             <div class="bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
                     <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                         <i class="fa-solid fa-users text-emerald-600 dark:text-lime-400"></i>
-                        Inside Gym Now (38)
+                        Inside Gym Now (@currentlyInside.Count)
                     </h3>
                     <span class="text-[10px] text-emerald-600 font-mono bg-emerald-50 dark:text-lime-400 dark:bg-lime-400/10 px-2 py-0.5 rounded-full font-bold">LIVE</span>
                 </div>
 
                 <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
-                    <!-- Inside Item 1 -->
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800">
-                        <div class="flex items-center gap-3">
-                            <img src="https://i.pravatar.cc/100?img=33" class="w-9 h-9 rounded-lg object-cover border border-emerald-500" />
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 dark:text-white">Ahmed Mohamed</h4>
-                                <p class="text-[10px] text-slate-500">MEM-8821 • In: 09:15 AM</p>
+                    @if (currentlyInside.Any())
+                    {
+                        foreach (var item in currentlyInside)
+                        {
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-lime-400/20 text-emerald-700 dark:text-lime-400 flex items-center justify-center font-bold text-xs">
+                                        @(item.Member?.Name?.Substring(0, 1) ?? "M")
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-900 dark:text-white">@(item.Member?.Name ?? "Unknown Member")</h4>
+                                        <p class="text-[10px] text-slate-500">@item.MemberId • In: @item.CheckIn</p>
+                                    </div>
+                                </div>
+                                <form asp-action="ProcessCheckOut" method="post">
+                                    <input type="hidden" name="memberId" value="@item.MemberId" />
+                                    <button type="submit" class="px-2.5 py-1 bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] rounded-lg transition cursor-pointer">
+                                        Exit
+                                    </button>
+                                </form>
                             </div>
-                        </div>
-                        <form asp-action="ProcessCheckOut" method="post">
-                            <input type="hidden" name="MemberId" value="MEM-8821" />
-                            <button type="submit" class="px-2.5 py-1 bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] rounded-lg transition cursor-pointer">
-                                Exit
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Inside Item 2 -->
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800">
-                        <div class="flex items-center gap-3">
-                            <img src="https://i.pravatar.cc/100?img=12" class="w-9 h-9 rounded-lg object-cover border border-emerald-500" />
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 dark:text-white">Farhiya Abdi</h4>
-                                <p class="text-[10px] text-slate-500">MEM-9012 • In: 10:10 AM</p>
-                            </div>
-                        </div>
-                        <form asp-action="ProcessCheckOut" method="post">
-                            <input type="hidden" name="MemberId" value="MEM-9012" />
-                            <button type="submit" class="px-2.5 py-1 bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] rounded-lg transition cursor-pointer">
-                                Exit
-                            </button>
-                        </form>
-                    </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-xs text-zinc-400 py-4">No members currently inside the gym.</p>
+                    }
                 </div>
             </div>
 
-            <!-- RECENT LOGS -->
+            <!-- RECENT EXITS LOG (DYNAMIC) -->
             <div class="bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
                     <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
@@ -230,13 +182,23 @@
                     </h3>
                 </div>
                 <div class="space-y-2 text-xs">
-                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-900 dark:text-white">Khalid Ali Jama</p>
-                            <span class="text-[10px] text-slate-500">Exited at 10:35 AM (1h 25m)</span>
-                        </div>
-                        <span class="text-[9px] bg-orange-100 text-orange-700 dark:bg-orange-400/10 dark:text-orange-400 px-2 py-0.5 rounded font-bold">Checked Out</span>
-                    </div>
+                    @if (recentExits.Any())
+                    {
+                        foreach (var exit in recentExits)
+                        {
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-white">@(exit.Member?.Name ?? "Unknown")</p>
+                                    <span class="text-[10px] text-slate-500">Exited at @exit.CheckOut</span>
+                                </div>
+                                <span class="text-[9px] bg-orange-100 text-orange-700 dark:bg-orange-400/10 dark:text-orange-400 px-2 py-0.5 rounded font-bold">Checked Out</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center text-xs text-zinc-400 py-2">No recent exits recorded today.</p>
+                    }
                 </div>
             </div>
 
@@ -246,7 +208,7 @@
 
 </div>
 
-<!-- JavaScript for Hidden Dropdown & Access Denied Control -->
+<!-- JavaScript for Interactive Search & Terminal Control -->
 <script>
     function filterMembersList() {
         const input = document.getElementById('txtMemberSearch').value.trim();
@@ -285,37 +247,12 @@
 
         const statusBadge = document.getElementById('lblSelectedStatus');
         statusBadge.innerText = status.toUpperCase();
-        statusBadge.className = "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 font-bold";
         
-        // Card styling & Sections visibility (Waxay ka saaraysaa hidden si ay u soo baxdo)
         const selectedCard = document.getElementById('selectedMemberCard');
         selectedCard.classList.remove('hidden');
-        selectedCard.className = "bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-emerald-500 shadow-sm space-y-4 transition-all";
-        
-        document.getElementById('activeActionButtons').classList.remove('hidden');
-        document.getElementById('accessDeniedSection').classList.add('hidden');
 
         // Hide dropdown after selection
         document.getElementById('memberSearchResults').classList.add('hidden');
         document.getElementById('txtMemberSearch').value = '';
-    }
-
-    function selectExpiredMember(name, id, phone, plan, status) {
-        selectMember(name, id, phone, plan, status);
-        
-        const statusBadge = document.getElementById('lblSelectedStatus');
-        statusBadge.innerText = "EXPIRED";
-        statusBadge.className = "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400 font-bold";
-        
-        // Change card border to red and show Access Denied section, hide check-in/out buttons
-        const selectedCard = document.getElementById('selectedMemberCard');
-        selectedCard.classList.remove('hidden');
-        selectedCard.className = "bg-white dark:bg-zinc-900/80 p-6 rounded-2xl border border-red-500 shadow-sm space-y-4 transition-all";
-        
-        document.getElementById('activeActionButtons').classList.add('hidden');
-        document.getElementById('accessDeniedSection').classList.remove('hidden');
-        
-        // Set renewal link URL
-        document.getElementById('lnkRenewMembership').href = '@Url.Action("Memberships", "Receptionist")?memberId=' + id;
     }
 </script>

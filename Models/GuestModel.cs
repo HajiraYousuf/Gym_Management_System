@@ -5,14 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymManagementSystem.Models
 {
-    // =========================================================
-    // VIEW MODEL - Guest Portal (dhammaan bogagga martida)
-    // =========================================================
     public class GuestModel
     {
         public List<MembershipPlan> MembershipPlans { get; set; } = new();
         public List<Product> Products { get; set; } = new();
-        public List<GymClass> Classes { get; set; } = new();
         public List<TrainerProfile> Trainers { get; set; } = new();
         public List<GalleryImage> GalleryImages { get; set; } = new();
         public List<Testimonial> Testimonials { get; set; } = new();
@@ -24,22 +20,6 @@ namespace GymManagementSystem.Models
         public decimal TotalDue => Subtotal + ShippingFee;
         public int TotalQuantity => CartItems.Sum(i => i.Quantity);
         public bool IsCartEmpty => CartItems.Count == 0;
-    }
-
-    // =========================================================
-    // ENTITIES
-    // =========================================================
-    public class MembershipPlan
-    {
-        [Key]
-        public int PlanID { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public int DurationInMonths { get; set; } = 1;
-        public bool IsActive { get; set; } = true;
-        public int DisplayOrder { get; set; }
-
-        public List<MembershipPlanFeature> Features { get; set; } = new();
     }
 
     public class MembershipPlanFeature
@@ -67,19 +47,6 @@ namespace GymManagementSystem.Models
         public bool IsActive { get; set; } = true;
     }
 
-    public class GymClass
-    {
-        [Key]
-        public int ClassID { get; set; }
-        public string ClassName { get; set; } = string.Empty;
-        public string TrainerName { get; set; } = string.Empty;
-        public string Days { get; set; } = string.Empty;
-        public string TimeSlot { get; set; } = string.Empty;
-        public string Icon { get; set; } = "dumbbell";
-        public string ImageUrl { get; set; } = string.Empty;
-        public bool IsActive { get; set; } = true;
-    }
-
     public class TrainerProfile
     {
         [Key]
@@ -88,16 +55,6 @@ namespace GymManagementSystem.Models
         public string Role { get; set; } = string.Empty;
         public string Experience { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
-        public int DisplayOrder { get; set; }
-        public bool IsActive { get; set; } = true;
-    }
-
-    public class GalleryImage
-    {
-        [Key]
-        public int GalleryID { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string ImageURL { get; set; } = string.Empty;
         public int DisplayOrder { get; set; }
         public bool IsActive { get; set; } = true;
     }
@@ -140,7 +97,6 @@ namespace GymManagementSystem.Models
         [Key]
         public int CartItemID { get; set; }
 
-        // Aqoonsiga martida (session) ee leh gaadhiga
         public string SessionId { get; set; } = string.Empty;
         public int ProductID { get; set; }
         public int Quantity { get; set; }

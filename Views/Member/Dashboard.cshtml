@@ -1,9 +1,12 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model GymManagementSystem.Models.MemberProgress
+
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/layouts/MemberMaster.cshtml";
+
+    var chartLabels = ViewBag.ChartLabels as string[] ?? new[] { "Week 1", "Week 2", "Week 3", "Week 4" };
+    var chartData = ViewBag.ChartData as double[] ?? new[] { 0.0, 0.0, 0.0, 0.0 };
+    var notices = ViewBag.Notices as IEnumerable<dynamic>;
 }
 
 <!-- Main Dashboard Container -->
@@ -18,7 +21,7 @@
 
         <div class="relative z-10 max-w-lg">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2">
-                Welcome back, <span>@(Model?.MemberName ?? "Member!")</span> 💪
+                Welcome back, <span>@(ViewBag.MemberName ?? "Member!")</span> 💪
             </h1>
             <p class="text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm mt-2 font-medium">Keep pushing your limits and achieve your goals.</p>
         </div>
@@ -32,9 +35,9 @@
             <div>
                 <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium block mb-1">Membership Status</span>
                 <h3 class="text-xl font-bold text-lime-600 dark:text-lime-400 tracking-wide">
-                    @(Model?.Status ?? "Active")
+                    @(ViewBag.MembershipStatus ?? "Active")
                 </h3>
-                <span class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 block font-medium">Valid until @(Model?.ExpiryDate ?? "-")</span>
+                <span class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 block font-medium">Valid until @(ViewBag.ExpiryDate ?? "-")</span>
             </div>
             <div class="p-3 bg-lime-500/10 border border-lime-500/20 text-lime-600 dark:text-lime-400 rounded-xl flex items-center justify-center">
                 <i data-lucide="shield-check" class="w-6 h-6"></i>
@@ -46,7 +49,7 @@
             <div>
                 <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium block mb-1">Days Remaining</span>
                 <h3 class="text-xl font-bold text-zinc-900 dark:text-white tracking-wide">
-                    @(Model?.DaysRemaining ?? "0") Days
+                    @(ViewBag.DaysRemaining ?? "0") Days
                 </h3>
                 <span class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 block font-medium">Until Expiry</span>
             </div>
@@ -60,7 +63,7 @@
             <div>
                 <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium block mb-1">Upcoming Classes</span>
                 <h3 class="text-xl font-bold text-zinc-900 dark:text-white tracking-wide">
-                    @(Model?.UpcomingClassesCount ?? 0) Classes
+                    @(ViewBag.UpcomingClassesCount ?? 0) Classes
                 </h3>
                 <span class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 block font-medium">This Week</span>
             </div>
@@ -72,11 +75,11 @@
         <!-- Card 4: Workouts Completed -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between shadow-md transition-colors duration-300">
             <div>
-                <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium block mb-1">Workouts Completed</span>
+                <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium block mb-1">Workouts / Checks</span>
                 <h3 class="text-xl font-bold text-zinc-900 dark:text-white tracking-wide">
-                    @(Model?.WorkoutsCompletedCount ?? 0)
+                    @(ViewBag.WorkoutsCompletedCount ?? 0) Logs
                 </h3>
-                <span class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 block font-medium">This Month</span>
+                <span class="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 block font-medium">Total Recorded</span>
             </div>
             <div class="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center">
                 <i data-lucide="clipboard-check" class="w-6 h-6"></i>
@@ -88,14 +91,11 @@
     <!-- 3. MIDDLE SECTION: OVERVIEW CHART + QUICK ACTIONS + LATEST NOTICE -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        <!-- Overview Chart (Chart.js) -->
+        <!-- Overview Chart (Chart.js dynamically populated from MemberProgress weights) -->
         <div class="lg:col-span-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-colors duration-300">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Overview Progress</h3>
-                <select id="overviewFilter" class="bg-zinc-100 dark:bg-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 rounded-lg px-3 py-1.5 focus:outline-none cursor-pointer">
-                    <option value="Month">This Month</option>
-                    <option value="Week">This Week</option>
-                </select>
+                <h3 class="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Weight Progress Overview (kg)</h3>
+                <span class="text-xs text-lime-600 dark:text-lime-400 font-bold">Dynamic Data</span>
             </div>
             
             <div class="w-full h-48 relative">
@@ -113,13 +113,13 @@
                     <span class="bg-lime-400 text-black p-1.5 rounded-lg shadow-md shadow-lime-400/10 group-hover:scale-105 transition"><i data-lucide="arrow-right" class="w-3.5 h-3.5 stroke-[2.5]"></i></span>
                 </a>
 
-                <a href="@Url.Action("Attendance", "Member")" class="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-xs font-semibold text-zinc-700 dark:text-zinc-200 transition group">
-                    <span>Record Attendance</span>
+                <a href="@Url.Action("MyProgress", "Member")" class="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-xs font-semibold text-zinc-700 dark:text-zinc-200 transition group">
+                    <span>View Progress Logs</span>
                     <span class="bg-lime-400 text-black p-1.5 rounded-lg shadow-md shadow-lime-400/10 group-hover:scale-105 transition"><i data-lucide="arrow-right" class="w-3.5 h-3.5 stroke-[2.5]"></i></span>
                 </a>
 
-                <a href="@Url.Action("Payments", "Member")" class="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-xs font-semibold text-zinc-700 dark:text-zinc-200 transition group">
-                    <span>Make a Payment</span>
+                <a href="@Url.Action("MyWorkoutPlan", "Member")" class="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-xs font-semibold text-zinc-700 dark:text-zinc-200 transition group">
+                    <span>My Workout Plan</span>
                     <span class="bg-lime-400 text-black p-1.5 rounded-lg shadow-md shadow-lime-400/10 group-hover:scale-105 transition"><i data-lucide="arrow-right" class="w-3.5 h-3.5 stroke-[2.5]"></i></span>
                 </a>
 
@@ -143,9 +143,9 @@
                 
                 <!-- Dynamic Notices Loop -->
                 <div class="space-y-3">
-                    @if (Model?.Notices != null && Model.Notices.Any())
+                    @if (notices != null && notices.Any())
                     {
-                        foreach (var notice in Model.Notices)
+                        foreach (var notice in notices)
                         {
                             <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/40 hover:border-zinc-300 dark:hover:border-zinc-700 transition group cursor-pointer">
                                 <div class="flex items-start gap-2.5">
@@ -162,15 +162,15 @@
                     }
                     else
                     {
-                        <!-- Static Fallback Notice -->
-                        <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/40 hover:border-zinc-300 dark:hover:border-zinc-700 transition group cursor-pointer">
+                        <!-- Fallback Notice -->
+                        <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/40">
                             <div class="flex items-start gap-2.5">
                                 <div class="p-1.5 rounded-lg bg-lime-500/10 text-lime-600 dark:text-lime-400 mt-0.5 shrink-0">
                                     <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition truncate">Yoga Class Added</h4>
-                                    <span class="text-[10px] font-medium text-zinc-500 block mt-0.5">22 Aug 2026</span>
+                                    <h4 class="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">Welcome to Gym System</h4>
+                                    <span class="text-[10px] font-medium text-zinc-500 block mt-0.5">Today</span>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +178,7 @@
                 </div>
             </div>
 
-            <a href="@Url.Action("Notifications", "Member")" class="w-full text-center py-2.5 mt-4 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-white border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs text-zinc-600 dark:text-zinc-400 font-semibold block transition">
+            <a href="@Url.Action("Notifications", "Member")" class="w-full text-center py-2.5 mt-4 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs text-zinc-600 dark:text-zinc-400 font-semibold block transition">
                 View All Notices
             </a>
         </div>
@@ -189,7 +189,7 @@
 <!-- Load Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Chart.js Script with ASP.NET Core JSON serialization -->
+<!-- Fully Dynamic Chart.js Script connected to database values -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('overviewChart').getContext('2d');
@@ -198,15 +198,15 @@
         gradient.addColorStop(0, 'rgba(163, 230, 53, 0.25)');
         gradient.addColorStop(1, 'rgba(163, 230, 53, 0.0)');
 
-        const chartLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.ChartLabels ?? new[] { "Week 1", "Week 2", "Week 3", "Week 4" }));
-        const chartData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.ChartData ?? new[] { 10, 25, 18, 30 }));
+        const chartLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartLabels));
+        const chartData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartData));
 
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: chartLabels,
                 datasets: [{
-                    label: 'Progress',
+                    label: 'Weight (kg)',
                     data: chartData,
                     borderColor: '#84cc16',
                     borderWidth: 3,

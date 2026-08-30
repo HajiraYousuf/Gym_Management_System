@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GymManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using GymManagementSystem.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GymManagementSystem.Controllers
@@ -19,29 +22,34 @@ namespace GymManagementSystem.Controllers
             _context = context;
         }
 
-        // =========================================================
-        // 1. CHAT / MESSAGES ACTIONS
-        // =========================================================
         public IActionResult Messages(string userId = "member1", string activeContactId = null)
         {
-            var currentUser = _context.Users.FirstOrDefault(u => u.Id == userId) ?? _context.Users.FirstOrDefault();
+            string currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? userId;
+
+            var currentUser = _context.Users.FirstOrDefault(u => u.Id == currentUserId) ?? _context.Users.FirstOrDefault();
             var allowedContacts = new List<User>();
 
             if (currentUser != null)
             {
+                // Ka saar shardi-ga chattedUserIds si dhamaan dadka la ogol yahay oo dhan ay u soo baxaan
                 if (currentUser.Role == "Member")
                 {
-                    allowedContacts = _context.Users.Where(u => u.Role == "Trainer" || u.Role == "Admin" || u.Role == "Receptionist").ToList();
+                    allowedContacts = _context.Users
+                        .Where(u => u.Id != currentUser.Id && (u.Role == "Trainer" || u.Role == "Admin" || u.Role == "Receptionist"))
+                        .ToList();
                 }
                 else if (currentUser.Role == "Trainer")
                 {
-                    allowedContacts = _context.Users.Where(u => u.Role == "Admin" || u.Role == "Receptionist" || u.Role == "Member").ToList();
+                    allowedContacts = _context.Users
+                        .Where(u => u.Id != currentUser.Id && (u.Role == "Admin" || u.Role == "Receptionist" || u.Role == "Member"))
+                        .ToList();
                 }
-                else
+                else // Admin ama Receptionist
                 {
-                    allowedContacts = _context.Users.Where(u => u.Id != currentUser.Id).ToList();
+                    allowedContacts = _context.Users
+                        .Where(u => u.Id != currentUser.Id)
+                        .ToList();
                 }
-
             }
 
             var activeContact = allowedContacts.FirstOrDefault(u => u.Id == activeContactId) ?? allowedContacts.FirstOrDefault();
@@ -65,17 +73,16 @@ namespace GymManagementSystem.Controllers
 
             return View("~/Views/Shared/Messages.cshtml", viewModel);
         }
-
         [HttpPost]
         public IActionResult SendMessage(string senderId, string receiverId, string text)
         {
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(senderId) && !string.IsNullOrEmpty(receiverId))
             {
                 var newMessage = new Message
                 {
                     SenderId = senderId,
                     ReceiverId = receiverId,
-                    Text = text,
+                    Text = text.Trim(),
                     Timestamp = DateTime.Now
                 };
 
@@ -106,32 +113,25 @@ namespace GymManagementSystem.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
-        [HttpPost]
         public IActionResult MarkAllAsRead(string role)
         {
-            // 1. Hel dhammaan ogeysiisyada aan la akhriyin
             var unreadNotifs = _context.Notifications
                 .Where(n => (n.TargetRole == role || n.TargetRole == "All") && !n.IsRead)
                 .ToList();
 
-            // 2. U beddel IsRead = true
             foreach (var notif in unreadNotifs)
             {
                 notif.IsRead = true;
             }
 
-            // 3. Save garee
             _context.SaveChanges();
 
-            // 4. Dib ugu celi bogga
             return RedirectToAction("Notifications", new { role = role });
         }
-        [HttpPost]
+
         [HttpPost]
         public IActionResult DismissNotification(int id, string role)
         {
-            // Waxay raadineysaa ogeysiiska iyadoo la isticmaalayo ID-giisa oo way tirtiraysaa (Delete)
             var notif = _context.Notifications.FirstOrDefault(n => n.Id == id);
             if (notif != null)
             {
@@ -141,12 +141,33 @@ namespace GymManagementSystem.Controllers
 
             return RedirectToAction("Notifications", new { role = role });
         }
-        // =========================================================
-        // 3. PROFILE ACTIONS
-        // =========================================================
-        public IActionResult Profile(string userId = "ADM-01")
+
+        public IActionResult Profile(string userId = null)
         {
-            var profile = _context.UserProfiles.FirstOrDefault(p => p.Id == userId) ?? _context.UserProfiles.FirstOrDefault(p => p.Id == "ADM-01") ?? _context.UserProfiles.FirstOrDefault();
+            // 1. Ka soo qaad ID-ga User-ka hadda Logged-in-ka ah
+            string currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                                   ?? HttpContext.Session.GetString("UserId")
+                                   ?? userId;
+
+            // 2. Ka raadi Profile-ka database-ka
+            UserProfile profile = null;
+
+            if (!string.IsNullOrEmpty(currentUserId))
+            {
+                profile = _context.UserProfiles.FirstOrDefault(p => p.Id == currentUserId);
+            }
+
+            // 3. Haddii aan wali la helin, ka raadi userId-ga parameter-ka lagu soo dhiibay
+            if (profile == null && !string.IsNullOrEmpty(userId))
+            {
+                profile = _context.UserProfiles.FirstOrDefault(p => p.Id == userId);
+            }
+
+            // 4. Haddii uu wali meelna ka weydo, ka soo qaad kan ugu horreeya
+            if (profile == null)
+            {
+                profile = _context.UserProfiles.FirstOrDefault();
+            }
 
             var viewModel = new SharedModel
             {
@@ -158,38 +179,59 @@ namespace GymManagementSystem.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> UpdateProfile(UserProfile updated, string currentPassword, string newPassword, string confirmPassword, IFormFile photoFile)
         {
-            System.Diagnostics.Debug.WriteLine("=== UPDATE PROFILE POST CALLED SUCCESS ===");
             if (updated == null || string.IsNullOrEmpty(updated.Id))
             {
-                return RedirectToAction("Profile", new { userId = updated?.Id ?? "ADM-01" });
+                return RedirectToAction("Profile");
             }
 
-            var existing = _context.UserProfiles.FirstOrDefault(p => p.Id == updated.Id);
-            if (existing != null)
+            var existing = await _context.UserProfiles.FirstOrDefaultAsync(p => p.Id == updated.Id);
+            if (existing == null)
             {
-                existing.Name = updated.Name;
-                existing.Email = updated.Email;
-                existing.Phone = updated.Phone;
-                existing.Address = updated.Address;
-                existing.DateOfBirth = updated.DateOfBirth;
-                existing.Gender = updated.Gender;
-                existing.Username = updated.Username;
+                TempData["ErrorMessage"] = "User profile ma la helin!";
+                return RedirectToAction("Profile");
+            }
 
-                // Hubinta Furaha Sirta ah (Password Change)
-                if (!string.IsNullOrEmpty(newPassword))
+            // 1. Cusbooneysii Xogta Caadiga ah
+            existing.Name = updated.Name;
+            existing.Email = updated.Email;
+            existing.Phone = updated.Phone;
+            existing.Address = updated.Address;
+            existing.DateOfBirth = updated.DateOfBirth;
+            existing.Gender = updated.Gender;
+            existing.Username = updated.Username;
+
+            // 2. Hubinta iyo Hashing-ka Password-ka Cusub
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                var passwordHasher = new PasswordHasher<UserProfile>();
+
+                // Hubi Current Password-ka hadda jira (Verify Hashed Password)
+                var verificationResult = passwordHasher.VerifyHashedPassword(existing, existing.Password ?? string.Empty, currentPassword ?? string.Empty);
+
+                if (verificationResult == PasswordVerificationResult.Failed)
                 {
-                    if (currentPassword == existing.Password && newPassword == confirmPassword)
-                    {
-                        existing.Password = newPassword;
-                    }
+                    TempData["ErrorMessage"] = "Password-kaaga hadda (Current Password) waa ma saxan!";
+                    return RedirectToAction("Profile", new { userId = updated.Id });
                 }
 
-                _context.Entry(existing).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                _context.SaveChanges();
+                // Hubi in New Password iyo Confirm Password ay isku mid yihiin
+                if (newPassword != confirmPassword)
+                {
+                    TempData["ErrorMessage"] = "Password-ka cusub iyo Confirm Password-ku waa inay isku mid noqdaan!";
+                    return RedirectToAction("Profile", new { userId = updated.Id });
+                }
+
+                // Hash-gareey password-ka cusub kahor intaan database-ka loo dirin
+                existing.Password = passwordHasher.HashPassword(existing, newPassword);
             }
 
+            _context.UserProfiles.Update(existing);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Profile-kaaga si guul leh ayaa loo cusbooneysiiyay!";
             return RedirectToAction("Profile", new { userId = updated.Id });
         }
     }

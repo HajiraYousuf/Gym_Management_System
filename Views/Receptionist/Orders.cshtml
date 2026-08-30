@@ -1,6 +1,14 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.GuestOrder>
+
+@{
     ViewData["Title"] = "Gym Product Orders Management";
     Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+
+    // Tirakoobka Dynamic-ka ah ee Card-yada
+    var totalOrdersCount = Model != null ? Model.Count() : 0;
+    var pendingOrdersCount = Model != null ? Model.Count(o => o.Status == "Pending") : 0;
+    var confirmedOrdersCount = Model != null ? Model.Count(o => o.Status == "Confirmed") : 0;
+    var completedOrdersCount = Model != null ? Model.Count(o => o.Status == "Completed") : 0;
 }
 
 <!-- FontAwesome CDN -->
@@ -25,26 +33,26 @@
         </button>
     </div>
 
-    <!-- 1. SUMMARY CARDS -->
+    <!-- 1. SUMMARY CARDS (DYNAMIC) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <!-- Card 1 -->
+
+        <!-- Card 1: Total Orders -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
-                <span class="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">Today's Orders</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">24 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Total</span></h3>
-                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Logged Today</p>
+                <span class="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">Total Orders</span>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@totalOrdersCount <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Total</span></h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Logged in System</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300 flex items-center justify-center text-xl">
                 <i class="fa-solid fa-receipt"></i>
             </div>
         </div>
 
-        <!-- Card 2 -->
+        <!-- Card 2: Pending Orders -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold block">Pending Orders</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">5 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Awaiting</span></h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@pendingOrdersCount <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Awaiting</span></h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Require Confirmation</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400 flex items-center justify-center text-xl">
@@ -52,11 +60,11 @@
             </div>
         </div>
 
-        <!-- Card 3 -->
+        <!-- Card 3: Confirmed Orders -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-emerald-600 dark:text-lime-400 font-bold block">Confirmed Orders</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">15 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Active</span></h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@confirmedOrdersCount <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Active</span></h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Ready / Processing</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 flex items-center justify-center text-xl">
@@ -64,11 +72,11 @@
             </div>
         </div>
 
-        <!-- Card 4 -->
+        <!-- Card 4: Completed Orders -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-blue-600 dark:text-blue-400 font-bold block">Completed Orders</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">4 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Fulfilled</span></h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@completedOrdersCount <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Fulfilled</span></h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Delivered & Paid</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl">
@@ -80,22 +88,14 @@
 
     <!-- 2. SEARCH & FILTERS -->
     <div class="bg-white dark:bg-zinc-900/80 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <!-- Status & Date Filters -->
+        <!-- Status Filters -->
         <div class="flex items-center gap-2 w-full sm:w-auto">
-            <div class="relative w-full sm:w-40">
-                <select id="filterStatus" onchange="filterOrders()" class="w-full h-11 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white text-xs font-semibold outline-none cursor-pointer appearance-none">
+            <div class="relative w-full sm:w-48">
+                <select id="filterStatus" onchange="filterTable()" class="w-full h-11 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white text-xs font-semibold outline-none cursor-pointer appearance-none">
                     <option value="all">Status: All</option>
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="completed">Completed</option>
-                </select>
-                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-            </div>
-            <div class="relative w-full sm:w-40">
-                <select id="filterDate" onchange="filterOrders()" class="w-full h-11 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white text-xs font-semibold outline-none cursor-pointer appearance-none">
-                    <option value="today">Date: Today</option>
-                    <option value="yesterday">Yesterday</option>
-                    <option value="week">This Week</option>
                 </select>
                 <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
             </div>
@@ -104,19 +104,19 @@
         <!-- Search Order ID / Member / Product -->
         <div class="relative w-full sm:w-80">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" id="txtOrderSearch" onkeyup="filterOrders()" placeholder="Search Order ID / Member / Product..." 
-                class="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 text-xs font-medium outline-none transition shadow-inner" />
+            <input type="text" id="txtOrderSearch" onkeyup="filterTable()" placeholder="Search Order ID / Member / Product..."
+                   class="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 text-xs font-medium outline-none transition shadow-inner" />
         </div>
     </div>
 
-    <!-- 3. ORDERS TABLE -->
+    <!-- 3. ORDERS TABLE (DYNAMIC LOOP) -->
     <div class="bg-white dark:bg-zinc-900/80 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
         <div class="p-5 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
             <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-emerald-600 dark:text-lime-400"></i>
                 Active Order Transactions Desk
             </h3>
-            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-lime-400/10 dark:text-lime-400 font-bold">ORDERS.ASPX</span>
+            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-lime-400/10 dark:text-lime-400 font-bold">DATABASE CONNECTED</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -134,222 +134,79 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-zinc-800/80 text-xs font-medium text-slate-800 dark:text-zinc-200">
-                    
-                    <!-- Row ORD-1025 -->
-                    <tr class="order-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="pending">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">ORD-1025</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Ahmed Ali</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Whey Protein ×2</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$100</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">11 Aug • 10:30 AM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400">Pending</span>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400">Unpaid</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('ORD-1025', 'Ahmed Ali', '11 Aug 2026', 'Pending', 'Unpaid', 100)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openConfirmModal('ORD-1025', 'Ahmed Ali', 100)" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-lime-400/10 dark:hover:bg-lime-400/20 text-emerald-600 dark:text-lime-400 font-bold rounded-lg transition cursor-pointer">Confirm</button>
-                            <button onclick="cancelOrder('ORD-1025')" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold rounded-lg transition cursor-pointer">Cancel</button>
-                        </td>
-                    </tr>
 
-                    <!-- Row ORD-1026 -->
-                    <tr class="order-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="confirmed">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">ORD-1026</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Farhiya Abdi</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Water ×3</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$6</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">11 Aug • 11:15 AM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Confirmed</span>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Paid</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('ORD-1026', 'Farhiya Abdi', '11 Aug 2026', 'Confirmed', 'Paid', 6)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openReceiptModal('ORD-1026', 'Farhiya Abdi', 6)" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg transition cursor-pointer">Receipt</button>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var order in Model)
+                        {
+                            <tr class="order-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="@order.Status.ToLower()">
+                                <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">@order.OrderNumber</td>
+                                <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">
+                                    @order.FullName
+                                    <div class="text-[10px] text-slate-400 font-normal">@order.Phone</div>
+                                </td>
+                                <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">
+                                    @if (order.Items != null && order.Items.Any())
+                                    {
+                                        foreach (var item in order.Items)
+                                        {
+                                            <div>@item.ProductName ×@item.Quantity</div>
+                                        }
+                                    }
+                                </td>
+                                <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$@order.TotalAmount</td>
+                                <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">@order.OrderDate.ToString("dd MMM • hh:mm tt")</td>
 
-                    <!-- Row ORD-1027 -->
-                    <tr class="order-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="completed">
-                        <td class="py-4 px-6 font-mono font-bold text-slate-900 dark:text-white">ORD-1027</td>
-                        <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Mohamed Jama</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Gloves ×1</td>
-                        <td class="py-4 px-4 font-mono font-bold text-slate-900 dark:text-white">$15</td>
-                        <td class="py-4 px-4 font-mono text-slate-500 dark:text-zinc-400">11 Aug • 12:05 PM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">Completed</span>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Paid</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewModal('ORD-1027', 'Mohamed Jama', '11 Aug 2026', 'Completed', 'Paid', 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="openReceiptModal('ORD-1027', 'Mohamed Jama', 15)" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg transition cursor-pointer">Receipt</button>
-                        </td>
-                    </tr>
+                                <td class="py-4 px-4 text-center">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold
+                                        @(order.Status == "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400" :
+                                          order.Status == "Confirmed" ? "bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400" :
+                                          "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400")">
+                                        @order.Status
+                                    </span>
+                                </td>
+
+                                <td class="py-4 px-4 text-center">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold
+                                        @(order.PaymentMethod == "Cash" && order.Status == "Pending" ? "bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400" : "bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400")">
+                                        @(order.Status == "Pending" ? "Unpaid" : "Paid")
+                                    </span>
+                                </td>
+
+                                <td class="py-4 px-6 text-right space-x-1.5">
+                                    @if (order.Status == "Pending")
+                                    {
+                                        <form asp-action="ProcessOrder" method="post" class="inline">
+                                            <input type="hidden" name="id" value="@order.OrderID" />
+                                            <input type="hidden" name="actionType" value="Confirm" />
+                                            <button type="submit" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-lime-400/10 dark:hover:bg-lime-400/20 text-emerald-600 dark:text-lime-400 font-bold rounded-lg transition cursor-pointer">Confirm</button>
+                                        </form>
+                                        <form asp-action="ProcessOrder" method="post" class="inline">
+                                            <input type="hidden" name="id" value="@order.OrderID" />
+                                            <input type="hidden" name="actionType" value="Cancel" />
+                                            <button type="submit" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold rounded-lg transition cursor-pointer">Cancel</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button onclick="openReceiptModal('@order.OrderNumber', '@order.FullName', @order.TotalAmount)" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg transition cursor-pointer">Receipt</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-6 text-slate-400">Wali ma jiraan wax dalabaad ah (Orders) oo soo galay.</td>
+                        </tr>
+                    }
 
                 </tbody>
             </table>
         </div>
     </div>
 
-</div>
-
-<!-- 4. VIEW ORDER MODAL -->
-<div id="viewOrderModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 text-xs">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
-            <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-file-invoice text-emerald-600 dark:text-lime-400"></i>
-                Order Details
-            </h3>
-            <button onclick="closeViewModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
-            <div><span class="text-slate-500">Order ID:</span> <strong id="viewModalId" class="font-mono text-slate-900 dark:text-white block">ORD-1025</strong></div>
-            <div><span class="text-slate-500">Member:</span> <strong id="viewModalMember" class="text-slate-900 dark:text-white block">Ahmed Ali</strong></div>
-            <div><span class="text-slate-500">Date:</span> <strong id="viewModalDate" class="font-mono text-slate-900 dark:text-white block">11 Aug 2026</strong></div>
-            <div><span class="text-slate-500">Status:</span> <strong id="viewModalStatus" class="text-emerald-600 dark:text-lime-400 block">Pending</strong></div>
-        </div>
-
-        <div class="space-y-2">
-            <span class="font-bold uppercase tracking-wider text-slate-500 block">Items</span>
-            <div class="border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-slate-100 dark:bg-zinc-950 text-[10px] uppercase text-slate-500">
-                            <th class="p-2.5">Product</th>
-                            <th class="p-2.5 text-center">Qty</th>
-                            <th class="p-2.5 text-right">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-zinc-800">
-                        <tr>
-                            <td class="p-2.5 font-bold">Whey Protein</td>
-                            <td class="p-2.5 text-center font-mono">2</td>
-                            <td class="p-2.5 text-right font-mono">$50</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-zinc-950 font-bold">
-                <span>Total:</span>
-                <span id="viewModalTotal" class="font-mono text-sm text-emerald-600 dark:text-lime-400">$100</span>
-            </div>
-            <div class="flex justify-between items-center px-1">
-                <span class="text-slate-500">Payment Status:</span>
-                <strong id="viewModalPayment" class="text-red-600 dark:text-red-400">Unpaid</strong>
-            </div>
-        </div>
-
-        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-zinc-800">
-            <button onclick="closeViewModal(); openConfirmModal('ORD-1025', 'Ahmed Ali', 100)" class="px-4 h-10 bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 font-bold rounded-xl transition cursor-pointer">Confirm Order</button>
-            <button onclick="closeViewModal(); cancelOrder('ORD-1025')" class="px-4 h-10 bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400 font-bold rounded-xl transition cursor-pointer">Cancel Order</button>
-            <button onclick="closeViewModal()" class="px-4 h-10 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">Close</button>
-        </div>
-    </div>
-</div>
-
-<!-- 5. CONFIRM ORDER MODAL -->
-<div id="confirmOrderModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden space-y-5 p-6 text-xs">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
-            <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-600 dark:text-lime-400"></i>
-                Confirm Order Verification
-            </h3>
-            <button onclick="closeConfirmModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <div class="space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
-            <p class="text-slate-600 dark:text-zinc-400">Receptionist-ku wuxuu hubinayaa in order-ku sax yahay:</p>
-            <div class="space-y-1">
-                <h4 id="confirmModalId" class="font-black text-sm text-slate-900 dark:text-white font-mono">Order #ORD-1025</h4>
-                <p>Member: <strong id="confirmModalMember" class="text-slate-900 dark:text-white">Ahmed Ali</strong></p>
-                <p>Total: <strong id="confirmModalTotal" class="font-mono text-emerald-600 dark:text-lime-400">$100</strong></p>
-            </div>
-            <p class="text-[11px] text-slate-400 dark:text-zinc-500 italic pt-1">Order → Confirmed → Forwarded to Payments.aspx for Paid → Receipt generation.</p>
-        </div>
-
-        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-zinc-800">
-            <button onclick="closeConfirmModal()" class="px-4 h-10 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">Cancel</button>
-            <button onclick="executeOrderConfirmation()" class="px-5 h-10 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold rounded-xl transition shadow-md cursor-pointer">Confirm Order & Pay</button>
-        </div>
-    </div>
-</div>
-
-<!-- 6. NEW ORDER MODAL (POPUP FORM) -->
-<div id="newOrderModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 text-xs my-8">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
-            <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-cart-plus text-emerald-600 dark:text-lime-400"></i>
-                New Product Order
-            </h3>
-            <button onclick="closeNewOrderModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Order successfully created!'); closeNewOrderModal();">
-            
-            <div class="space-y-1">
-                <label class="block font-bold text-slate-700 dark:text-zinc-400">Member</label>
-                <input type="text" placeholder="Search Member (e.g. Ahmed Ali - MEM-1044)..." class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none" />
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="space-y-1 sm:col-span-1">
-                    <label class="block font-bold text-slate-700 dark:text-zinc-400">Product</label>
-                    <select class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
-                        <option>Select Product</option>
-                        <option selected>Whey Protein</option>
-                        <option>Water Bottle</option>
-                        <option>Gym Gloves</option>
-                        <option>Energy Drink</option>
-                    </select>
-                </div>
-                <div class="space-y-1">
-                    <label class="block font-bold text-slate-700 dark:text-zinc-400">Quantity</label>
-                    <input type="number" value="2" class="w-full h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
-                </div>
-                <div class="space-y-1">
-                    <label class="block font-bold text-slate-700 dark:text-zinc-400">Price</label>
-                    <div class="h-10 px-3 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl flex items-center font-mono font-bold text-slate-900 dark:text-white">
-                        $50
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <button type="button" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5">
-                    <i class="fa-solid fa-plus text-[10px]"></i> Add Item
-                </button>
-            </div>
-
-            <hr class="border-slate-200 dark:border-zinc-800" />
-
-            <div class="flex justify-between items-center p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950 font-bold text-sm">
-                <span>Order Total:</span>
-                <span class="font-mono text-emerald-600 dark:text-lime-400">$100</span>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-zinc-800">
-                <button type="button" onclick="closeNewOrderModal()" class="px-4 h-10 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 h-10 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer">Create Order</button>
-            </div>
-        </form>
-    </div>
 </div>
 
 <!-- VIEW RECEIPT MODAL -->
@@ -365,86 +222,48 @@
         </div>
 
         <div class="space-y-2 text-left p-3 rounded-xl bg-slate-50 dark:bg-zinc-950 font-mono text-[11px]">
-            <div class="flex justify-between"><span>Order ID:</span> <strong id="receiptId" class="text-slate-900 dark:text-white">ORD-1026</strong></div>
-            <div class="flex justify-between"><span>Member:</span> <strong id="receiptMember" class="text-slate-900 dark:text-white">Farhiya Abdi</strong></div>
+            <div class="flex justify-between"><span>Order ID:</span> <strong id="receiptId" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span>Member:</span> <strong id="receiptMember" class="text-slate-900 dark:text-white"></strong></div>
             <div class="flex justify-between"><span>Status:</span> <strong class="text-emerald-600 dark:text-lime-400">PAID</strong></div>
-            <div class="flex justify-between border-t border-slate-200 dark:border-zinc-800 pt-2 font-bold text-xs"><span>Total Paid:</span> <strong id="receiptTotal" class="text-emerald-600 dark:text-lime-400">$6</strong></div>
+            <div class="flex justify-between border-t border-slate-200 dark:border-zinc-800 pt-2 font-bold text-xs"><span>Total Paid:</span> <strong id="receiptTotal" class="text-emerald-600 dark:text-lime-400"></strong></div>
         </div>
 
         <div class="flex gap-2 pt-2">
-            <button onclick="alert('Printing receipt...')" class="w-full h-10 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">Print Slip</button>
-            <button onclick="closeReceiptModal()" class="w-full h-10 bg-emerald-600 dark:bg-emerald-700 dark:bg-lime-400 dark:text-zinc-950 font-extrabold rounded-xl transition cursor-pointer">Done</button>
+            <button onclick="window.print()" class="w-full h-10 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">Print Slip</button>
+            <button onclick="closeReceiptModal()" class="w-full h-10 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:text-zinc-950 font-extrabold rounded-xl transition cursor-pointer">Done</button>
         </div>
     </div>
 </div>
 
-<!-- JavaScript Logic & Router Emulation -->
+<!-- JavaScript Filtering & Modals -->
 <script>
-    // New Order Modal Controls
-    function openNewOrderModal() { document.getElementById('newOrderModal').classList.remove('hidden'); }
-    function closeNewOrderModal() { document.getElementById('newOrderModal').classList.add('hidden'); }
+    function filterTable() {
+        let statusFilter = document.getElementById('filterStatus').value.toLowerCase();
+        let searchInput = document.getElementById('txtOrderSearch').value.toLowerCase();
+        let rows = document.querySelectorAll('.order-row');
 
-    // View Modal Controls
-    function openViewModal(id, member, date, status, payment, total) {
-        document.getElementById('viewModalId').innerText = id;
-        document.getElementById('viewModalMember').innerText = member;
-        document.getElementById('viewModalDate').innerText = date;
-        document.getElementById('viewModalStatus').innerText = status;
-        document.getElementById('viewModalPayment').innerText = payment;
-        document.getElementById('viewModalTotal').innerText = '$' + total;
-        document.getElementById('viewOrderModal').classList.remove('hidden');
-    }
-    function closeViewModal() { document.getElementById('viewOrderModal').classList.add('hidden'); }
+        rows.forEach(row => {
+            let rowStatus = row.getAttribute('data-status');
+            let rowText = row.innerText.toLowerCase();
 
-    // Confirm Modal Controls
-    function openConfirmModal(id, member, total) {
-        document.getElementById('confirmModalId').innerText = 'Order #' + id;
-        document.getElementById('confirmModalMember').innerText = member;
-        document.getElementById('confirmModalTotal').innerText = '$' + total;
-        document.getElementById('confirmOrderModal').classList.remove('hidden');
-    }
-    function closeConfirmModal() { document.getElementById('confirmOrderModal').classList.add('hidden'); }
+            let matchesStatus = (statusFilter === 'all' || rowStatus === statusFilter);
+            let matchesSearch = (rowText.includes(searchInput));
 
-    function executeOrderConfirmation() {
-        alert("Order verified and confirmed! Redirecting to Payments.aspx for official payment processing...");
-        closeConfirmModal();
-        window.location.href = '#payments'; // Emulating redirect to Payments.aspx
+            if (matchesStatus && matchesSearch) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
     }
 
-    // Cancel Action
-    function cancelOrder(id) {
-        if(confirm("Are you sure you want to cancel order " + id + "?")) {
-            alert("Order " + id + " has been cancelled.");
-        }
-    }
-
-    // Receipt Modal Controls
     function openReceiptModal(id, member, total) {
         document.getElementById('receiptId').innerText = id;
         document.getElementById('receiptMember').innerText = member;
         document.getElementById('receiptTotal').innerText = '$' + total;
         document.getElementById('receiptModal').classList.remove('hidden');
     }
-    function closeReceiptModal() { document.getElementById('receiptModal').classList.add('hidden'); }
-
-    // Table Filter & Search Engine
-    function filterOrders() {
-        const searchInput = document.getElementById('txtOrderSearch').value.toLowerCase();
-        const statusFilter = document.getElementById('filterStatus').value;
-        const rows = document.querySelectorAll('.order-row');
-
-        rows.forEach(row => {
-            const rowText = row.innerText.toLowerCase();
-            const rowStatus = row.getAttribute('data-status');
-            
-            const matchesSearch = rowText.includes(searchInput);
-            const matchesStatus = (statusFilter === 'all' || rowStatus === statusFilter);
-
-            if(matchesSearch && matchesStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
+    function closeReceiptModal() {
+        document.getElementById('receiptModal').classList.add('hidden');
     }
 </script>

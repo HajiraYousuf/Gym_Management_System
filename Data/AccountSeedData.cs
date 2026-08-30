@@ -8,6 +8,8 @@ namespace GymManagementSystem.Data
     /// <summary>
     /// Applies pending migrations and creates one default account per role.
     /// Passwords are hashed, never stored in clear text.
+    /// This is the ONLY place default accounts get seeded — do not
+    /// duplicate this logic in a controller constructor.
     /// </summary>
     public static class AccountSeedData
     {
@@ -44,6 +46,7 @@ namespace GymManagementSystem.Data
                     Username = email,
                     Role = role,
                     Status = "Active",
+                    MembershipRequested = false, // default accounts never sit in the pending-approval flow
                     JoinDate = DateTime.UtcNow,
                     LastLogin = DateTime.UtcNow,
                     Phone = string.Empty,

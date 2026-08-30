@@ -1,13 +1,31 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.NutritionPlan>
+
+@{
     ViewData["Title"] = "Nutrition Plans";
     Layout = "~/Views/layouts/TrainerMaster.cshtml";
+
+    var membersList = ViewBag.MembersList as List<GymManagementSystem.Models.UserProfile> ?? new List<GymManagementSystem.Models.UserProfile>();
 }
 
 <!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <div class="space-y-6 min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 p-4 md:p-6 transition-colors duration-300">
-    
+
+    <!-- TempData Alerts -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="p-4 rounded-xl bg-lime-400/20 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-xs font-bold">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="p-4 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-500 text-xs font-bold">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-5">
         <div>
@@ -18,7 +36,6 @@
             <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Create, assign, and manage custom diet routines and macros for your members.</p>
         </div>
 
-        <!-- Action Buttons -->
         <div class="flex items-center gap-3 w-full sm:w-auto">
             <button type="button" onclick="openAssignModal()" class="bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-extrabold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all w-full sm:w-auto cursor-pointer">
                 <i class="fas fa-utensils"></i> Assign Nutrition
@@ -31,8 +48,6 @@
 
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <!-- Total Plans -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-lime-100 dark:bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 flex items-center justify-center text-lg">
@@ -40,11 +55,10 @@
                 </div>
                 <span class="text-xs font-mono font-bold text-zinc-400">Total</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">12</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.TotalPlans</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Active Diet Programs</p>
         </div>
 
-        <!-- Assigned Plans -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center text-lg">
@@ -52,23 +66,21 @@
                 </div>
                 <span class="text-xs font-mono font-bold text-blue-500">Assigned</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">10</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.AssignedCount</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Assigned to Trainees</p>
         </div>
 
-        <!-- Weight Loss Goal -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center text-lg">
                     <i class="fas fa-fire-flame-curved"></i>
                 </div>
-                <span class="text-xs font-mono font-bold text-purple-500">Cal Deficit</span>
+                <span class="text-xs font-mono font-bold text-purple-500">Fat Loss</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">5</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.FatLossCount</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Fat Loss Diets</p>
         </div>
 
-        <!-- Avg Calories -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-lg">
@@ -76,40 +88,29 @@
                 </div>
                 <span class="text-xs font-mono font-bold text-amber-500">Avg Cals</span>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">2,450</h3>
+            <h3 class="text-2xl font-black text-zinc-900 dark:text-white font-mono">@ViewBag.AvgCalories</h3>
             <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Daily Target Calories</p>
         </div>
-
     </div>
 
     <!-- Filter & Search Section -->
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
-        <!-- Search Input -->
+    <form method="get" asp-action="NutritionPlans" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-center">
         <div class="relative w-full md:w-80">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-400">
                 <i class="fas fa-search text-xs"></i>
             </span>
-            <input type="text" placeholder="Search nutrition plan name..." class="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 transition-all font-medium" />
+            <input type="text" name="search" placeholder="Search nutrition plan name..." value="@Context.Request.Query["search"]" class="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 transition-all font-medium" />
         </div>
 
-        <!-- Filters Dropdown Group -->
         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <select class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
+            <select name="goalFilter" onchange="this.form.submit()" class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
                 <option value="">All Goals</option>
-                <option value="muscle">Muscle Building</option>
+                <option value="Muscle Building">Muscle Building</option>
                 <option value="weightloss">Weight Loss</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="keto">Keto/Low Carb</option>
-            </select>
-
-            <select class="px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs text-zinc-700 dark:text-zinc-300 focus:outline-none focus:border-lime-500 font-medium cursor-pointer">
-                <option value="">All Diet Types</option>
-                <option value="highprotein">High Protein</option>
-                <option value="balanced">Balanced Macros</option>
-                <option value="vegan">Vegan</option>
+                <option value="Maintenance">Maintenance</option>
             </select>
         </div>
-    </div>
+    </form>
 
     <!-- Nutrition Plans Table -->
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden">
@@ -121,407 +122,302 @@
                         <th class="p-4">Target Goal</th>
                         <th class="p-4">Calories</th>
                         <th class="p-4">Macros (P / C / F)</th>
-                        <th class="p-4">Assigned Member</th>
+                        <th class="p-4">Assigned Member ID</th>
                         <th class="p-4 text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-xs">
-                    
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td class="p-4 flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 font-bold flex items-center justify-center text-xs">
-                                <i class="fas fa-apple-whole"></i>
-                            </div>
-                            <div>
-                                <span class="font-bold text-zinc-900 dark:text-white block">Lean Mass High Protein</span>
-                                <span class="text-[11px] text-zinc-400 font-mono">4 Weeks • 4 Meals/day</span>
-                            </div>
-                        </td>
-                        <td class="p-4 font-medium text-zinc-700 dark:text-zinc-300">Muscle Building</td>
-                        <td class="p-4 font-mono font-bold text-zinc-900 dark:text-white">2,800 kcal</td>
-                        <td class="p-4 font-mono text-zinc-600 dark:text-zinc-400 font-semibold">180g / 300g / 75g</td>
-                        <td class="p-4 font-bold text-zinc-900 dark:text-white">Ahmed Ali (#MEM-8801)</td>
-                        <td class="p-4 text-right space-x-2">
-                            <button type="button" onclick="openDetailModal()" title="View Nutrition Details" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
-                                <i class="fas fa-eye text-xs"></i>
-                            </button>
-                            <button type="button" onclick="openAddModal()" title="Edit Plan" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
-                                <i class="fas fa-pen text-xs"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var plan in Model)
+                        {
+                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
+                                <td class="p-4 flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 font-bold flex items-center justify-center text-xs">
+                                        <i class="fas fa-apple-whole"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-zinc-900 dark:text-white block">@plan.Title</span>
+                                        <span class="text-[11px] text-zinc-400 font-mono">@plan.DurationWeeks Weeks</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 font-medium text-zinc-700 dark:text-zinc-300">@plan.TargetGoal</td>
+                                <td class="p-4 font-mono font-bold text-zinc-900 dark:text-white">@plan.Calories kcal</td>
+                                <td class="p-4 font-mono text-zinc-600 dark:text-zinc-400 font-semibold">@plan.Protein g / @plan.Carbs g / @plan.Fats g</td>
+                                <td class="p-4 font-bold text-zinc-900 dark:text-white">@(string.IsNullOrEmpty(plan.AssignedMemberId) ? "Unassigned" : "#MEM-" + plan.AssignedMemberId)</td>
+                                <td class="p-4 text-right space-x-2">
+                                    <button type="button" onclick="openDetailModal('@plan.Title', '@plan.TargetGoal', '@plan.Calories', '@plan.Protein', '@plan.Carbs', '@plan.Fats', '@plan.Notes')" title="View Details" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </button>
+                                    <!-- Edit Button -->
+                                    <button type="button" onclick="openEditNutritionModal(@plan.Id, '@plan.Title', '@plan.TargetGoal', @plan.Calories, @plan.DurationWeeks, @plan.Protein, @plan.Carbs, @plan.Fats, '@plan.Notes')" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black transition-all cursor-pointer">
+                                        <i class="fas fa-pen text-xs"></i>
+                                    </button>
 
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td class="p-4 flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-500 font-bold flex items-center justify-center text-xs">
-                                <i class="fas fa-fire-flame-curved"></i>
-                            </div>
-                            <div>
-                                <span class="font-bold text-zinc-900 dark:text-white block">Shredded Fat Loss Diet</span>
-                                <span class="text-[11px] text-zinc-400 font-mono">6 Weeks • 3 Meals/day</span>
-                            </div>
-                        </td>
-                        <td class="p-4 font-medium text-zinc-700 dark:text-zinc-300">Weight Loss</td>
-                        <td class="p-4 font-mono font-bold text-zinc-900 dark:text-white">1,850 kcal</td>
-                        <td class="p-4 font-mono text-zinc-600 dark:text-zinc-400 font-semibold">160g / 140g / 55g</td>
-                        <td class="p-4 font-bold text-zinc-900 dark:text-white">Mohamed Omar (#MEM-8802)</td>
-                        <td class="p-4 text-right space-x-2">
-                            <button type="button" onclick="openDetailModal()" title="View Nutrition Details" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
-                                <i class="fas fa-eye text-xs"></i>
-                            </button>
-                            <button type="button" onclick="openAddModal()" title="Edit Plan" class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer">
-                                <i class="fas fa-pen text-xs"></i>
-                            </button>
-                        </td>
-                    </tr>
-
+                                    <!-- Delete Form -->
+                                    <form asp-action="DeleteNutritionPlan" method="post" class="inline-block" onsubmit="return confirm('Ma hubtaa in aad tirtirto nutrition plan-kan?');">
+                                        <input type="hidden" name="id" value="@plan.Id" />
+                                        <button type="submit" class="p-2 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all cursor-pointer">
+                                            <i class="fas fa-trash text-xs"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="p-6 text-center text-zinc-400">No nutrition plans found.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
-
-        <!-- Pagination Footer -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
-            <span class="text-zinc-500 dark:text-zinc-400 font-medium">Showing nutrition plans (1 to 2 of 12 entries)</span>
-            <div class="flex items-center gap-2">
-                <button type="button" class="px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">Previous</button>
-                <button type="button" class="px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-400 hover:text-black dark:hover:bg-lime-400 text-zinc-700 dark:text-zinc-300 font-bold transition-all cursor-pointer">Next</button>
-            </div>
-        </div>
     </div>
-
 </div>
 
 <!-- ==================== ASSIGN NUTRITION PLAN MODAL ==================== -->
 <div id="assignModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl my-8">
-        
-        <!-- Modal Header -->
-        <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
-            <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-utensils text-lime-500"></i>
-                <span>Assign Nutrition Plan</span>
-            </h3>
-            <button type="button" onclick="closeAssignModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-        </div>
+        <form asp-action="AssignNutrition" method="post">
+            <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-utensils text-lime-500"></i> Assign Nutrition Plan
+                </h3>
+                <button type="button" onclick="closeAssignModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
 
-        <!-- Modal Body / Form -->
-        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
-            <div>
-                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Member <span class="text-rose-500">*</span></label>
-                <div class="relative">
-                    <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 transition appearance-none cursor-pointer">
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <div>
+                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Member <span class="text-rose-500">*</span></label>
+                    <select name="memberId" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
                         <option value="">Choose member...</option>
-                        <option value="8801">Ahmed Ali (#MEM-8801)</option>
-                        <option value="8802">Mohamed Omar (#MEM-8802)</option>
-                        <option value="8803">Fadumo Hassan (#MEM-8803)</option>
+                        @if (membersList != null && membersList.Any())
+                        {
+                            foreach (var mem in membersList)
+                            {
+                                <option value="@mem.Id">@mem.Name (@mem.Email)</option>
+                            }
+                        }
                     </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-xs"></i>
                 </div>
-            </div>
 
-            <div>
-                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Nutrition Plan <span class="text-rose-500">*</span></label>
-                <div class="relative">
-                    <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 transition appearance-none cursor-pointer">
+                <div>
+                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Nutrition Plan <span class="text-rose-500">*</span></label>
+                    <select name="planId" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 cursor-pointer">
                         <option value="">Choose nutrition plan...</option>
-                        <option value="301">Lean Mass High Protein (2,800 kcal)</option>
-                        <option value="302">Shredded Fat Loss Diet (1,850 kcal)</option>
+                        @if (Model != null)
+                        {
+                            foreach (var p in Model)
+                            {
+                                <option value="@p.Id">@p.Title (@p.Calories kcal)</option>
+                            }
+                        }
                     </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-xs"></i>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Start Date <span class="text-rose-500">*</span></label>
+                        <input type="date" name="startDate" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                    <div>
+                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">End Date <span class="text-rose-500">*</span></label>
+                        <input type="date" name="endDate" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 dark:[color-scheme:dark]" />
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Start Date <span class="text-rose-500">*</span></label>
-                    <input type="date" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition dark:[color-scheme:dark]" />
-                </div>
-                <div>
-                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">End Date <span class="text-rose-500">*</span></label>
-                    <input type="date" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition dark:[color-scheme:dark]" />
+                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes</label>
+                    <textarea name="notes" rows="3" placeholder="Add food allergies or guidelines..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 resize-none"></textarea>
                 </div>
             </div>
 
-            <div>
-                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Dietary Restrictions & Trainer Notes</label>
-                <textarea rows="3" placeholder="Add food allergies, water intake target, or guidelines..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition resize-none"></textarea>
+            <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
+                <button type="button" onclick="closeAssignModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold cursor-pointer text-xs">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 cursor-pointer text-xs">Assign Nutrition</button>
             </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeAssignModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer text-xs">
-                Cancel
-            </button>
-            <button type="button" onclick="if(confirm('Ma hubtaa in aad sii wadato meelaynta nutrition plan-kan?')) { closeAssignModal(); }" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer text-xs">
-                Assign Nutrition
-            </button>
-        </div>
-
+        </form>
     </div>
 </div>
 
+<!-- ==================== CREATE NUTRITION PLAN MODAL ==================== -->
 <!-- ==================== CREATE / EDIT NUTRITION PLAN MODAL ==================== -->
 <div id="addModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl my-8">
         
-        <!-- Modal Header -->
-        <div class="flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <div>
-                <h2 class="text-xl font-black text-zinc-900 dark:text-white">Create Nutrition Plan</h2>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Configure calories, macros, daily meals, and assign diet programs to members.</p>
-            </div>
-            <button type="button" onclick="closeAddModal()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black transition cursor-pointer">
-                <i class="fas fa-times text-sm"></i>
-            </button>
-        </div>
-
-        <!-- Modal Body / Form -->
-        <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
+        <!-- Asp-action waxaan ka dhignay 'SaveNutritionPlan' si uu labadaba u qabto -->
+        <form asp-action="SaveNutritionPlan" method="post">
             
-            <!-- Plan Information Group -->
-            <div class="space-y-4">
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Plan Information & Macros</h3>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Plan Name *</label>
-                        <input type="text" placeholder="e.g. Lean Mass High Protein" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
+            <!-- Hidden ID Field: 0 = Create, ID kale = Edit -->
+            <input type="hidden" name="Id" id="nutritionId" value="0" />
 
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Assign Member</label>
-                        <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="">Select Member...</option>
-                            <option value="8801">Ahmed Ali (#MEM-8801)</option>
-                            <option value="8802">Mohamed Omar (#MEM-8802)</option>
-                            <option value="8803">Fadumo Hassan (#MEM-8803)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Target Goal</label>
-                        <select class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="muscle">Muscle Building</option>
-                            <option value="weightloss">Weight Loss</option>
-                            <option value="maintenance">Maintenance</option>
-                            <option value="keto">Keto/Low Carb</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Daily Calories (kcal)</label>
-                        <input type="number" value="2800" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Duration (Weeks)</label>
-                        <input type="number" value="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Protein (g)</label>
-                        <input type="number" value="180" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Carbs (g)</label>
-                        <input type="number" value="300" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                    <div>
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Fats (g)</label>
-                        <input type="number" value="75" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Meal Items Selection Section -->
-            <div class="space-y-4 pt-2">
-                <div class="border-b border-zinc-100 dark:border-zinc-800 pb-2">
-                    <h3 class="text-sm font-bold text-zinc-900 dark:text-white">Daily Meals Configuration</h3>
-                    <p class="text-[11px] text-zinc-400">Add individual meal items, foods, and serving portions for the diet plan.</p>
-                </div>
-
-                <!-- Meal Inputs Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl border border-zinc-200/60 dark:border-zinc-800">
-                    <div class="sm:col-span-3">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Meal Time</label>
-                        <select class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch">Lunch</option>
-                            <option value="snack">Pre/Post Workout</option>
-                            <option value="dinner">Dinner</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-5">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Food Items & Recipe</label>
-                        <input type="text" placeholder="e.g. Oatmeal, 2 whole eggs, 1 banana" class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                    <div class="sm:col-span-3">
-                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1">Calories / Macros</label>
-                        <input type="text" placeholder="550 kcal (40g P)" class="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
-                    </div>
-                    <div class="sm:col-span-1">
-                        <button type="button" title="Add Meal Item" class="w-full py-2 bg-lime-400 hover:bg-lime-500 text-black font-extrabold rounded-xl transition flex items-center justify-center cursor-pointer shadow-md shadow-lime-500/10">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-
-                
-            <!-- Single Textbox for Notes -->
-            <div class="space-y-3 pt-2">
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Dietary & Hydration Notes</h3>
-                
+            <div class="flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
                 <div>
-                    <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes, Water Intake & Supplements</label>
-                    <textarea rows="4" placeholder="Enter water target, supplement guidelines, and food substitution notes here..." class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500">Drink at least 3.5 to 4 liters of water daily. Take Whey Protein post-workout and Creatine Monohydrate (5g) daily.</textarea>
+                    <h2 id="nutritionModalTitle" class="text-xl font-black text-zinc-900 dark:text-white">Create Nutrition Plan</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Configure and save custom diet and macro routines.</p>
+                </div>
+                <button type="button" onclick="closeAddModal()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black transition cursor-pointer">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Plan Information & Macros</h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Plan Name *</label>
+                            <input type="text" name="Title" id="nutritionTitle" required placeholder="e.g. Lean Mass High Protein" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Target Goal</label>
+                            <select name="TargetGoal" id="nutritionGoal" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500 cursor-pointer">
+                                <option value="Muscle Building">Muscle Building</option>
+                                <option value="Weight Loss">Weight Loss</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Keto/Low Carb">Keto/Low Carb</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Daily Calories (kcal)</label>
+                            <input type="number" name="Calories" id="nutritionCalories" value="2800" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Duration (Weeks)</label>
+                            <input type="number" name="DurationWeeks" id="nutritionDuration" value="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Protein (g)</label>
+                            <input type="number" name="Protein" id="nutritionProtein" value="180" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Carbs (g)</label>
+                            <input type="number" name="Carbs" id="nutritionCarbs" value="300" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                        <div>
+                            <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Fats (g)</label>
+                            <input type="number" name="Fats" id="nutritionFats" value="75" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Trainer Notes & Guidelines</label>
+                        <textarea name="Notes" id="nutritionNotes" rows="4" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium focus:outline-none focus:border-lime-500"></textarea>
+                    </div>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="flex justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer">
-                Cancel
-            </button>
-            <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer">
-                Save Nutrition Plan
-            </button>
-        </div>
-
+            <div class="flex justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+                <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold cursor-pointer">Cancel</button>
+                <button type="submit" id="nutritionSaveBtnText" class="px-5 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 cursor-pointer">Save Nutrition Plan</button>
+            </div>
+        </form>
     </div>
 </div>
-
-<!-- ==================== VIEW NUTRITION PLAN DETAIL MODAL ==================== -->
+<!-- ==================== VIEW DETAIL MODAL ==================== -->
 <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl my-8">
-        
-        <!-- Modal Header -->
         <div class="flex justify-between items-center p-6 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold">
-                    <i class="fas fa-apple-whole"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-zinc-900 dark:text-white">Lean Mass High Protein</h2>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Assigned to: <span class="text-zinc-800 dark:text-zinc-200 font-bold">Ahmed Ali (#MEM-8801)</span></p>
-                </div>
-            </div>
+            <h2 id="modalTitle" class="text-xl font-black text-zinc-900 dark:text-white">Plan Details</h2>
             <button type="button" onclick="closeDetailModal()" class="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black transition cursor-pointer">
                 <i class="fas fa-times text-sm"></i>
             </button>
         </div>
 
-        <!-- Modal Body Content -->
         <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
-            
-            <!-- Plan Info Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-800">
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Target Goal</span>
-                    <p class="font-bold text-zinc-900 dark:text-white mt-0.5">Muscle Building</p>
+                    <p id="modalGoal" class="font-bold text-zinc-900 dark:text-white mt-0.5">-</p>
                 </div>
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Daily Calories</span>
-                    <p class="font-bold text-lime-500 mt-0.5">2,800 kcal</p>
+                    <p id="modalCals" class="font-bold text-lime-500 mt-0.5">-</p>
                 </div>
                 <div>
                     <span class="text-[10px] font-bold text-zinc-400 uppercase">Macros (P / C / F)</span>
-                    <p class="font-bold text-zinc-900 dark:text-white mt-0.5">180g / 300g / 75g</p>
-                </div>
-                <div>
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase">Program Duration</span>
-                    <p class="font-bold text-zinc-900 dark:text-white mt-0.5">4 Weeks</p>
+                    <p id="modalMacros" class="font-bold text-zinc-900 dark:text-white mt-0.5">-</p>
                 </div>
             </div>
 
-            <!-- Daily Meals List -->
-            <div>
-                <h3 class="text-sm font-bold text-zinc-900 dark:text-white mb-3">Daily Meal Routine</h3>
-                <div class="border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-zinc-50 dark:bg-zinc-950 uppercase text-[10px] font-bold text-zinc-400 border-b border-zinc-200 dark:border-zinc-800">
-                            <tr>
-                                <th class="p-3">Meal Time</th>
-                                <th class="p-3">Food Items & Recipe</th>
-                                <th class="p-3">Est. Calories</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 font-medium">
-                            <tr>
-                                <td class="p-3 font-bold text-zinc-900 dark:text-white">Breakfast</td>
-                                <td class="p-3 text-zinc-500">Oatmeal (100g), 2 Whole Eggs, Peanut Butter (1 tbsp)</td>
-                                <td class="p-3 font-mono">620 kcal</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-zinc-900 dark:text-white">Lunch</td>
-                                <td class="p-3 text-zinc-500">Grilled Chicken Breast (200g), Jasmine Rice (1.5 cup), Broccoli</td>
-                                <td class="p-3 font-mono">750 kcal</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-zinc-900 dark:text-white">Dinner</td>
-                                <td class="p-3 text-zinc-500">Lean Beef Steak (180g), Sweet Potato (200g), Mixed Salad</td>
-                                <td class="p-3 font-mono">810 kcal</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Trainer Notes & Instructions Box -->
             <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-800 space-y-2">
                 <h3 class="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    <i class="fas fa-clipboard-list text-lime-500"></i> Dietary & Hydration Notes
+                    <i class="fas fa-clipboard-list text-lime-500"></i> Trainer Notes & Instructions
                 </h3>
-                <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    Drink at least 3.5 to 4 liters of water daily. Take Whey Protein post-workout and Creatine Monohydrate (5g) daily.
-                </p>
+                <p id="modalNotes" class="text-zinc-600 dark:text-zinc-400 leading-relaxed">-</p>
             </div>
-
         </div>
 
-        <!-- Modal Footer -->
         <div class="flex justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer">
-                Close
-            </button>
-            <button type="button" onclick="closeDetailModal(); openAddModal();" class="px-5 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer">
-                Edit Nutrition Plan
-            </button>
+            <button type="button" onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold cursor-pointer">Close</button>
         </div>
-
     </div>
 </div>
 
 <!-- Modal Control JavaScript -->
 <script>
-    function openAssignModal() {
-        document.getElementById('assignModal').classList.remove('hidden');
-    }
-    function closeAssignModal() {
-        document.getElementById('assignModal').classList.add('hidden');
-    }
+        function openAssignModal() { document.getElementById('assignModal').classList.remove('hidden'); }
+    function closeAssignModal() { document.getElementById('assignModal').classList.add('hidden'); }
 
-    function openAddModal() {
-        document.getElementById('addModal').classList.remove('hidden');
-    }
-    function closeAddModal() {
-        document.getElementById('addModal').classList.add('hidden');
-    }
-
-    function openDetailModal() {
+    function openDetailModal(title, goal, cals, protein, carbs, fats, notes) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalGoal').innerText = goal;
+        document.getElementById('modalCals').innerText = cals + ' kcal';
+            document.getElementById('modalMacros').innerText = protein + 'g / ' + carbs + 'g / ' + fats + 'g';
+        document.getElementById('modalNotes').innerText = notes || 'No special notes provided.';
         document.getElementById('detailModal').classList.remove('hidden');
     }
-    function closeDetailModal() {
-        document.getElementById('detailModal').classList.add('hidden');
-    }
+    function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
+    // Marka la abuurayo Plan cusub
+function openAddModal() {
+    document.getElementById('nutritionId').value = 0;
+    document.getElementById('nutritionModalTitle').innerText = "Create Nutrition Plan";
+    document.getElementById('nutritionSaveBtnText').innerText = "Save Nutrition Plan";
+
+    // Nadiifi Foomka
+    document.getElementById('nutritionTitle').value = "";
+    document.getElementById('nutritionGoal').value = "Muscle Building";
+    document.getElementById('nutritionCalories').value = 2800;
+    document.getElementById('nutritionDuration').value = 4;
+    document.getElementById('nutritionProtein').value = 180;
+    document.getElementById('nutritionCarbs').value = 300;
+    document.getElementById('nutritionFats').value = 75;
+    document.getElementById('nutritionNotes').placeholder = "Drink at least 3.5 to 4 liters of water daily.";
+
+    document.getElementById('addModal').classList.remove('hidden');
+}
+
+// Marka wax laga beddelayo Plan hore (Edit)
+function openEditNutritionModal(id, title, goal, calories, duration, protein, carbs, fats, notes) {
+    document.getElementById('nutritionId').value = id;
+    document.getElementById('nutritionModalTitle').innerText = "Edit Nutrition Plan";
+    document.getElementById('nutritionSaveBtnText').innerText = "Update Nutrition Plan";
+
+    // Buuxi Foomka xogtiisa saxda ah
+    document.getElementById('nutritionTitle').value = title;
+    document.getElementById('nutritionGoal').value = goal;
+    document.getElementById('nutritionCalories').value = calories;
+    document.getElementById('nutritionDuration').value = duration;
+    document.getElementById('nutritionProtein').value = protein;
+    document.getElementById('nutritionCarbs').value = carbs;
+    document.getElementById('nutritionFats').value = fats;
+    document.getElementById('nutritionNotes').value = notes || "";
+
+    document.getElementById('addModal').classList.remove('hidden');
+}
+
+function closeAddModal() {
+    document.getElementById('addModal').classList.add('hidden');
+}
 </script>

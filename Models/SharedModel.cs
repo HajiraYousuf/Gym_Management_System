@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymManagementSystem.Models
 {
@@ -28,13 +27,13 @@ namespace GymManagementSystem.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Role { get; set; }
-        public string Avatar { get; set; }
-        public string Status { get; set; }
+        public string? Avatar { get; set; }
+        public string? Status { get; set; }
         public DateTime LastSeen { get; set; }
 
-        public string Specialization { get; set; }
-        public string MembershipType { get; set; }
-        public string Shift { get; set; }
+        public string? Specialization { get; set; }
+        public string? MembershipType { get; set; }
+        public string? Shift { get; set; }
     }
 
     public class UserProfile
@@ -43,29 +42,39 @@ namespace GymManagementSystem.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Address { get; set; }
-        public string DateOfBirth { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
+        public string? DateOfBirth { get; set; }
         public string Gender { get; set; }
-        public string Bio { get; set; }
-        public string Avatar { get; set; }
+        public string? Bio { get; set; }
+        public string? Avatar { get; set; }
         public string Username { get; set; }
         public string Role { get; set; }
         public string Status { get; set; }
         public DateTime JoinDate { get; set; }
         public DateTime LastLogin { get; set; }
         public string Password { get; set; }
-        public string MembershipType { get; set; }
-        public string Specialization { get; set; }
-        public string Shift { get; set; }
+        public string? MembershipType { get; set; }
+        public string? ClassName { get; set; }
+        public string? Specialization { get; set; }
+        public string? Shift { get; set; }
+        public bool MembershipRequested { get; set; }
+        public int ExperienceYears { get; set; }
+        public decimal Salary { get; set; }
     }
 
     public class Message
     {
         [Key]
         public int Id { get; set; }
+
+        [Required]
         public string SenderId { get; set; }
+
+        [Required]
         public string ReceiverId { get; set; }
+
+        [Required]
         public string Text { get; set; }
         public DateTime Timestamp { get; set; }
     }

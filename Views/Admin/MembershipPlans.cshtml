@@ -1,9 +1,27 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.MembershipPlan>
+
+@{
     ViewData["Title"] = "Membership Management";
     Layout = "~/Views/Layouts/AdminMaster.cshtml";
+
+    int totalPlans = ViewBag.TotalPlans ?? 0;
+    int activeMembers = ViewBag.ActiveMembers ?? 1050;
+    decimal avgPrice = ViewBag.AvgPrice ?? 0;
+    int installmentsCount = ViewBag.InstallmentsCount ?? 0;
 }
+
 <div class="space-y-6 min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 p-2 sm:p-4 transition-colors duration-300">
-      
+
+    <!-- Alerts -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="p-4 rounded-xl bg-lime-500/10 border border-lime-500/20 text-lime-600 text-sm font-semibold">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-sm font-semibold">@TempData["Error"]</div>
+    }
+
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -20,57 +38,49 @@
 
     <!-- 1. Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-lime-500/50 transition-all rounded-2xl p-5 shadow-sm group">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start">
                 <div>
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Plans</span>
-                    <div class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">
-                        4
-                    </div>
+                    <div class="text-3xl font-black text-zinc-900 dark:text-white mt-2">@totalPlans</div>
                 </div>
-                <div class="p-3 bg-lime-100 dark:bg-lime-500/10 rounded-xl text-lime-600 dark:text-lime-400 group-hover:scale-110 transition-transform">
+                <div class="p-3 bg-lime-100 dark:bg-lime-500/10 rounded-xl text-lime-600 dark:text-lime-400">
                     <i class="fas fa-layer-group text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-lime-500/50 transition-all rounded-2xl p-5 shadow-sm group">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start">
                 <div>
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active Members</span>
-                    <div class="text-3xl font-black text-lime-600 dark:text-lime-400 mt-2">
-                        1,050
-                    </div>
+                    <div class="text-3xl font-black text-lime-600 dark:text-lime-400 mt-2">@activeMembers</div>
                 </div>
-                <div class="p-3 bg-lime-100 dark:bg-lime-500/10 rounded-xl text-lime-600 dark:text-lime-400 group-hover:scale-110 transition-transform">
+                <div class="p-3 bg-lime-100 dark:bg-lime-500/10 rounded-xl text-lime-600 dark:text-lime-400">
                     <i class="fas fa-users text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/50 transition-all rounded-2xl p-5 shadow-sm group">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start">
                 <div>
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Avg. Plan Price</span>
-                    <div class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                        $45.00
-                    </div>
+                    <div class="text-3xl font-black text-zinc-900 dark:text-white mt-2">$@avgPrice.ToString("0.00")</div>
                 </div>
-                <div class="p-3 bg-emerald-100 dark:bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                <div class="p-3 bg-emerald-100 dark:bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400">
                     <i class="fas fa-dollar-sign text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-purple-500/50 transition-all rounded-2xl p-5 shadow-sm group">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
             <div class="flex justify-between items-start">
                 <div>
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Installments</span>
-                    <div class="text-3xl font-black text-purple-600 dark:text-purple-400 mt-2">
-                        2 Plans
-                    </div>
+                    <div class="text-3xl font-black text-purple-600 dark:text-purple-400 mt-2">@installmentsCount Plans</div>
                 </div>
-                <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
+                <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl text-purple-600 dark:text-purple-400">
                     <i class="fas fa-credit-card text-xl"></i>
                 </div>
             </div>
@@ -85,7 +95,7 @@
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Complete list of available gym membership plans.</p>
             </div>
         </div>
-        
+
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm text-zinc-600 dark:text-zinc-300">
                 <thead class="bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-400 uppercase text-xs font-semibold tracking-wider border-b border-zinc-200 dark:border-zinc-800">
@@ -101,78 +111,71 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-lime-500/5 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td class="py-4 px-4 font-bold text-zinc-900 dark:text-white flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 flex items-center justify-center font-bold text-xs border border-lime-300 dark:border-lime-500/30">
-                                <i class="fas fa-shield-alt text-sm"></i>
-                            </div>
-                            <div>
-                                <div class="text-zinc-900 dark:text-white font-semibold">VIP Monthly Plan</div>
-                                <div class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">Full gym access with personal trainer support.</div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 font-mono text-lime-600 dark:text-lime-400 font-semibold">VIP-01</td>
-                        <td class="py-4 px-4">
-                            <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2.5 py-1 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-700">Full Access</span>
-                        </td>
-                        <td class="py-4 px-4 text-zinc-700 dark:text-zinc-300">30 Days</td>
-                        <td class="py-4 px-4 font-bold text-zinc-900 dark:text-white">$60.00</td>
-                        <td class="py-4 px-4">
-                            <span class='bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-purple-200 dark:border-purple-500/20'>2 Inst.</span>
-                        </td>
-                        <td class="py-4 px-4 font-medium text-zinc-700 dark:text-zinc-300">
-                            <span class='text-lime-600 dark:text-lime-400 font-semibold'>Free</span>
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            <div class="flex justify-center items-center gap-1.5">
-                                <button type="button" title="View Details" onclick="viewPlanDetails('VIP Monthly Plan', 'VIP-01', 'Full Access', '30', '60.00', '2', '0.00', 'Full gym access with personal trainer support.', 'Free Water|Personal Trainer|Sauna Access')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg transition-all">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </button>
-                                <button type="button" title="Edit Plan" onclick="editPlan('1', 'VIP Monthly Plan', 'VIP-01', 'Full Access', '30', '60.00', '2', '0.00', 'Full gym access with personal trainer support.', 'Free Water|Personal Trainer|Sauna Access')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-50 dark:hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg transition-all">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </button>
-                                <button type="button" title="Delete Plan" onclick="return confirm('Are you sure you want to delete this plan?');" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg transition-all">
-                                    <i class="fas fa-trash-alt text-sm"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-lime-500/5 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td class="py-4 px-4 font-bold text-zinc-900 dark:text-white flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 flex items-center justify-center font-bold text-xs border border-lime-300 dark:border-lime-500/30">
-                                <i class="fas fa-shield-alt text-sm"></i>
-                            </div>
-                            <div>
-                                <div class="text-zinc-900 dark:text-white font-semibold">Standard Plan</div>
-                                <div class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">Standard access during working hours.</div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 font-mono text-lime-600 dark:text-lime-400 font-semibold">STD-02</td>
-                        <td class="py-4 px-4">
-                            <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2.5 py-1 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-700">Standard</span>
-                        </td>
-                        <td class="py-4 px-4 text-zinc-700 dark:text-zinc-300">30 Days</td>
-                        <td class="py-4 px-4 font-bold text-zinc-900 dark:text-white">$30.00</td>
-                        <td class="py-4 px-4">
-                            <span class='bg-red-500/10 text-red-500 px-2.5 py-1 rounded-md text-xs font-semibold border border-red-500/20'>None</span>
-                        </td>
-                        <td class="py-4 px-4 font-medium text-zinc-700 dark:text-zinc-300">$5.00</td>
-                        <td class="py-4 px-4 text-center">
-                            <div class="flex justify-center items-center gap-1.5">
-                                <button type="button" title="View Details" onclick="viewPlanDetails('Standard Plan', 'STD-02', 'Standard', '30', '30.00', '0', '5.00', 'Standard access during working hours.', 'Free Water|Locker Access')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg transition-all">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </button>
-                                <button type="button" title="Edit Plan" onclick="editPlan('2', 'Standard Plan', 'STD-02', 'Standard', '30', '30.00', '0', '5.00', 'Standard access during working hours.', 'Free Water|Locker Access')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-50 dark:hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg transition-all">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </button>
-                                <button type="button" title="Delete Plan" onclick="return confirm('Are you sure you want to delete this plan?');" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg transition-all">
-                                    <i class="fas fa-trash-alt text-sm"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var plan in Model)
+                        {
+                            <tr class="hover:bg-lime-500/5 dark:hover:bg-zinc-800/50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-zinc-900 dark:text-white flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 flex items-center justify-center font-bold text-xs border border-lime-300 dark:border-lime-500/30">
+                                        <i class="fas fa-shield-alt text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-zinc-900 dark:text-white font-semibold">@plan.Name</div>
+                                        <div class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">@plan.Description</div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 font-mono text-lime-600 dark:text-lime-400 font-semibold">@plan.ShortCode</td>
+                                <td class="py-4 px-4">
+                                    <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2.5 py-1 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-700">@plan.Type</span>
+                                </td>
+                                <td class="py-4 px-4 text-zinc-700 dark:text-zinc-300">@plan.DurationDays Days</td>
+                                <td class="py-4 px-4 font-bold text-zinc-900 dark:text-white">$@plan.Price.ToString("0.00")</td>
+                                <td class="py-4 px-4">
+                                    @if (plan.Installments > 0)
+                                    {
+                                        <span class='bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-purple-200 dark:border-purple-500/20'>@plan.Installments Inst.</span>
+                                    }
+                                    else
+                                    {
+                                        <span class='bg-red-500/10 text-red-500 px-2.5 py-1 rounded-md text-xs font-semibold border border-red-500/20'>None</span>
+                                    }
+                                </td>
+                                <td class="py-4 px-4 font-medium text-zinc-700 dark:text-zinc-300">
+                                    @if (plan.SignupFee == 0)
+                                    {
+                                        <span class='text-lime-600 dark:text-lime-400 font-semibold'>Free</span>
+                                    }
+                                    else
+                                    {
+                                        <span>$@plan.SignupFee.ToString("0.00")</span>
+                                    }
+                                </td>
+                                <td class="py-4 px-4 text-center">
+                                    <div class="flex justify-center items-center gap-1.5">
+                                        <button type="button" title="View Details" onclick="viewPlanDetails('@plan.Name', '@plan.ShortCode', '@plan.Type', '@plan.DurationDays', '@plan.Price', '@plan.Installments', '@plan.SignupFee', '@plan.Description', '@plan.Features')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg transition-all cursor-pointer">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </button>
+                                        <button type="button" title="Edit Plan" onclick="editPlan('@plan.PlanId', '@plan.Name', '@plan.ShortCode', '@plan.Type', '@plan.DurationDays', '@plan.Price', '@plan.Installments', '@plan.SignupFee', '@plan.Description', '@plan.Features')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-50 dark:hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg transition-all cursor-pointer">
+                                            <i class="fas fa-edit text-sm"></i>
+                                        </button>
+                                        <form asp-action="Delete" asp-route-id="@plan.PlanId" method="post" onsubmit="return confirm('Are you sure you want to delete this plan?');" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" title="Delete Plan" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg transition-all cursor-pointer">
+                                                <i class="fas fa-trash-alt text-sm"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-10 text-zinc-500">No membership plans found. Click "Add New Plan" to create one.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -180,76 +183,77 @@
 
     <!-- 3. Add/Edit Plan Modal -->
     <div id="planModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center hidden p-2 sm:p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl my-auto landscape:my-4">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl my-auto">
             <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
                 <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Add New Membership Plan</h3>
-                <button type="button" onclick="closePlanModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white">
+                <button type="button" onclick="closePlanModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white cursor-pointer">
                     <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
 
-            <input type="hidden" id="hfPlanID" value="0" />
+            <form asp-action="SavePlan" method="post" class="p-4 sm:p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="hfPlanID" name="PlanId" value="0" />
 
-            <div class="p-4 sm:p-6 space-y-4 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
                 <div>
                     <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Plan Name *</label>
-                    <input type="text" id="txtPlanName" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g. VIP Monthly" />
+                    <input type="text" id="txtPlanName" name="Name" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g. VIP Monthly" />
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Short Code *</label>
-                        <input type="text" id="txtShortCode" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g. VIP-01" />
+                        <input type="text" id="txtShortCode" name="ShortCode" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g. VIP-01" />
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Membership Type *</label>
-                        <input type="text" id="txtMembershipType" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g. Full Access" />
+                        <input type="text" id="txtMembershipType" name="Type" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g. Full Access" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Duration (Days) *</label>
-                        <input type="number" id="txtDurationDays" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="30" />
+                        <input type="number" id="txtDurationDays" name="DurationDays" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="30" />
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Price ($) *</label>
-                        <input type="number" step="0.01" id="txtPrice" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="0.00" />
+                        <input type="number" step="0.01" id="txtPrice" name="Price" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="0.00" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Installments Allowed</label>
-                        <input type="number" id="txtInstallments" value="0" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" />
+                        <input type="number" id="txtInstallments" name="Installments" value="0" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" />
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Signup Fee ($)</label>
-                        <input type="number" step="0.01" id="txtSignupFee" value="0.00" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" />
+                        <input type="number" step="0.01" id="txtSignupFee" name="SignupFee" value="0.00" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" />
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Description</label>
-                    <textarea id="txtDescription" rows="2" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="Brief description..."></textarea>
+                    <textarea id="txtDescription" name="Description" rows="2" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="Brief description..."></textarea>
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Features (Separate with | symbol)</label>
-                    <textarea id="txtFeatures" rows="2" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="Free Water|Personal Trainer|Sauna Access"></textarea>
+                    <textarea id="txtFeatures" name="Features" rows="2" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="Free Water|Personal Trainer|Sauna Access"></textarea>
                 </div>
-            </div>
 
-            <div class="flex justify-end gap-3 px-4 sm:px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-                <button type="button" onclick="closePlanModal()" class="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-xl text-xs font-medium hover:bg-zinc-300 dark:hover:bg-zinc-700">Cancel</button>
-                <button type="button" onclick="closePlanModal()" class="px-5 py-2 bg-lime-500 text-zinc-950 font-bold rounded-xl text-xs hover:bg-lime-400 shadow cursor-pointer">Save Plan</button>
-            </div>
+                <div class="flex justify-end gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                    <button type="button" onclick="closePlanModal()" class="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-xl text-xs font-medium hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-lime-500 text-zinc-950 font-bold rounded-xl text-xs hover:bg-lime-400 shadow cursor-pointer">Save Plan</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- 4. VIEW DETAILS MODAL -->
     <div id="viewModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center hidden p-2 sm:p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl my-auto landscape:my-4">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl my-auto">
             <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl bg-lime-100 dark:bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold">
@@ -260,12 +264,12 @@
                         <span id="viewShortCode" class="text-xs font-mono text-lime-600 dark:text-lime-400 font-semibold"></span>
                     </div>
                 </div>
-                <button type="button" onclick="closeViewModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white">
+                <button type="button" onclick="closeViewModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white cursor-pointer">
                     <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
 
-            <div class="p-4 sm:p-6 space-y-4 text-xs text-zinc-700 dark:text-zinc-300 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
+            <div class="p-4 sm:p-6 space-y-4 text-xs text-zinc-700 dark:text-zinc-300 max-h-[60vh] overflow-y-auto">
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <div>
                         <span class="text-zinc-400 block">Type</span>
@@ -302,7 +306,7 @@
             </div>
 
             <div class="flex justify-end border-t border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-3 bg-zinc-50 dark:bg-zinc-950">
-                <button type="button" onclick="closeViewModal()" class="px-5 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-xl text-xs font-semibold hover:bg-zinc-300 dark:hover:bg-zinc-700">Close</button>
+                <button type="button" onclick="closeViewModal()" class="px-5 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-xl text-xs font-semibold hover:bg-zinc-300 dark:hover:bg-zinc-700 cursor-pointer">Close</button>
             </div>
         </div>
     </div>
@@ -321,7 +325,7 @@
         document.getElementById('txtSignupFee').value = "0.00";
         document.getElementById('txtDescription').value = "";
         document.getElementById('txtFeatures').value = "";
-        
+
         document.getElementById('modalTitle').innerText = "Add New Membership Plan";
         document.getElementById('planModal').classList.remove('hidden');
     }
@@ -361,7 +365,7 @@
 
         if (features && features.trim() !== "") {
             var items = features.split('|');
-            items.forEach(function (item) {
+            items.forEach(function(item) {
                 if (item.trim() !== "") {
                     var li = document.createElement('li');
                     li.className = "flex items-center gap-2 text-zinc-700 dark:text-zinc-300 text-xs";

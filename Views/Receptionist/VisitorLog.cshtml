@@ -1,6 +1,10 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.Visitor>
+
+@{
     ViewData["Title"] = "Visitor Log & Front Desk Control";
     Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+
+    var visitorsList = Model?.ToList() ?? new List<GymManagementSystem.Models.Visitor>();
 }
 
 <!-- FontAwesome CDN -->
@@ -27,24 +31,21 @@
 
     <!-- 1. SUMMARY CARDS -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <!-- Card 1 -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-emerald-600 dark:text-lime-400 font-bold block">Today's Visitors</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">15 <span class="text-xs font-semibold text-emerald-600 dark:text-lime-400">+12%</span></h3>
-                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">This Week Volume</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@ViewBag.TotalVisitorsToday</h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Registered Today</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 flex items-center justify-center text-xl">
                 <i class="fa-solid fa-clipboard-user"></i>
             </div>
         </div>
 
-        <!-- Card 2 -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-blue-600 dark:text-blue-400 font-bold block">Currently Inside</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">6 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Active</span></h3>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@ViewBag.CurrentlyInside <span class="text-sm font-normal text-slate-500">Active</span></h3>
                 <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">On-Site Visitors</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl">
@@ -52,35 +53,31 @@
             </div>
         </div>
 
-        <!-- Card 3 -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
                 <span class="text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold block">Trial Visitors</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">8 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Total</span></h3>
-                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">This Week Trials</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@ViewBag.TrialVisitors</h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Trial Workouts</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400 flex items-center justify-center text-xl">
                 <i class="fa-solid fa-dumbbell"></i>
             </div>
         </div>
 
-        <!-- Card 4 -->
         <div class="bg-white dark:bg-zinc-900/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
-                <span class="text-xs uppercase tracking-wider text-purple-600 dark:text-purple-400 font-bold block">Interested Visitors</span>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white">3 <span class="text-sm font-normal text-slate-500 dark:text-zinc-400">Leads</span></h3>
-                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">Need Follow-up</p>
+                <span class="text-xs uppercase tracking-wider text-purple-600 dark:text-purple-400 font-bold block">Inquiries / Leads</span>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white">@ViewBag.Inquiries</h3>
+                <p class="text-[11px] text-slate-400 dark:text-zinc-500 font-medium">General Inquiries</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400 flex items-center justify-center text-xl">
                 <i class="fa-solid fa-bullhorn"></i>
             </div>
         </div>
-
     </div>
 
     <!-- FILTER & SEARCH BAR -->
     <div class="bg-white dark:bg-zinc-900/80 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <!-- Tab Filters -->
         <div class="flex items-center gap-2 w-full sm:w-auto">
             <div class="flex p-1 bg-slate-100 dark:bg-black rounded-xl border border-slate-200 dark:border-zinc-800 w-full sm:w-auto text-xs font-bold">
                 <button onclick="filterVisitorTab('all')" id="tabAll" class="px-4 py-2 rounded-lg bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 transition cursor-pointer">Today's Visitors</button>
@@ -89,11 +86,10 @@
             </div>
         </div>
 
-        <!-- Search Input -->
         <div class="relative w-full sm:w-80">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" id="txtSearchVisitor" onkeyup="searchVisitorsTable()" placeholder="Search visitor name, phone or type..." 
-                class="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 text-xs font-medium outline-none transition shadow-inner" />
+            <input type="text" id="txtSearchVisitor" onkeyup="searchVisitorsTable()" placeholder="Search visitor name, phone or type..."
+                   class="w-full h-11 pl-10 pr-4 bg-slate-50 dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 text-xs font-medium outline-none transition shadow-inner" />
         </div>
     </div>
 
@@ -121,50 +117,56 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-zinc-800/80 text-xs font-medium text-slate-800 dark:text-zinc-200">
-                    
-                    <!-- Row 1 -->
-                    <tr class="visitor-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="inside">
-                        <td class="py-4 px-6 font-bold text-slate-900 dark:text-white">Hassan Omar</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Guest Visit</td>
-                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">0634440011</td>
-                        <td class="py-4 px-4 font-mono text-emerald-600 dark:text-lime-400">10:15 AM</td>
-                        <td class="py-4 px-4 font-mono text-slate-400">—</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">Inside</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewVisitorModal('Hassan Omar', 'Guest Visit', '0634440011', '10:15 AM', 'Active On-Site', 'Male', 'Captain Ahmed Hassan')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                            <button onclick="checkoutVisitor('Hassan Omar')" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-400/10 dark:hover:bg-amber-400/20 text-amber-600 dark:text-amber-400 font-bold rounded-lg transition cursor-pointer">Check-Out</button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr class="visitor-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="completed">
-                        <td class="py-4 px-6 font-bold text-slate-900 dark:text-white">Ahmed Ali</td>
-                        <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">Trial Workout</td>
-                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">0635552233</td>
-                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">09:30 AM</td>
-                        <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">11:00 AM</td>
-                        <td class="py-4 px-4 text-center">
-                            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Completed</span>
-                        </td>
-                        <td class="py-4 px-6 text-right space-x-1.5">
-                            <button onclick="openViewVisitorModal('Ahmed Ali', 'Trial Workout', '0635552233', '09:30 AM - 11:00 AM', 'Completed Workout', 'Male', 'Trainer Mustafa')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
-                        </td>
-                    </tr>
-
+                    @if (visitorsList.Any())
+                    {
+                        foreach (var v in visitorsList)
+                        {
+                            var statusClass = v.Status == "Inside" ? "inside" : "completed";
+                            <tr class="visitor-row hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition" data-status="@statusClass">
+                                <td class="py-4 px-6 font-bold text-slate-900 dark:text-white">@v.FullName</td>
+                                <td class="py-4 px-4 text-slate-600 dark:text-zinc-400">@v.VisitType</td>
+                                <td class="py-4 px-4 font-mono text-slate-600 dark:text-zinc-400">@v.PhoneNumber</td>
+                                <td class="py-4 px-4 font-mono text-emerald-600 dark:text-lime-400">@v.CheckInTime</td>
+                                <td class="py-4 px-4 font-mono text-slate-400">@(v.CheckOutTime?.ToString() ?? "—")</td>
+                                <td class="py-4 px-4 text-center">
+                                    @if (v.Status == "Inside")
+                                    {
+                                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">Inside</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-lime-400/10 dark:text-lime-400">Completed</span>
+                                    }
+                                </td>
+                                <td class="py-4 px-6 text-right space-x-1.5">
+                                    <button onclick="openViewVisitorModal('@v.FullName', '@v.VisitType', '@v.PhoneNumber', '@v.CheckInTime', '@v.Status', '@v.Gender', '@(v.AssignedTrainer ?? "None")')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-lg transition cursor-pointer">View</button>
+                                    @if (v.Status == "Inside")
+                                    {
+                                        <form asp-action="CheckoutVisitor" method="post" class="inline">
+                                            <input type="hidden" name="id" value="@v.Id" />
+                                            <button type="submit" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-400/10 dark:hover:bg-amber-400/20 text-amber-600 dark:text-amber-400 font-bold rounded-lg transition cursor-pointer">Check-Out</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-6 text-slate-400">No visitors registered today.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
 
-<!-- ADD NEW VISITOR MODAL (POP-UP FORM) -->
+<!-- ADD NEW VISITOR MODAL -->
 <div id="addVisitorModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden space-y-6 p-6 my-8">
-        
-        <!-- Modal Header -->
+
         <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
             <div class="flex items-center gap-3">
                 <span class="p-2 bg-emerald-50 text-emerald-600 dark:bg-lime-400/10 dark:text-lime-400 rounded-xl">
@@ -180,44 +182,41 @@
             </button>
         </div>
 
-        <!-- Modal Form Content -->
-        <form class="space-y-6 text-xs" onsubmit="event.preventDefault(); alert('Visitor registered successfully!'); closeAddVisitorModal();">
-            
-            <!-- Step 1: Visitor Information -->
+        <!-- FORM CONNECTED TO CONTROLLER -->
+        <form asp-action="AddVisitor" method="post" class="space-y-6 text-xs">
+
             <div class="space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
                 <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 uppercase tracking-wider text-[11px]">
                     <span class="w-5 h-5 rounded-full bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 flex items-center justify-center text-[10px] font-black">1</span>
                     Visitor Information
                 </h4>
-                
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-700 dark:text-zinc-400">Full Name *</label>
-                        <input type="text" placeholder="Enter full name..." required class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none transition" />
+                        <input type="text" name="FullName" placeholder="Enter full name..." required class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none" />
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-700 dark:text-zinc-400">Phone Number *</label>
-                        <input type="text" placeholder="Enter phone number..." required class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none transition font-mono" />
+                        <input type="text" name="PhoneNumber" placeholder="Enter phone number..." required class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-700 dark:text-zinc-400">Email Address (Optional)</label>
-                        <input type="email" placeholder="Enter email address..." class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none transition" />
+                        <input type="email" name="Email" placeholder="Enter email address..." class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none" />
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-700 dark:text-zinc-400">Gender *</label>
-                        <select class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
-                            <option>Select Gender</option>
-                            <option selected>Male</option>
-                            <option>Female</option>
+                        <select name="Gender" class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 2: Visit Details -->
             <div class="space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
                 <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 uppercase tracking-wider text-[11px]">
                     <span class="w-5 h-5 rounded-full bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 flex items-center justify-center text-[10px] font-black">2</span>
@@ -227,57 +226,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-700 dark:text-zinc-400">Visit Type *</label>
-                        <select class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
-                            <option>Select Type</option>
-                            <option selected>Trial Workout</option>
-                            <option>Guest Visit</option>
-                            <option>Inquiry</option>
-                            <option>Meeting</option>
-                            <option>Other</option>
+                        <select name="VisitType" class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
+                            <option value="Trial Workout">Trial Workout</option>
+                            <option value="Guest Visit">Guest Visit</option>
+                            <option value="Inquiry">Inquiry</option>
+                            <option value="Meeting">Meeting</option>
                         </select>
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-700 dark:text-zinc-400">Invited By Member (Optional)</label>
-                        <input type="text" placeholder="Member Name or ID..." class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none transition" />
+                        <input type="text" name="InvitedByMember" placeholder="Member Name or ID..." class="w-full h-10 px-3.5 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none" />
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-700 dark:text-zinc-400">Purpose of Visit</label>
-                    <textarea rows="2" placeholder="Briefly describe visit purpose..." class="w-full p-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none resize-none"></textarea>
+                    <textarea name="Purpose" rows="2" placeholder="Briefly describe visit purpose..." class="w-full p-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none resize-none"></textarea>
                 </div>
             </div>
 
-            <!-- Step 3: Gym Access Details -->
-            <div class="space-y-3 p-4 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
-                <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 uppercase tracking-wider text-[11px]">
-                    <span class="w-5 h-5 rounded-full bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 flex items-center justify-center text-[10px] font-black">3</span>
-                    Gym Access Details
-                </h4>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div class="space-y-1">
-                        <label class="block font-bold text-slate-700 dark:text-zinc-400">Check-In Time</label>
-                        <input type="text" value="10:30 AM" class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-white outline-none font-mono" />
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block font-bold text-slate-700 dark:text-zinc-400">Check-Out Time</label>
-                        <input type="text" placeholder="Auto on checkout" class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-400 dark:text-zinc-600 outline-none font-mono" disabled />
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block font-bold text-slate-700 dark:text-zinc-400">Assigned Trainer</label>
-                        <select class="w-full h-10 px-3 bg-white dark:bg-black border border-slate-300 dark:border-zinc-700 focus:border-emerald-500 dark:focus:border-lime-400 rounded-xl text-slate-900 dark:text-white outline-none cursor-pointer">
-                            <option>Select Trainer (Optional)</option>
-                            <option selected>Captain Ahmed Hassan</option>
-                            <option>Trainer Mustafa</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Action Footer -->
             <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-200 dark:border-zinc-800">
-                <button type="button" onclick="closeAddVisitorModal()" class="px-4 h-11 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">
+                <button type="button" onclick="closeAddVisitorModal()" class="px-4 h-11 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">
                     Cancel
                 </button>
                 <button type="submit" class="px-6 h-11 bg-emerald-600 hover:bg-emerald-700 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-zinc-950 font-extrabold uppercase tracking-wider rounded-xl transition shadow-md cursor-pointer">
@@ -297,23 +266,22 @@
                 <i class="fa-solid fa-circle-info text-emerald-600 dark:text-lime-400"></i>
                 Visitor Summary
             </h3>
-            <button onclick="closeViewVisitorModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer">
+            <button onclick="closeViewVisitorModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-white flex items-center justify-center transition cursor-pointer">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         <div class="space-y-3 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950">
-            <div class="flex justify-between"><span class="text-slate-500">Visitor Name:</span> <strong id="viewVisitorName" class="text-slate-900 dark:text-white">Hassan Omar</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Visit Type:</span> <strong id="viewVisitorType" class="text-slate-900 dark:text-white">Guest Visit</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Phone Number:</span> <strong id="viewVisitorPhone" class="font-mono text-slate-900 dark:text-white">0634440011</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Gender:</span> <strong id="viewVisitorGender" class="text-slate-900 dark:text-white">Male</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Check-In / Time:</span> <strong id="viewVisitorCheckIn" class="font-mono text-emerald-600 dark:text-lime-400">10:15 AM</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Assigned Trainer:</span> <strong id="viewVisitorTrainer" class="text-slate-900 dark:text-white">Captain Ahmed Hassan</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Status:</span> <strong id="viewVisitorStatus" class="text-blue-600 dark:text-blue-400">Active On-Site</strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Visitor Name:</span> <strong id="viewVisitorName" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Visit Type:</span> <strong id="viewVisitorType" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Phone Number:</span> <strong id="viewVisitorPhone" class="font-mono text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Gender:</span> <strong id="viewVisitorGender" class="text-slate-900 dark:text-white"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Check-In Time:</span> <strong id="viewVisitorCheckIn" class="font-mono text-emerald-600 dark:text-lime-400"></strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">Status:</span> <strong id="viewVisitorStatus" class="text-blue-600"></strong></div>
         </div>
 
         <div class="flex justify-end pt-2 border-t border-slate-200 dark:border-zinc-800">
-            <button onclick="closeViewVisitorModal()" class="px-5 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">
+            <button onclick="closeViewVisitorModal()" class="px-5 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold rounded-xl transition cursor-pointer">
                 Close
             </button>
         </div>
@@ -322,7 +290,6 @@
 
 <!-- JavaScript Controls -->
 <script>
-    // Add Visitor Modal Controls
     function openAddVisitorModal() {
         document.getElementById('addVisitorModal').classList.remove('hidden');
     }
@@ -330,7 +297,6 @@
         document.getElementById('addVisitorModal').classList.add('hidden');
     }
 
-    // View Visitor Modal Controls
     function openViewVisitorModal(name, type, phone, checkIn, status, gender, trainer) {
         document.getElementById('viewVisitorName').innerText = name;
         document.getElementById('viewVisitorType').innerText = type;
@@ -338,21 +304,12 @@
         document.getElementById('viewVisitorCheckIn').innerText = checkIn;
         document.getElementById('viewVisitorStatus').innerText = status;
         document.getElementById('viewVisitorGender').innerText = gender;
-        document.getElementById('viewVisitorTrainer').innerText = trainer;
         document.getElementById('viewVisitorModal').classList.remove('hidden');
     }
     function closeViewVisitorModal() {
         document.getElementById('viewVisitorModal').classList.add('hidden');
     }
 
-    // Checkout Action
-    function checkoutVisitor(name) {
-        if(confirm("Check out visitor " + name + "?")) {
-            alert(name + " has been successfully checked out.");
-        }
-    }
-
-    // Search Filter Table
     function searchVisitorsTable() {
         const input = document.getElementById('txtSearchVisitor').value.toLowerCase();
         const rows = document.querySelectorAll('.visitor-row');
@@ -362,27 +319,25 @@
         });
     }
 
-    // Tab Filters
     function filterVisitorTab(status) {
         const rows = document.querySelectorAll('.visitor-row');
         const btnAll = document.getElementById('tabAll');
         const btnInside = document.getElementById('tabInside');
         const btnCompleted = document.getElementById('tabCompleted');
 
-        // Reset classes
         [btnAll, btnInside, btnCompleted].forEach(btn => {
-            btn.className = "px-4 py-2 rounded-lg text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer";
+            btn.className = "px-4 py-2 rounded-lg text-slate-600 dark:text-zinc-400 hover:text-white transition cursor-pointer";
         });
 
-        if(status === 'all') {
+        if (status === 'all') {
             btnAll.className = "px-4 py-2 rounded-lg bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 transition cursor-pointer";
             rows.forEach(r => r.style.display = '');
-        } else if(status === 'inside') {
+        } else if (status === 'inside') {
             btnInside.className = "px-4 py-2 rounded-lg bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 transition cursor-pointer";
             rows.forEach(r => {
                 r.style.display = r.getAttribute('data-status') === 'inside' ? '' : 'none';
             });
-        } else if(status === 'completed') {
+        } else if (status === 'completed') {
             btnCompleted.className = "px-4 py-2 rounded-lg bg-emerald-600 text-white dark:bg-lime-400 dark:text-zinc-950 transition cursor-pointer";
             rows.forEach(r => {
                 r.style.display = r.getAttribute('data-status') === 'completed' ? '' : 'none';

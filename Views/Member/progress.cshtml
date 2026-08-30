@@ -1,8 +1,18 @@
-﻿@{
+﻿@model GymManagementSystem.Models.MemberProgress
+
+@{
     ViewData["Title"] = "My Progress Tracker";
     Layout = "~/Views/layouts/MemberMaster.cshtml";
-}
 
+    var progressList = ViewBag.ProgressList as List<GymManagementSystem.Models.MemberProgress> ?? new List<GymManagementSystem.Models.MemberProgress>();
+
+    // Isticmaal ?? 0 ama ?.Value si aad uga hortagto khilaafka Nullable decimal?
+    decimal targetW = Model.TargetWeight.HasValue && Model.TargetWeight.Value > 0 ? Model.TargetWeight.Value : 70m;
+    decimal currentW = Model.Weight.HasValue ? Model.Weight.Value : 0m;
+
+    int progressPercent = currentW > 0 ? (int)((currentW / targetW) * 100) : 0;
+    if (progressPercent > 100) progressPercent = 100;
+}
 <!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -16,7 +26,7 @@
         </div>
         <div class="flex items-center gap-3">
             <span class="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-bold flex items-center gap-2">
-                <i class="fa-solid fa-calendar text-lime-500"></i> Current Status
+                <i class="fa-solid fa-calendar text-lime-500"></i> Last Checked: @Model.CheckDate.ToString("yyyy-MM-dd")
             </span>
         </div>
     </div>
@@ -31,7 +41,7 @@
                 <i class="fa-solid fa-scale-balanced text-lime-500 text-lg"></i>
             </div>
             <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
-                0.0 <span class="text-xs text-zinc-400 font-normal">kg</span>
+                @Model.Weight <span class="text-xs text-zinc-400 font-normal">kg</span>
             </h3>
         </div>
 
@@ -42,30 +52,29 @@
                 <i class="fa-solid fa-percent text-amber-500 text-lg"></i>
             </div>
             <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
-                0.0 <span class="text-xs text-zinc-400 font-normal">%</span>
+                @Model.BodyFat <span class="text-xs text-zinc-400 font-normal">%</span>
             </h3>
         </div>
 
-        <!-- BMI -->
+        <!-- BMI (Estimated or Calculated) -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
             <div class="flex justify-between items-center">
-                <span class="text-xs text-zinc-500 font-medium">BMI Ratio</span>
+                <span class="text-xs text-zinc-500 font-medium">Chest / Waist</span>
                 <i class="fa-solid fa-heart-pulse text-sky-500 text-lg"></i>
             </div>
-            <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
-                0.0
-                <span class="text-xs text-zinc-400 font-normal ml-1">Normal</span>
+            <h3 class="text-xl font-black text-zinc-900 dark:text-white">
+                @Model.Chest <span class="text-xs text-zinc-400 font-normal">/ @Model.Waist in</span>
             </h3>
         </div>
 
-        <!-- Lean Muscle -->
+        <!-- Lean Muscle / Arms -->
         <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 shadow-sm space-y-2">
             <div class="flex justify-between items-center">
-                <span class="text-xs text-zinc-500 font-medium">Muscle Mass</span>
+                <span class="text-xs text-zinc-500 font-medium">Arms Size</span>
                 <i class="fa-solid fa-dumbbell text-rose-500 text-lg"></i>
             </div>
             <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
-                0.0 <span class="text-xs text-zinc-400 font-normal">kg</span>
+                @Model.Arms <span class="text-xs text-zinc-400 font-normal">in</span>
             </h3>
         </div>
 
@@ -82,25 +91,25 @@
                     <div>
                         <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">Active Target</span>
                         <h3 class="text-base font-bold text-zinc-900 dark:text-white">
-                            Weight Loss Goal
+                            @(string.IsNullOrEmpty(Model.Goal) ? "Fitness Goal" : Model.Goal)
                         </h3>
                     </div>
                 </div>
 
                 <div class="space-y-2">
                     <div class="flex justify-between text-xs font-bold">
-                        <span class="text-zinc-500">Current: <strong class="text-lime-500">0.0 kg</strong></span>
-                        <span class="text-zinc-500">Target: <strong class="text-zinc-900 dark:text-white">70.0 kg</strong></span>
+                        <span class="text-zinc-500">Current: <strong class="text-lime-500">@Model.Weight kg</strong></span>
+                        <span class="text-zinc-500">Target: <strong class="text-zinc-900 dark:text-white">@Model.TargetWeight kg</strong></span>
                     </div>
                     <div class="w-full bg-zinc-100 dark:bg-zinc-800 h-3 rounded-full overflow-hidden p-0.5">
-                        <div class="bg-lime-400 h-full rounded-full transition-all duration-500" style="width: 75%;"></div>
+                        <div class="bg-lime-400 h-full rounded-full transition-all duration-500" style="width: @progressPercent%;"></div>
                     </div>
                 </div>
             </div>
 
             <!-- BODY METRICS TABLE -->
             <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
-                <h3 class="text-base font-bold text-zinc-900 dark:text-white">Current Body Measurements</h3>
+                <h3 class="text-base font-bold text-zinc-900 dark:text-white">Progress History</h3>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-zinc-600 dark:text-zinc-400">
@@ -115,14 +124,26 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 font-medium">
-                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition">
-                                <td class="p-4 font-bold text-zinc-900 dark:text-white">Today</td>
-                                <td class="p-4 font-semibold text-lime-600 dark:text-lime-400">0.0 kg</td>
-                                <td class="p-4">0%</td>
-                                <td class="p-4">-</td>
-                                <td class="p-4">-</td>
-                                <td class="p-4">-</td>
-                            </tr>
+                            @if (progressList.Any())
+                            {
+                                foreach (var item in progressList)
+                                {
+                                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition">
+                                        <td class="p-4 font-bold text-zinc-900 dark:text-white">@item.CheckDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="p-4 font-semibold text-lime-600 dark:text-lime-400">@item.Weight kg</td>
+                                        <td class="p-4">@item.BodyFat%</td>
+                                        <td class="p-4">@item.Chest in</td>
+                                        <td class="p-4">@item.Waist in</td>
+                                        <td class="p-4">@item.Arms in</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="p-4 text-center text-zinc-400">No progress records found.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -144,7 +165,7 @@
                 </div>
 
                 <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed italic">
-                    "Horumar fiican ayaa ka muuqda!"
+                    "@(string.IsNullOrEmpty(Model.Notes) ? "Horumar fiican ayaa ka muuqda!" : Model.Notes)"
                 </p>
             </div>
 
@@ -154,12 +175,11 @@
                     <span class="text-[10px] font-bold uppercase tracking-widest">Next Body Check</span>
                 </div>
                 <h4 class="text-sm font-bold">
-                    September 01, 2026
+                    @Model.NextCheckDate.ToString("MMMM dd, yyyy")
                 </h4>
             </div>
 
         </div>
 
     </div>
-
 </div>

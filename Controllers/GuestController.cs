@@ -23,7 +23,44 @@ namespace GymManagementSystem.Controllers
         // =========================================================
         public IActionResult HomePage()
         {
-            return View();
+            var membershipPlans = _context.MembershipPlans
+               .Where(p => p.IsActive)
+               .ToList();
+            var classes = _context.GymClasses
+             .Where(c => c.Status == "Active")
+             .ToList();
+            var trainers = _context.TrainerProfiles
+               .Where(t => t.IsActive)
+               .ToList();
+            var products = _context.Products
+               .Where(p => p.IsActive)
+               .OrderBy(p => p.ProductID)
+               .ToList();
+            var galleryImages = _context.GalleryImages
+               .Where(g => g.IsVisible)
+               .ToList();
+
+            var testimonials = _context.Testimonials
+                .Where(t => t.IsApproved)
+                .OrderByDescending(t => t.Rating)
+                .ToList();
+
+            var faqs = _context.Faqs
+                .Where(f => f.IsActive)
+                .OrderBy(f => f.DisplayOrder)
+                .ToList();
+
+            return View(new
+            {
+                MembershipPlans = membershipPlans,
+                Classes = classes,
+                Trainers = trainers,
+                Products=products,
+                GalleryImages = galleryImages,
+                Testimonials = testimonials,
+                Faqs = faqs
+
+            });
         }
 
         public IActionResult About()
@@ -38,9 +75,12 @@ namespace GymManagementSystem.Controllers
 
         public IActionResult Classes()
         {
-            return View(new GuestModel { Classes = ActiveClasses().ToList() });
-        }
+            var classes = _context.GymClasses
+                .Where(c => c.Status == "Active")
+                .ToList();
 
+            return View(classes);
+        }
         // Badhanka "View Full Schedule" ee bogga Classes
         public IActionResult Schedule()
         {
@@ -86,6 +126,13 @@ namespace GymManagementSystem.Controllers
         [HttpPost]
         public IActionResult SubmitContact(string name, string email, string subject, string message)
         {
+            // HUBIN: Guest-ku fariin ma diri karo ilaa uu Login/Register sameeyo
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                TempData["ErrorMessage"] = "Fadlan marka hore Login ama Register samee si aad fariin u soo dirtid!";
+                return RedirectToAction("Register", "Account");
+            }
+
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(message))
             {
                 TempData["ErrorMessage"] = "Fadlan buuxi dhammaan meelaha loo baahan yahay.";
@@ -101,12 +148,22 @@ namespace GymManagementSystem.Controllers
                 SubmittedAt = DateTime.Now,
                 IsRead = false
             });
+
+            _context.Notifications.Add(new Notification
+            {
+                TargetRole = "Receptionist",
+                Title = "New Contact Message",
+                Message = $"A new message has been received from {name.Trim()} regarding '{subject ?? "General Inquiry"}'.",
+                Type = "Contact",
+                IsRead = false,
+                Timestamp = DateTime.Now
+            });
+
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "Fariintaada waa la helay. Waan kula soo xidhiidhi doonaa dhawaan!";
             return RedirectToAction(nameof(Contact));
         }
-
         // =========================================================
         // 3. SHOPPING CART
         // =========================================================
@@ -117,6 +174,13 @@ namespace GymManagementSystem.Controllers
 
         public IActionResult AddToCart(int id, int quantity = 1)
         {
+            // HUBIN: Guest-ku Cart wax uga dari karo ilaa uu Register/Login sameeyo
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                TempData["ErrorMessage"] = "Fadlan marka hore Register ama Login samee si aad alaabta gaadhiga ugu dartid!";
+                return RedirectToAction("Register", "Account");
+            }
+
             var product = _context.Products.FirstOrDefault(p => p.ProductID == id && p.IsActive);
             if (product == null)
             {
@@ -124,10 +188,7 @@ namespace GymManagementSystem.Controllers
                 return RedirectToAction(nameof(Store));
             }
 
-            if (quantity < 1)
-            {
-                quantity = 1;
-            }
+            if (quantity < 1) quantity = 1;
 
             var cartId = GetCartId();
             var existing = _context.CartItems.FirstOrDefault(c => c.SessionId == cartId && c.ProductID == id);
@@ -151,7 +212,6 @@ namespace GymManagementSystem.Controllers
             TempData["SuccessMessage"] = $"{product.ProductName} waa lagu daray gaadhiga.";
             return RedirectToAction(nameof(Cart));
         }
-
         public IActionResult IncreaseQuantity(int id)
         {
             var item = FindCartItem(id);
@@ -268,6 +328,15 @@ namespace GymManagementSystem.Controllers
 
             _context.GuestOrders.Add(order);
             _context.CartItems.RemoveRange(items);
+            _context.Notifications.Add(new Notification
+            {
+                TargetRole = "Receptionist",
+                Title = "New Order Received",
+                Message = $"A new store order ({order.OrderNumber}) has been placed by {order.FullName} totaling ${order.TotalAmount:N2}.",
+                Type = "Order",
+                IsRead = false,
+                Timestamp = DateTime.Now
+            });
             _context.SaveChanges();
 
             return RedirectToAction(nameof(OrderConfirmation), new { orderNumber = order.OrderNumber });
@@ -287,26 +356,74 @@ namespace GymManagementSystem.Controllers
             return View(order);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SubmitMembershipRequest(string planName, string paymentMethod)
+        {
+            var loggedInUser = User.Identity?.Name;
+
+            if (string.IsNullOrEmpty(loggedInUser))
+            {
+                TempData["ErrorMessage"] = "Fadlan marka hore Login ama Register samee!";
+                return RedirectToAction("Register", "Account");
+            }
+
+            if (string.IsNullOrWhiteSpace(planName))
+            {
+                TempData["ErrorMessage"] = "Fadlan dooro qorshe sax ah.";
+                return RedirectToAction(nameof(Memberships));
+            }
+
+            var userProfile = _context.UserProfiles.FirstOrDefault(u =>
+                u.Email == loggedInUser ||
+                u.Username == loggedInUser ||
+                u.Name == loggedInUser);
+
+            if (userProfile != null)
+            {
+                userProfile.MembershipType = planName.Trim();
+                userProfile.Status = "Pending";
+                userProfile.JoinDate = DateTime.Now;
+
+                _context.Notifications.Add(new Notification
+                {
+                    TargetRole = "Receptionist",
+                    Title = "Membership Request Pending",
+                    Message = $"A new membership request has been submitted by {userProfile.Name} ({userProfile.Id}) for plan {planName}.",
+                    Type = "Member",
+                    IsRead = false,
+                    Timestamp = DateTime.Now
+                });
+                _context.SaveChanges();
+
+                TempData["SuccessMessage"] = "Your application has been submitted successfully! Please wait while your request is reviewed and approved.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = $"Koontada loogu talagalay '{loggedInUser}' lagama helin database-ka.";
+                return RedirectToAction(nameof(Memberships));
+            }
+
+            return RedirectToAction(nameof(Memberships));
+        }
         // =========================================================
         // HELPERS
         // =========================================================
         private IQueryable<MembershipPlan> ActivePlans() =>
             _context.MembershipPlans
-                .Include(p => p.Features)
-                .Where(p => p.IsActive)
-                .OrderBy(p => p.DisplayOrder);
+                .Where(p => p.IsActive);
 
         private IQueryable<Product> ActiveProducts() =>
             _context.Products.Where(p => p.IsActive).OrderBy(p => p.ProductID);
 
         private IQueryable<GymClass> ActiveClasses() =>
-            _context.GymClasses.Where(c => c.IsActive).OrderBy(c => c.ClassID);
+            _context.GymClasses.Where(c => c.Status == "Active").OrderBy(c => c.Id);
 
         private IQueryable<TrainerProfile> ActiveTrainers() =>
-            _context.TrainerProfiles.Where(t => t.IsActive).OrderBy(t => t.DisplayOrder);
+            _context.TrainerProfiles.Where(t => t.IsActive);
 
         private IQueryable<GalleryImage> ActiveGallery() =>
-            _context.GalleryImages.Where(g => g.IsActive).OrderBy(g => g.DisplayOrder);
+            _context.GalleryImages.Where(g => g.IsVisible);
 
         private IQueryable<Testimonial> ApprovedTestimonials() =>
             _context.Testimonials.Where(t => t.IsApproved).OrderBy(t => t.TestimonialID);

@@ -1,8 +1,9 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.GymClass>
+
+@{
     ViewData["Title"] = "Class List";
     Layout = "~/Views/layouts/AdminMaster.cshtml";
 }
-
 
 <div class="space-y-8 pt-4 pb-12 px-4 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-[#050505] text-zinc-900 dark:text-zinc-100 min-h-screen transition-colors duration-200">
 
@@ -21,6 +22,10 @@
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add New Class
             </button>
+            <button type="button" onclick="openAddScheduleModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Schedule
+            </button>
         </div>
     </div>
 
@@ -29,7 +34,7 @@
         <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
             <div>
                 <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Total Classes</p>
-                <h3 class="text-2xl font-black text-zinc-900 dark:text-white mt-1">12</h3>
+                <h3 class="text-2xl font-black text-zinc-900 dark:text-white mt-1">@Model.Count()</h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Master programs available</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center border border-lime-500/20">
@@ -40,7 +45,7 @@
         <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
             <div>
                 <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Active Classes</p>
-                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">10</h3>
+                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">@Model.Count(c => c.Status == "Active")</h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Currently offered in schedules</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
@@ -51,7 +56,7 @@
         <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
             <div>
                 <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Inactive Classes</p>
-                <h3 class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">2</h3>
+                <h3 class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">@Model.Count(c => c.Status == "Inactive")</h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Paused or seasonal programs</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-500/20">
@@ -62,53 +67,11 @@
         <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
             <div>
                 <p class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">Categories</p>
-                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">4</h3>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Strength, HIIT, Yoga, Combat</p>
+                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">@Model.Select(c => c.Category).Distinct().Count()</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Unique fitness categories</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-500/20">
                 <i data-lucide="grid" class="w-6 h-6"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Action Toolbar & Controls -->
-    <div class="bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-5 shadow-sm space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="relative flex-1 min-w-[260px]">
-                <i data-lucide="search" class="w-5 h-5 text-zinc-400 absolute left-4 top-3.5"></i>
-                <input type="text" placeholder="Search class name, equipment, or category..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-500" />
-            </div>
-
-            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <div class="relative flex-1 sm:flex-none">
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-lime-500 appearance-none font-medium cursor-pointer">
-                        <option value="">All Categories</option>
-                        <option value="Strength Training">Strength Training</option>
-                        <option value="Cardio & HIIT">Cardio & HIIT</option>
-                        <option value="Yoga & Wellness">Yoga & Wellness</option>
-                        <option value="Boxing & Combat">Boxing & Combat</option>
-                    </select>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 absolute right-3 top-3.5 pointer-events-none"></i>
-                </div>
-
-                <div class="relative flex-1 sm:flex-none">
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-lime-500 appearance-none font-medium cursor-pointer">
-                        <option value="">All Difficulty Levels</option>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                    </select>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 absolute right-3 top-3.5 pointer-events-none"></i>
-                </div>
-
-                <div class="relative flex-1 sm:flex-none">
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-lime-500 appearance-none font-medium cursor-pointer">
-                        <option value="">All Statuses</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 absolute right-3 top-3.5 pointer-events-none"></i>
-                </div>
             </div>
         </div>
     </div>
@@ -137,82 +100,55 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800/60 font-medium">
-                    
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                        <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white flex items-center gap-3 text-base">
-                            <div class="w-9 h-9 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold border border-lime-500/20 shrink-0">
-                                <i data-lucide="dumbbell" class="w-5 h-5"></i>
-                            </div>
-                            Morning Strength
-                        </td>
-                        <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">
-                            <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-3 py-1 rounded-lg text-xs font-semibold">Strength Training</span>
-                        </td>
-                        <td class="py-4 px-5">
-                            <span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-md text-xs font-bold border border-amber-500/20">Intermediate</span>
-                        </td>
-                        <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">60 mins</td>
-                        <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">15 Persons</td>
-                        <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Dumbbells, Barbells, Bench</td>
-                        <td class="py-4 px-5">
-                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-md text-xs font-bold border border-emerald-500/20">Active</span>
-                        </td>
-                        <td class="py-4 px-5 text-center">
-                            <div class="flex justify-center items-center gap-2">
-                                <button type="button" onclick="openViewModal('Morning Strength', 'Strength Training', 'Intermediate', '60 mins', '15 Persons', 'Dumbbells, Barbells, Bench', 'Active', 'Full body resistance training designed to build muscle, improve posture, and boost overall endurance.')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
-                                    <i data-lucide="eye" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="openEditModal('Morning Strength')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Class">
-                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="openDeleteModal('Morning Strength')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Class">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                        <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white flex items-center gap-3 text-base">
-                            <div class="w-9 h-9 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold border border-lime-500/20 shrink-0">
-                                <i data-lucide="heart-pulse" class="w-5 h-5"></i>
-                            </div>
-                            Cardio Blast
-                        </td>
-                        <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">
-                            <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-3 py-1 rounded-lg text-xs font-semibold">Cardio & HIIT</span>
-                        </td>
-                        <td class="py-4 px-5">
-                            <span class="bg-rose-500/10 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-bold border border-rose-500/20">Advanced</span>
-                        </td>
-                        <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">45 mins</td>
-                        <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">20 Persons</td>
-                        <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">Jump Rope, Kettlebell</td>
-                        <td class="py-4 px-5">
-                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-md text-xs font-bold border border-emerald-500/20">Active</span>
-                        </td>
-                        <td class="py-4 px-5 text-center">
-                            <div class="flex justify-center items-center gap-2">
-                                <button type="button" onclick="openViewModal('Cardio Blast', 'Cardio & HIIT', 'Advanced', '45 mins', '20 Persons', 'Jump Rope, Kettlebell', 'Active', 'High-intensity interval training session engineered for rapid calorie burning and aerobic stamina.')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
-                                    <i data-lucide="eye" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="openEditModal('Cardio Blast')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Class">
-                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="openDeleteModal('Cardio Blast')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Class">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                                <td class="py-4 px-5 font-bold text-zinc-900 dark:text-white flex items-center gap-3 text-base">
+                                    <div class="w-9 h-9 rounded-xl bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center font-bold border border-lime-500/20 shrink-0">
+                                        <i data-lucide="@(string.IsNullOrEmpty(item.IconName) ? "dumbbell" : item.IconName)" class="w-5 h-5"></i>
+                                    </div>
+                                    @item.Name
+                                </td>
+                                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">
+                                    <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-3 py-1 rounded-lg text-xs font-semibold">@item.Category</span>
+                                </td>
+                                <td class="py-4 px-5">
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold border @(item.Difficulty == "Advanced" ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" : item.Difficulty == "Intermediate" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20")">@item.Difficulty</span>
+                                </td>
+                                <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">@item.DurationMinutes mins</td>
+                                <td class="py-4 px-5 font-mono text-zinc-600 dark:text-zinc-300">@item.Capacity Persons</td>
+                                <td class="py-4 px-5 text-zinc-600 dark:text-zinc-300">@item.Equipment</td>
+                                <td class="py-4 px-5">
+                                    <span class="px-3 py-1 rounded-md text-xs font-bold border @(item.Status == "Active" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20")">@item.Status</span>
+                                </td>
+                                <td class="py-4 px-5 text-center">
+                                    <div class="flex justify-center items-center gap-2">
+                                        <button type="button" onclick="openViewModal('@item.Name', '@item.Category', '@item.Difficulty', '@item.DurationMinutes mins', '@item.Capacity Persons', '@item.Equipment', '@item.Status', '@item.Description')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </button>
+                                        <button type="button" onclick="openEditModal('@item.Id', '@item.Name')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Class">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                        </button>
+                                        <button type="button" onclick="openDeleteModal('@item.Id', '@item.Name')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Class">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-8 text-zinc-500">No gym classes found in database.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
 
 <!-- ========================================== -->
@@ -235,73 +171,76 @@
             </button>
         </div>
 
-        <div class="p-6 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Class Name <span class="text-lime-500">*</span></label>
-                    <input type="text" placeholder="e.g. CrossFit Challenge" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+        <form asp-action="SaveClass" method="POST">
+            <input type="hidden" id="ClassId" name="Id" value="0" />
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Class Name <span class="text-lime-500">*</span></label>
+                        <input type="text" id="inputClassName" name="Name" required placeholder="e.g. CrossFit Challenge" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Category <span class="text-lime-500">*</span></label>
+                        <select id="inputCategory" name="Category" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
+                            <option value="">-- Select Category --</option>
+                            <option value="Strength Training">Strength Training</option>
+                            <option value="Cardio & HIIT">Cardio & HIIT</option>
+                            <option value="Yoga & Wellness">Yoga & Wellness</option>
+                            <option value="Boxing & Combat">Boxing & Combat</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Duration (Mins) <span class="text-lime-500">*</span></label>
+                        <input type="number" id="inputDuration" name="DurationMinutes" required placeholder="e.g. 60" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Default Capacity <span class="text-lime-500">*</span></label>
+                        <input type="number" id="inputCapacity" name="Capacity" required placeholder="e.g. 15" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Difficulty Level</label>
+                        <select id="inputDifficulty" name="Difficulty" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
+                            <option value="All Levels">All Levels</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Equipment Required</label>
+                        <input type="text" id="inputEquipment" name="Equipment" placeholder="e.g. Dumbbell, Mat, Boxing Gloves" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Lucide Icon Name</label>
+                        <input type="text" id="inputIconName" name="IconName" placeholder="e.g. dumbbell, heart-pulse" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                    </div>
+                </div>
+
                 <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Category <span class="text-lime-500">*</span></label>
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
-                        <option value="">-- Select Category --</option>
-                        <option value="Strength Training">Strength Training</option>
-                        <option value="Cardio & HIIT">Cardio & HIIT</option>
-                        <option value="Yoga & Wellness">Yoga & Wellness</option>
-                        <option value="Boxing & Combat">Boxing & Combat</option>
+                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Description</label>
+                    <textarea id="inputDescription" name="Description" rows="3" placeholder="Brief details about the class..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600"></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Status <span class="text-lime-500">*</span></label>
+                    <select id="inputStatus" name="Status" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
                     </select>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Duration (Mins) <span class="text-lime-500">*</span></label>
-                    <input type="number" placeholder="e.g. 60" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Default Capacity <span class="text-lime-500">*</span></label>
-                    <input type="number" placeholder="e.g. 15" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Difficulty Level</label>
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
-                        <option value="All Levels">All Levels</option>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                    </select>
-                </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                <button type="button" onclick="closeClassModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">Save Class</button>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Equipment Required</label>
-                    <input type="text" placeholder="e.g. Dumbbell, Mat, Boxing Gloves" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Lucide Icon Name</label>
-                    <input type="text" placeholder="e.g. dumbbell, heart-pulse" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Description</label>
-                <textarea rows="3" placeholder="Brief details about the class..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600"></textarea>
-            </div>
-
-            <div class="space-y-2">
-                <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Status <span class="text-lime-500">*</span></label>
-                <select class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-            <button type="button" onclick="closeClassModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer">Cancel</button>
-            <button type="button" onclick="closeClassModal()" class="px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">Save Class</button>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -328,35 +267,35 @@
         <div class="p-6 space-y-6">
             <div class="flex items-center justify-between bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
                 <div>
-                    <h4 id="viewClassName" class="text-xl font-bold text-zinc-900 dark:text-white">Morning Strength</h4>
-                    <span id="viewCategory" class="inline-block mt-1 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-3 py-1 rounded-lg text-xs font-semibold">Strength Training</span>
+                    <h4 id="viewClassName" class="text-xl font-bold text-zinc-900 dark:text-white">-</h4>
+                    <span id="viewCategory" class="inline-block mt-1 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-3 py-1 rounded-lg text-xs font-semibold">-</span>
                 </div>
-                <span id="viewStatus" class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-md text-xs font-bold border border-emerald-500/20">Active</span>
+                <span id="viewStatus" class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-md text-xs font-bold border border-emerald-500/25">-</span>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-zinc-50 dark:bg-zinc-900 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Duration</p>
-                    <p id="viewDuration" class="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-200 mt-1">60 mins</p>
+                    <p id="viewDuration" class="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-200 mt-1">-</p>
                 </div>
                 <div class="bg-zinc-50 dark:bg-zinc-900 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Capacity</p>
-                    <p id="viewCapacity" class="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-200 mt-1">15 Persons</p>
+                    <p id="viewCapacity" class="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-200 mt-1">-</p>
                 </div>
                 <div class="bg-zinc-50 dark:bg-zinc-900 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Difficulty</p>
-                    <p id="viewDifficulty" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">Intermediate</p>
+                    <p id="viewDifficulty" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">-</p>
                 </div>
                 <div class="bg-zinc-50 dark:bg-zinc-900 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Equipment</p>
-                    <p id="viewEquipment" class="text-sm font-bold text-zinc-900 dark:text-zinc-200 mt-1">Dumbbells, Barbells</p>
+                    <p id="viewEquipment" class="text-sm font-bold text-zinc-900 dark:text-zinc-200 mt-1">-</p>
                 </div>
             </div>
 
             <div class="space-y-2">
                 <h5 class="text-xs font-bold uppercase text-zinc-500 dark:text-zinc-400">Class Overview</h5>
                 <p id="viewDescription" class="text-sm text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 leading-relaxed">
-                    Full body resistance training designed to build muscle, improve posture, and boost overall endurance.
+                    -
                 </p>
             </div>
         </div>
@@ -372,30 +311,35 @@
 <!-- ========================================== -->
 <div id="deleteClassModal" class="fixed inset-0 z-50 hidden bg-zinc-950/70 backdrop-blur-sm overflow-y-auto flex items-center justify-center p-4">
     <div class="relative bg-white dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-        <div class="p-6 text-center space-y-4">
-            <div class="w-14 h-14 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto border border-rose-500/20">
-                <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+        <form asp-action="DeleteClass" method="POST">
+            <input type="hidden" id="deleteClassId" name="id" value="" />
+            <div class="p-6 text-center space-y-4">
+                <div class="w-14 h-14 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto border border-rose-500/20">
+                    <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Delete Class Program?</h3>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+                        Are you sure you want to delete <span id="deleteClassName" class="font-bold text-zinc-900 dark:text-white"></span>? This action cannot be undone.
+                    </p>
+                </div>
             </div>
-            <div>
-                <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Delete Class Program?</h3>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
-                    Are you sure you want to delete <span id="deleteClassName" class="font-bold text-zinc-900 dark:text-white"></span>? This action cannot be undone.
-                </p>
-            </div>
-        </div>
 
-        <div class="flex items-center justify-center gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-            <button type="button" onclick="closeDeleteModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors w-1/2 cursor-pointer">
-                Cancel
-            </button>
-            <button type="button" onclick="closeDeleteModal()" class="px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-colors cursor-pointer w-1/2 shadow-lg shadow-rose-500/10">
-                Delete
-            </button>
-        </div>
+            <div class="flex items-center justify-center gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                <button type="button" onclick="closeDeleteModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors w-1/2 cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-colors cursor-pointer w-1/2 shadow-lg shadow-rose-500/10">
+                    Delete
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+<!-- ========================================== -->
+<!-- JAVASCRIPT SCRIPTS                         -->
+<!-- ========================================== -->
 
-<!-- JavaScript Controls -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         if (window.lucide) {
@@ -403,15 +347,28 @@
         }
     });
 
-    // Add / Edit Modal Controls
     function openAddClassModal() {
         document.getElementById('modalTitle').innerText = "Add New Class";
+        document.getElementById('ClassId').value = "0";
+        document.getElementById('inputClassName').value = "";
+        document.getElementById('inputCategory').value = "";
+        document.getElementById('inputDuration').value = "";
+        document.getElementById('inputCapacity').value = "";
+        document.getElementById('inputDifficulty').value = "All Levels";
+        document.getElementById('inputEquipment').value = "";
+        document.getElementById('inputIconName').value = "dumbbell";
+        document.getElementById('inputDescription').value = "";
+        document.getElementById('inputStatus').value = "Active";
+
         document.getElementById('classListModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
 
-    function openEditModal(className) {
+    function openEditModal(id, className) {
         document.getElementById('modalTitle').innerText = "Edit Class: " + className;
+        document.getElementById('ClassId').value = id;
+        document.getElementById('inputClassName').value = className;
+
         document.getElementById('classListModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
@@ -421,7 +378,6 @@
         document.body.style.overflow = 'auto';
     }
 
-    // View Modal Controls
     function openViewModal(name, category, difficulty, duration, capacity, equipment, status, description) {
         document.getElementById('viewClassName').innerText = name;
         document.getElementById('viewCategory').innerText = category;
@@ -440,8 +396,8 @@
         document.body.style.overflow = 'auto';
     }
 
-    // Delete Modal Controls
-    function openDeleteModal(className) {
+    function openDeleteModal(id, className) {
+        document.getElementById('deleteClassId').value = id;
         document.getElementById('deleteClassName').innerText = className;
         document.getElementById('deleteClassModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';

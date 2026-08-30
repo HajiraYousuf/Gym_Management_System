@@ -13,29 +13,12 @@ namespace GymManagementSystem.Data
         public static void SeedGuestData(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MembershipPlan>().HasData(
-                new MembershipPlan { PlanID = 1, Title = "Standard Plan", Price = 29.99m, DurationInMonths = 1, DisplayOrder = 1, IsActive = true },
-                new MembershipPlan { PlanID = 2, Title = "Pro Plan", Price = 49.99m, DurationInMonths = 1, DisplayOrder = 2, IsActive = true },
-                new MembershipPlan { PlanID = 3, Title = "VIP Elite", Price = 89.99m, DurationInMonths = 1, DisplayOrder = 3, IsActive = true }
-            );
+                new MembershipPlan { PlanId = 1, Name = "Standard Plan", ShortCode = "STD-01", Type = "Standard", DurationDays = 30, Price = 29.99m, Features = "Gym Access|Locker", IsActive = true },
+                new MembershipPlan { PlanId = 2, Name = "Pro Plan", ShortCode = "PRO-02", Type = "Pro", DurationDays = 30, Price = 49.99m, Features = "Gym Access|Trainer", IsActive = true },
+                new MembershipPlan { PlanId = 3, Name = "VIP Elite", ShortCode = "VIP-03", Type = "VIP", DurationDays = 30, Price = 89.99m, Features = "Full Access|Sauna", IsActive = true }
+                );
 
-            modelBuilder.Entity<MembershipPlanFeature>().HasData(
-                new MembershipPlanFeature { FeatureID = 1, PlanID = 1, Description = "Access to gym equipment", DisplayOrder = 1 },
-                new MembershipPlanFeature { FeatureID = 2, PlanID = 1, Description = "Locker room access", DisplayOrder = 2 },
-                new MembershipPlanFeature { FeatureID = 3, PlanID = 1, Description = "1 Free guest pass per month", DisplayOrder = 3 },
-                new MembershipPlanFeature { FeatureID = 4, PlanID = 1, Description = "Standard support", DisplayOrder = 4 },
-
-                new MembershipPlanFeature { FeatureID = 5, PlanID = 2, Description = "24/7 Gym access", DisplayOrder = 1 },
-                new MembershipPlanFeature { FeatureID = 6, PlanID = 2, Description = "Unlimited guest passes", DisplayOrder = 2 },
-                new MembershipPlanFeature { FeatureID = 7, PlanID = 2, Description = "Free personal trainer (2 sessions)", DisplayOrder = 3 },
-                new MembershipPlanFeature { FeatureID = 8, PlanID = 2, Description = "Nutrition guidance", DisplayOrder = 4 },
-                new MembershipPlanFeature { FeatureID = 9, PlanID = 2, Description = "Priority support", DisplayOrder = 5 },
-
-                new MembershipPlanFeature { FeatureID = 10, PlanID = 3, Description = "All Pro Plan features", DisplayOrder = 1 },
-                new MembershipPlanFeature { FeatureID = 11, PlanID = 3, Description = "Dedicated 1-on-1 personal trainer", DisplayOrder = 2 },
-                new MembershipPlanFeature { FeatureID = 12, PlanID = 3, Description = "Custom meal & diet plans", DisplayOrder = 3 },
-                new MembershipPlanFeature { FeatureID = 13, PlanID = 3, Description = "VIP lounge & sauna access", DisplayOrder = 4 },
-                new MembershipPlanFeature { FeatureID = 14, PlanID = 3, Description = "Free protein shakes", DisplayOrder = 5 }
-            );
+            
 
             modelBuilder.Entity<Product>().HasData(
                 new Product
@@ -87,51 +70,55 @@ namespace GymManagementSystem.Data
             modelBuilder.Entity<GymClass>().HasData(
                 new GymClass
                 {
-                    ClassID = 1,
-                    ClassName = "Strength & Lifting",
+                    Id = 1,
+                    Name = "Strength & Lifting",
+                    Category = "Strength",
+                    DurationMinutes = 60,
+                    Capacity = 30,
                     TrainerName = "John Doe",
                     Days = "Mon, Wed, Fri",
                     TimeSlot = "08:00 AM - 10:00 AM",
-                    Icon = "dumbbell",
+                    IconName = "dumbbell",
                     ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80",
-                    IsActive = true
+                    Status = "Active"
                 },
-                new GymClass
-                {
-                    ClassID = 2,
-                    ClassName = "Cardio & Burn",
-                    TrainerName = "Jane Smith",
-                    Days = "Tue, Thu, Sat",
-                    TimeSlot = "10:00 AM - 11:30 AM",
-                    Icon = "activity",
-                    ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80",
-                    IsActive = true
-                },
-                new GymClass
-                {
-                    ClassID = 3,
-                    ClassName = "CrossFit Pro",
-                    TrainerName = "Mike Johnson",
-                    Days = "Mon, Wed, Fri",
-                    TimeSlot = "04:00 PM - 06:00 PM",
-                    Icon = "target",
-                    ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80",
-                    IsActive = true
-                }
+new GymClass
+{
+    Id = 2,
+    Name = "Cardio & Burn",
+    Category = "Cardio",
+    DurationMinutes = 45,
+    Capacity = 25,
+    TrainerName = "Jane Smith",
+    Days = "Tue, Thu, Sat",
+    TimeSlot = "10:00 AM - 11:30 AM",
+    IconName = "activity",
+    ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80",
+    Status = "Active"
+},
+new GymClass
+{
+    Id = 3,
+    Name = "CrossFit Pro",
+    Category = "CrossFit",
+    DurationMinutes = 90,
+    Capacity = 20,
+    TrainerName = "Mike Johnson",
+    Days = "Mon, Wed, Fri",
+    TimeSlot = "04:00 PM - 06:00 PM",
+    IconName = "target",
+    ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80",
+    Status = "Active"
+}
             );
 
-            modelBuilder.Entity<TrainerProfile>().HasData(
-                new TrainerProfile { TrainerID = 1, TrainerName = "Sarah Jenkins", Role = "Head Strength Coach", Experience = "8 Years Experience", ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80", DisplayOrder = 1, IsActive = true },
-                new TrainerProfile { TrainerID = 2, TrainerName = "David Miller", Role = "CrossFit & Conditioning", Experience = "5 Years Experience", ImageUrl = "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=600&q=80", DisplayOrder = 2, IsActive = true },
-                new TrainerProfile { TrainerID = 3, TrainerName = "Alex Turner", Role = "Personal Fitness Trainer", Experience = "6 Years Experience", ImageUrl = "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=600&q=80", DisplayOrder = 3, IsActive = true },
-                new TrainerProfile { TrainerID = 4, TrainerName = "Jessica Wong", Role = "Yoga & Mobility Specialist", Experience = "7 Years Experience", ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80", DisplayOrder = 4, IsActive = true }
-            );
+
 
             modelBuilder.Entity<GalleryImage>().HasData(
-                new GalleryImage { GalleryID = 1, Title = "Heavy Lifting", ImageURL = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80", DisplayOrder = 1, IsActive = true },
-                new GalleryImage { GalleryID = 2, Title = "Cardio Session", ImageURL = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80", DisplayOrder = 2, IsActive = true },
-                new GalleryImage { GalleryID = 3, Title = "Modern Equipment", ImageURL = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80", DisplayOrder = 3, IsActive = true },
-                new GalleryImage { GalleryID = 4, Title = "Personal Training", ImageURL = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1000&q=80", DisplayOrder = 4, IsActive = true }
+                new GalleryImage { Id = -1, Title = "Heavy Lifting", Category = "Training", ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80", IsVisible = true, UploadedAt = new DateTime(2026, 1, 1) },
+                new GalleryImage { Id = -2, Title = "Cardio Session", Category = "Gym", ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80", IsVisible = true, UploadedAt = new DateTime(2026, 1, 1) },
+                new GalleryImage { Id = -3, Title = "Modern Equipment", Category = "Gym", ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80", IsVisible = true, UploadedAt = new DateTime(2026, 1, 1) },
+                new GalleryImage { Id = -4, Title = "Personal Training", Category = "Training", ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1000&q=80", IsVisible = true, UploadedAt = new DateTime(2026, 1, 1) }
             );
 
             modelBuilder.Entity<Testimonial>().HasData(

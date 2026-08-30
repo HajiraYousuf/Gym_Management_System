@@ -2,11 +2,7 @@
     ViewData["Title"] = "Front Desk Reports";
     Layout = "~/Views/layouts/ReceptionMaster.cshtml";
     
-    // Get current active report type from query string or default to 'attendance'
-    string currentTab = Context.Request.Query["tab"].ToString();
-    if (string.IsNullOrEmpty(currentTab)) {
-        currentTab = "attendance";
-    }
+    string currentTab = ViewBag.CurrentTab ?? "attendance";
 }
 
 <!-- FontAwesome CDN -->
@@ -21,7 +17,7 @@
                 <span>Receptionist Module</span> • <span>Reports</span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Front Desk Reports</h1>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mt-1">Select a report category to view detailed operational records.</p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mt-1">Select a report category to view live database records.</p>
         </div>
 
         <!-- Global Action Buttons -->
@@ -36,16 +32,16 @@
         </div>
     </div>
 
-    <!-- 1. Report Selector Cards (Overview & Quick View) -->
+    <!-- 1. Report Selector Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         
-        <!-- Attendance Report Card -->
+        <!-- Attendance Card -->
         <div onclick="switchReportTab('attendance')" id="card-attendance" class="report-card bg-white dark:bg-zinc-900 border @(currentTab == "attendance" ? "border-lime-500 ring-2 ring-lime-500/20" : "border-gray-200 dark:border-zinc-800") rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-lime-100 dark:bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 flex items-center justify-center text-lg">
                     <i class="fas fa-clipboard-user"></i>
                 </div>
-                <span class="text-xs font-mono font-bold text-gray-400">142 Check-ins</span>
+                <span class="text-xs font-mono font-bold text-gray-400">@ViewBag.TotalCheckIns Check-ins</span>
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">Attendance Report</h3>
             <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Track member check-ins, check-outs, and active gym users.</p>
@@ -54,13 +50,13 @@
             </div>
         </div>
 
-        <!-- Payment Collection Card -->
+        <!-- Payments Card -->
         <div onclick="switchReportTab('payments')" id="card-payments" class="report-card bg-white dark:bg-zinc-900 border @(currentTab == "payments" ? "border-lime-500 ring-2 ring-lime-500/20" : "border-gray-200 dark:border-zinc-800") rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-lime-100 dark:bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 flex items-center justify-center text-lg">
                     <i class="fas fa-receipt"></i>
                 </div>
-                <span class="text-xs font-mono font-bold text-lime-600 dark:text-lime-400">$1,450 Today</span>
+                <span class="text-xs font-mono font-bold text-lime-600 dark:text-lime-400">$@ViewBag.TotalCollectedToday Today</span>
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">Payment Collection</h3>
             <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Front desk daily transactions, fee receipts, and collections.</p>
@@ -69,43 +65,28 @@
             </div>
         </div>
 
-        <!-- New Members Card -->
+        <!-- Users / Registrations Card -->
         <div onclick="switchReportTab('registrations')" id="card-registrations" class="report-card bg-white dark:bg-zinc-900 border @(currentTab == "registrations" ? "border-lime-500 ring-2 ring-lime-500/20" : "border-gray-200 dark:border-zinc-800") rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center text-lg">
                     <i class="fas fa-user-plus"></i>
                 </div>
-                <span class="text-xs font-mono font-bold text-blue-500">12 Registered</span>
+                <span class="text-xs font-mono font-bold text-blue-500">@ViewBag.NewMembersCount Users</span>
             </div>
-            <h3 class="text-base font-bold text-gray-900 dark:text-white">New Members</h3>
-            <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Newly registered members and assigned membership plans.</p>
+            <h3 class="text-base font-bold text-gray-900 dark:text-white">User Accounts</h3>
+            <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Newly registered system users and members.</p>
             <div class="w-full bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-2">
                 <i class="fas fa-eye"></i> View Registrations
             </div>
         </div>
 
-        <!-- Renewal Report Card -->
-        <div onclick="switchReportTab('renewals')" id="card-renewals" class="report-card bg-white dark:bg-zinc-900 border @(currentTab == "renewals" ? "border-lime-500 ring-2 ring-lime-500/20" : "border-gray-200 dark:border-zinc-800") rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all cursor-pointer">
-            <div class="flex justify-between items-start mb-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center text-lg">
-                    <i class="fas fa-sync-alt"></i>
-                </div>
-                <span class="text-xs font-mono font-bold text-purple-500">8 Processed</span>
-            </div>
-            <h3 class="text-base font-bold text-gray-900 dark:text-white">Renewal Report</h3>
-            <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Membership extensions processed at the front desk today.</p>
-            <div class="w-full bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-2">
-                <i class="fas fa-eye"></i> View Renewals
-            </div>
-        </div>
-
-        <!-- Visitor Report Card -->
+        <!-- Visitors Card -->
         <div onclick="switchReportTab('visitors')" id="card-visitors" class="report-card bg-white dark:bg-zinc-900 border @(currentTab == "visitors" ? "border-lime-500 ring-2 ring-lime-500/20" : "border-gray-200 dark:border-zinc-800") rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-lg">
                     <i class="fas fa-users"></i>
                 </div>
-                <span class="text-xs font-mono font-bold text-amber-500">15 Visitors</span>
+                <span class="text-xs font-mono font-bold text-amber-500">@ViewBag.VisitorCount Visitors</span>
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">Visitor Report</h3>
             <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Guest entries, trial visits, and current active visitors.</p>
@@ -114,13 +95,13 @@
             </div>
         </div>
 
-        <!-- Class Reservations Card -->
+        <!-- Reservations Card -->
         <div onclick="switchReportTab('reservations')" id="card-reservations" class="report-card bg-white dark:bg-zinc-900 border @(currentTab == "reservations" ? "border-lime-500 ring-2 ring-lime-500/20" : "border-gray-200 dark:border-zinc-800") rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all cursor-pointer">
             <div class="flex justify-between items-start mb-3">
                 <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center text-lg">
                     <i class="fas fa-calendar-check"></i>
                 </div>
-                <span class="text-xs font-mono font-bold text-rose-500">84 Bookings</span>
+                <span class="text-xs font-mono font-bold text-rose-500">@ViewBag.ReservationCount Bookings</span>
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">Reservation Report</h3>
             <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1 mb-4">Daily class booking status and capacity check.</p>
@@ -140,10 +121,7 @@
             <i class="fas fa-receipt"></i> Payments
         </button>
         <button onclick="switchReportTab('registrations')" id="tab-registrations" class="report-tab px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all flex items-center gap-2 @(currentTab == "registrations" ? "bg-lime-400 text-black shadow-md shadow-lime-500/10" : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white cursor-pointer")">
-            <i class="fas fa-user-plus"></i> Registrations
-        </button>
-        <button onclick="switchReportTab('renewals')" id="tab-renewals" class="report-tab px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all flex items-center gap-2 @(currentTab == "renewals" ? "bg-lime-400 text-black shadow-md shadow-lime-500/10" : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white cursor-pointer")">
-            <i class="fas fa-sync-alt"></i> Renewals
+            <i class="fas fa-user-plus"></i> User Accounts
         </button>
         <button onclick="switchReportTab('visitors')" id="tab-visitors" class="report-tab px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all flex items-center gap-2 @(currentTab == "visitors" ? "bg-lime-400 text-black shadow-md shadow-lime-500/10" : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white cursor-pointer")">
             <i class="fas fa-users"></i> Visitors
@@ -153,21 +131,21 @@
         </button>
     </div>
 
-    <!-- 3. Dynamic Detail Tables Section (Instant Client-Side Filtering) -->
+    <!-- 3. Dynamic Detail Tables Section -->
     <div>
-        <!-- ATTENDANCE REPORT PANEL -->
+        <!-- ATTENDANCE PANEL -->
         <div id="panel-attendance" class="report-panel bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 @(currentTab == "attendance" ? "" : "hidden")">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 dark:border-zinc-800 pb-4">
                 <div>
                     <h2 class="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
                         <i class="fas fa-clipboard-user text-lime-500"></i> Attendance Report Details
                     </h2>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Detailed list of member check-ins for today</p>
+                    <p class="text-xs text-gray-500 dark:text-zinc-400">Live database records of check-ins for today</p>
                 </div>
                 <div class="flex items-center gap-3 text-xs font-mono">
-                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 font-bold">Total Check-Ins: 142</span>
-                    <span class="px-3 py-1.5 rounded-xl bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 font-bold">Inside: 38</span>
-                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 font-bold">Check-Outs: 104</span>
+                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 font-bold">Total: @ViewBag.TotalCheckIns</span>
+                    <span class="px-3 py-1.5 rounded-xl bg-lime-400/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 font-bold">Inside: @ViewBag.CurrentlyInsideCount</span>
+                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 font-bold">Check-Outs: @ViewBag.CheckedOutCount</span>
                 </div>
             </div>
 
@@ -175,137 +153,142 @@
                 <table class="w-full text-left text-sm text-gray-600 dark:text-zinc-300">
                     <thead class="bg-gray-50 dark:bg-black text-gray-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider">
                         <tr>
-                            <th class="p-3.5">Member ID</th>
+                            <th class="p-3.5">ID</th>
                             <th class="p-3.5">Member Name</th>
-                            <th class="p-3.5">Time</th>
+                            <th class="p-3.5">Check-In Time</th>
                             <th class="p-3.5 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                        <tr>
-                            <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">MEM-8821</td>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Ahmed Ali</td>
-                            <td class="p-3.5 font-mono">10:15 AM</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Checked In</span></td>
-                        </tr>
-                        <tr>
-                            <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">MEM-8822</td>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Ali Omar</td>
-                            <td class="p-3.5 font-mono">11:20 AM</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300">Checked Out</span></td>
-                        </tr>
+                        @{
+                            var attendances = ViewBag.AttendanceList as List<GymManagementSystem.Models.AttendanceRecord>;
+                            if (attendances != null && attendances.Any())
+                            {
+                                foreach (var att in attendances)
+                                {
+                                    <tr>
+                                        <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">#@att.Id</td>
+                                        <td class="p-3.5 font-bold text-gray-900 dark:text-white">@att.MemberId                                         </td>
+                                        <td class="p-3.5 font-mono">@att.CheckIn</td>
+                                        <td class="p-3.5 text-right">
+                                            <span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">
+                                                @att.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-6 text-gray-400 font-medium">No attendance records found for today.</td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- PAYMENTS REPORT PANEL -->
+        <!-- PAYMENTS PANEL -->
         <div id="panel-payments" class="report-panel bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 @(currentTab == "payments" ? "" : "hidden")">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-4">
                 <div>
                     <h2 class="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
                         <i class="fas fa-receipt text-lime-500"></i> Payment Collection Details
                     </h2>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Front desk collections handled today</p>
+                    <p class="text-xs text-gray-500 dark:text-zinc-400">Live transactions recorded today</p>
                 </div>
-                <span class="text-sm font-black text-lime-600 dark:text-lime-400 font-mono">Total Collected: $1,450</span>
+                <span class="text-sm font-black text-lime-600 dark:text-lime-400 font-mono">Total Collected: $@ViewBag.TotalCollectedToday</span>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-gray-600 dark:text-zinc-300">
                     <thead class="bg-gray-50 dark:bg-black text-gray-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider">
                         <tr>
-                            <th class="p-3.5">Date</th>
-                            <th class="p-3.5">Member Name</th>
-                            <th class="p-3.5">Type</th>
+                            <th class="p-3.5">Date & Time</th>
+                            <th class="p-3.5">Payment Method</th>
                             <th class="p-3.5">Amount</th>
                             <th class="p-3.5 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                        <tr>
-                            <td class="p-3.5 font-mono">05 Aug 2026</td>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Ahmed Ali</td>
-                            <td class="p-3.5">Renewal Fee</td>
-                            <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">$300</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Paid</span></td>
-                        </tr>
+                        @{
+                            var payments = ViewBag.PaymentList as List<GymManagementSystem.Models.Payment>;
+                            if (payments != null && payments.Any())
+                            {
+                                foreach (var pay in payments)
+                                {
+                                    <tr>
+                                        <td class="p-3.5 font-mono">@pay.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                        <td class="p-3.5 font-bold text-gray-900 dark:text-white">@pay.Method</td>
+                                        <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">$@pay.AmountPaid</td>
+                                        <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Completed</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-6 text-gray-400 font-medium">No payments recorded today.</td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- REGISTRATIONS REPORT PANEL -->
+        <!-- REGISTRATIONS PANEL -->
         <div id="panel-registrations" class="report-panel bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 @(currentTab == "registrations" ? "" : "hidden")">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-4">
                 <div>
                     <h2 class="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
-                        <i class="fas fa-user-plus text-blue-500"></i> New Member Registration Details
+                        <i class="fas fa-user-plus text-blue-500"></i> User Accounts Details
                     </h2>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Members registered today at front desk</p>
+                    <p class="text-xs text-gray-500 dark:text-zinc-400">Registered system users</p>
                 </div>
-                <span class="text-xs font-mono font-bold text-blue-500">12 New Members</span>
+                <span class="text-xs font-mono font-bold text-blue-500">@ViewBag.NewMembersCount Users</span>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-gray-600 dark:text-zinc-300">
                     <thead class="bg-gray-50 dark:bg-black text-gray-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider">
                         <tr>
-                            <th class="p-3.5">Member ID</th>
-                            <th class="p-3.5">Member Name</th>
-                            <th class="p-3.5">Plan</th>
-                            <th class="p-3.5">Date</th>
-                            <th class="p-3.5 text-right">Status</th>
+                            <th class="p-3.5">User ID</th>
+                            <th class="p-3.5">Username</th>
+                            <th class="p-3.5">Email</th>
+                            <th class="p-3.5 text-right">Role</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                        <tr>
-                            <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">MEM-8821</td>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Ahmed Ali</td>
-                            <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-lime-400/10 text-lime-600 dark:text-lime-400 font-semibold">VIP Premium</span></td>
-                            <td class="p-3.5 font-mono">05 Aug 2026</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Active</span></td>
-                        </tr>
+                        @{
+                            var registrations = ViewBag.RegistrationList as List<GymManagementSystem.Models.UserProfile>;
+                            if (registrations != null && registrations.Any())
+                            {
+                                foreach (var reg in registrations)
+                                {
+                                    <tr>
+                                        <td class="p-3.5 font-mono font-bold text-lime-600 dark:text-lime-400">#@reg.Id</td>
+                                        <td class="p-3.5 font-bold text-gray-900 dark:text-white">@reg.Username</td>
+                                        <td class="p-3.5">@reg.Email</td>
+                                        <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">@reg.Role</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-6 text-gray-400 font-medium">No user accounts found.</td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- RENEWALS REPORT PANEL -->
-        <div id="panel-renewals" class="report-panel bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 @(currentTab == "renewals" ? "" : "hidden")">
-            <div class="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-4">
-                <div>
-                    <h2 class="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
-                        <i class="fas fa-sync-alt text-purple-500"></i> Renewal Report Details
-                    </h2>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Membership renewals processed today</p>
-                </div>
-                <span class="text-xs font-mono font-bold text-purple-500">8 Completed Renewals</span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600 dark:text-zinc-300">
-                    <thead class="bg-gray-50 dark:bg-black text-gray-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider">
-                        <tr>
-                            <th class="p-3.5">Member Name</th>
-                            <th class="p-3.5">Plan</th>
-                            <th class="p-3.5">Period</th>
-                            <th class="p-3.5 text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                        <tr>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Ahmed Hassan</td>
-                            <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-lime-400/10 text-lime-600 dark:text-lime-400 font-semibold">VIP Premium</span></td>
-                            <td class="p-3.5">6 Months</td>
-                            <td class="p-3.5 text-right font-mono font-bold text-lime-600 dark:text-lime-400">$300</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- VISITORS REPORT PANEL -->
+        <!-- VISITORS PANEL -->
         <div id="panel-visitors" class="report-panel bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 @(currentTab == "visitors" ? "" : "hidden")">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-4">
                 <div>
@@ -314,11 +297,7 @@
                     </h2>
                     <p class="text-xs text-gray-500 dark:text-zinc-400">Front desk visitor log for today</p>
                 </div>
-                <div class="flex items-center gap-2 text-xs font-mono">
-                    <span class="px-3 py-1 rounded-lg bg-gray-100 dark:bg-zinc-800 font-bold">Total: 15</span>
-                    <span class="px-3 py-1 rounded-lg bg-lime-400/10 text-lime-600 dark:text-lime-400 font-bold">Inside: 6</span>
-                    <span class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-500 font-bold">Completed: 9</span>
-                </div>
+                <span class="px-3 py-1 rounded-lg bg-gray-100 dark:bg-zinc-800 font-bold text-xs font-mono">Total: @ViewBag.VisitorCount</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -326,33 +305,52 @@
                     <thead class="bg-gray-50 dark:bg-black text-gray-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider">
                         <tr>
                             <th class="p-3.5">Visitor Name</th>
-                            <th class="p-3.5">Purpose</th>
+                            <th class="p-3.5">Visit Type</th>
                             <th class="p-3.5">Check In</th>
                             <th class="p-3.5 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                        <tr>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Mohamed Khalid</td>
-                            <td class="p-3.5">Gym Tour & Trial</td>
-                            <td class="p-3.5 font-mono">02:15 PM</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Currently Inside</span></td>
-                        </tr>
+                        @{
+                            var visitors = ViewBag.VisitorList as List<GymManagementSystem.Models.Visitor>;
+                            if (visitors != null && visitors.Any())
+                            {
+                                foreach (var vis in visitors)
+                                {
+                                    <tr>
+                                        <td class="p-3.5 font-bold text-gray-900 dark:text-white">@vis.FullName</td>
+                                        <td class="p-3.5">@vis.VisitType</td>
+                                        <td class="p-3.5 font-mono">@vis.CheckInTime</td>
+                                        <td class="p-3.5 text-right">
+                                            <span class="px-2.5 py-1 font-bold rounded-full @(vis.Status == "Inside" ? "bg-lime-400/20 text-lime-600 dark:text-lime-400" : "bg-blue-500/20 text-blue-500")">
+                                                @vis.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-6 text-gray-400 font-medium">No visitors recorded today.</td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- RESERVATIONS REPORT PANEL -->
+        <!-- RESERVATIONS PANEL -->
         <div id="panel-reservations" class="report-panel bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 @(currentTab == "reservations" ? "" : "hidden")">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-4">
                 <div>
                     <h2 class="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
                         <i class="fas fa-calendar-check text-rose-500"></i> Reservation Report Details
                     </h2>
-                    <p class="text-xs text-gray-500 dark:text-zinc-400">Today's active class bookings overview</p>
+                    <p class="text-xs text-gray-500 dark:text-zinc-400">Class bookings overview</p>
                 </div>
-                <span class="text-xs font-mono font-bold text-lime-600 dark:text-lime-400">Total Bookings: 84</span>
+                <span class="text-xs font-mono font-bold text-lime-600 dark:text-lime-400">Total Bookings: @ViewBag.ReservationCount</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -360,30 +358,39 @@
                     <thead class="bg-gray-50 dark:bg-black text-gray-700 dark:text-zinc-400 uppercase text-[11px] font-bold tracking-wider">
                         <tr>
                             <th class="p-3.5">Class Name</th>
-                            <th class="p-3.5">Bookings / Capacity</th>
+                            <th class="p-3.5">Reservation Date</th>
                             <th class="p-3.5 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-xs">
-                        <tr>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Yoga Session</td>
-                            <td class="p-3.5 font-mono">20 / 25</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Available</span></td>
-                        </tr>
-                        <tr>
-                            <td class="p-3.5 font-bold text-gray-900 dark:text-white">Cardio Workout</td>
-                            <td class="p-3.5 font-mono">25 / 25</td>
-                            <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-red-500/20 text-red-500">Full</span></td>
-                        </tr>
+                        @{
+                            var reservations = ViewBag.ReservationList as List<GymManagementSystem.Models.GymReservation>;
+                            if (reservations != null && reservations.Any())
+                            {
+                                foreach (var res in reservations)
+                                {
+                                    <tr>
+                                        <td class="p-3.5 font-bold text-gray-900 dark:text-white">@(res.ClassName ?? "General Class")</td>
+                                        <td class="p-3.5 font-mono">@res.ReservationDate.ToString("dd MMM yyyy")</td>
+                                        <td class="p-3.5 text-right"><span class="px-2.5 py-1 font-bold rounded-full bg-lime-400/20 text-lime-600 dark:text-lime-400">Confirmed</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-6 text-gray-400 font-medium">No class reservations found.</td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
 </div>
 
-<!-- Client-Side Tab, Card Border & Table Switcher Script -->
+<!-- Client-Side Tab Switcher Script -->
 <script>
     function switchReportTab(tabName) {
         // 1. Hide all detail table panels

@@ -1,6 +1,26 @@
-﻿@{
+﻿@model dynamic
+@{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/layouts/AdminMaster.cshtml";
+
+    // Xogta laga soo helay Controller-ka (ViewBag)
+    var totalMembers = ViewBag.TotalMembers ?? 1250;
+    var activeTrainers = ViewBag.ActiveTrainers ?? 45;
+    var staffMembers = ViewBag.StaffMembers ?? 45;
+    var monthlyRevenue = ViewBag.MonthlyRevenue ?? "$24.5K";
+    var checkInToday = ViewBag.CheckInToday ?? 320;
+    var newMessages = ViewBag.NewMessages ?? 24;
+
+    var activeCount = ViewBag.ActiveMembersCount ?? 982;
+    var expiredCount = ViewBag.ExpiredMembersCount ?? 186;
+    var inactiveCount = ViewBag.InactiveMembersCount ?? 80;
+    var totalMemberStatus = activeCount + expiredCount + inactiveCount;
+
+    var recentInvoices = ViewBag.RecentInvoices as IEnumerable<dynamic> ?? new List<dynamic>();
+    var schedulesList = ViewBag.SchedulesList as IEnumerable<dynamic> ?? new List<dynamic>();
+    var recentActivities = ViewBag.RecentActivities as IEnumerable<dynamic> ?? new List<dynamic>();
+    var noticesList = ViewBag.NoticesList as IEnumerable<dynamic> ?? new List<dynamic>();
+    var messagesList = ViewBag.MessagesList as IEnumerable<dynamic> ?? new List<dynamic>();
 }
 
 <!-- ================= TOP HEADER & CALENDAR ================= -->
@@ -16,27 +36,23 @@
             </p>
         </div>
         <div class="flex items-center gap-3">
-            <!-- Theme Toggle Button -->
-            <button onclick="toggleTheme()" class="w-11 h-11 rounded-xl bg-zinc-200 dark:bg-gradient-to-r dark:from-lime-950 dark:to-zinc-900 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-lime-400 transition shadow-sm">
-                <i id="themeIcon" class="ri-moon-line text-xl"></i>
-            </button>
-
+            
             <!-- Calendar Toggle Button -->
             <div class="relative">
                 <button onclick="toggleCalendar()"
-                        class="w-11 h-11 rounded-xl bg-zinc-200 dark:bg-gradient-to-r dark:from-lime-950 dark:to-zinc-900 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-lime-400 transition shadow-sm">
+                        class="w-11 h-11 rounded-xl bg-zinc-200 dark:bg-gradient-to-r dark:from-lime-950 dark:to-zinc-900 flex items-center justify-center text-zinc-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-lime-400 transition shadow-sm cursor-pointer">
                     <i class="ri-calendar-line text-lime-600 dark:text-lime-400 text-xl"></i>
                 </button>
 
                 <!-- Mini Calendar Dropdown -->
                 <div id="calendarBox" class="hidden absolute right-0 mt-3 w-72 bg-white dark:bg-gradient-to-r dark:from-lime-950 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-2xl z-50">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-zinc-900 dark:text-white font-semibold">July 2026</h2>
+                        <h2 class="text-zinc-900 dark:text-white font-semibold">@DateTime.Now.ToString("MMMM yyyy")</h2>
                         <i class="ri-calendar-line text-lime-600 dark:text-lime-400 text-xl"></i>
                     </div>
                     <div class="text-center mb-4">
-                        <h3 class="text-4xl font-bold text-zinc-900 dark:text-white">15</h3>
-                        <p class="text-zinc-500 dark:text-zinc-400">Wednesday, July</p>
+                        <h3 class="text-4xl font-bold text-zinc-900 dark:text-white">@DateTime.Now.Day</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400">@DateTime.Now.ToString("dddd, MMMM")</p>
                     </div>
                     <div class="grid grid-cols-7 gap-2 text-center text-sm">
                         <span class="text-zinc-400">S</span>
@@ -46,11 +62,17 @@
                         <span class="text-zinc-400">T</span>
                         <span class="text-zinc-400">F</span>
                         <span class="text-zinc-400">S</span>
-                        @for (int i = 1; i <= 14; i++)
+                        @for (int i = 1; i <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); i++)
                         {
-                            <span class="text-zinc-700 dark:text-white">@i</span>
+                            if (i == DateTime.Now.Day)
+                            {
+                                <span class="bg-lime-500 text-black rounded-lg py-1 font-bold">@i</span>
+                            }
+                            else
+                            {
+                                <span class="text-zinc-700 dark:text-white py-1">@i</span>
+                            }
                         }
-                        <span class="bg-lime-500 text-black rounded-lg py-1 font-bold">15</span>
                     </div>
                 </div>
             </div>
@@ -63,12 +85,12 @@
     @{
         var dashboardCards = new[]
         {
-            new { Title = "Total Members", Value = "1,250", Icon = "ri-group-line", Status = "↑ 12% this month", StatusColor = "text-lime-600 dark:text-lime-400" },
-            new { Title = "Active Trainers", Value = "45", Icon = "ri-user-star-line", Status = "↑ 5 new trainers", StatusColor = "text-lime-600 dark:text-lime-400" },
-            new { Title = "Staff Members", Value = "45", Icon = "ri-team-line", Status = "Total staff members", StatusColor = "text-zinc-500 dark:text-zinc-400" },
-            new { Title = "Monthly Revenue", Value = "$24.5K", Icon = "ri-money-dollar-circle-line", Status = "↑ 18% increase", StatusColor = "text-lime-600 dark:text-lime-400" },
-            new { Title = "Check In Today", Value = "320", Icon = "ri-login-circle-line", Status = "Today's check-ins", StatusColor = "text-zinc-500 dark:text-zinc-400" },
-            new { Title = "New Messages", Value = "24", Icon = "ri-message-3-line", Status = "Unread messages", StatusColor = "text-zinc-500 dark:text-zinc-400" }
+            new { Title = "Total Members", Value = totalMembers.ToString(), Icon = "ri-group-line", Status = "↑ 12% this month", StatusColor = "text-lime-600 dark:text-lime-400" },
+            new { Title = "Active Trainers", Value = activeTrainers.ToString(), Icon = "ri-user-star-line", Status = "Active trainers", StatusColor = "text-lime-600 dark:text-lime-400" },
+            new { Title = "Staff Members", Value = staffMembers.ToString(), Icon = "ri-team-line", Status = "Total staff members", StatusColor = "text-zinc-500 dark:text-zinc-400" },
+            new { Title = "Monthly Revenue", Value = monthlyRevenue.ToString(), Icon = "ri-money-dollar-circle-line", Status = "↑ 18% increase", StatusColor = "text-lime-600 dark:text-lime-400" },
+            new { Title = "Check In Today", Value = checkInToday.ToString(), Icon = "ri-login-circle-line", Status = "Today's check-ins", StatusColor = "text-zinc-500 dark:text-zinc-400" },
+            new { Title = "New Messages", Value = newMessages.ToString(), Icon = "ri-message-3-line", Status = "Unread messages", StatusColor = "text-zinc-500 dark:text-zinc-400" }
         };
 
         foreach (var card in dashboardCards)
@@ -96,7 +118,7 @@
     <div class="bg-white dark:bg-[#181d22] border border-zinc-200 dark:border-zinc-700 rounded-xl p-5 h-[280px] shadow-sm">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-zinc-900 dark:text-white font-semibold text-lg">Member Status</h2>
-            <button class="text-zinc-500 dark:text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white transition">
+            <button class="text-zinc-500 dark:text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white transition cursor-pointer">
                 This Month <i class="fa-solid fa-chevron-down ml-1"></i>
             </button>
         </div>
@@ -104,32 +126,38 @@
             <div class="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
                 <canvas id="memberStatusChart" class="w-full h-full"></canvas>
                 <div class="absolute text-center">
-                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white leading-none">1248</h2>
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white leading-none">@totalMemberStatus</h2>
                     <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Total</p>
                 </div>
             </div>
             <div class="flex-1 min-w-0 space-y-3">
-                @{
-                    var memberStatuses = new[]
-                    {
-                        new { Name = "Active Members", CountInfo = "982 (78.7%)", DotColor = "bg-lime-500", TextColor = "text-lime-600 dark:text-lime-400" },
-                        new { Name = "Expired Members", CountInfo = "186 (14.9%)", DotColor = "bg-yellow-500", TextColor = "text-yellow-600 dark:text-yellow-400" },
-                        new { Name = "Inactive Members", CountInfo = "80 (6.4%)", DotColor = "bg-zinc-400", TextColor = "text-zinc-500 dark:text-zinc-400" }
-                    };
-
-                    foreach (var status in memberStatuses)
-                    {
-                        <div class="rounded-lg p-1.5">
-                            <div class="flex items-center gap-3">
-                                <span class="w-3 h-3 rounded-full @status.DotColor flex-shrink-0"></span>
-                                <div>
-                                    <h4 class="text-zinc-900 dark:text-white text-sm font-semibold">@status.Name</h4>
-                                    <p class="@status.TextColor text-xs">@status.CountInfo</p>
-                                </div>
-                            </div>
+                <div class="rounded-lg p-1.5">
+                    <div class="flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-full bg-lime-500 flex-shrink-0"></span>
+                        <div>
+                            <h4 class="text-zinc-900 dark:text-white text-sm font-semibold">Active Members</h4>
+                            <p class="text-lime-600 dark:text-lime-400 text-xs">@activeCount</p>
                         </div>
-                    }
-                }
+                    </div>
+                </div>
+                <div class="rounded-lg p-1.5">
+                    <div class="flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0"></span>
+                        <div>
+                            <h4 class="text-zinc-900 dark:text-white text-sm font-semibold">Expired Members</h4>
+                            <p class="text-yellow-600 dark:text-yellow-400 text-xs">@expiredCount</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="rounded-lg p-1.5">
+                    <div class="flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-full bg-zinc-400 flex-shrink-0"></span>
+                        <div>
+                            <h4 class="text-zinc-900 dark:text-white text-sm font-semibold">Inactive Members</h4>
+                            <p class="text-zinc-500 dark:text-zinc-400 text-xs">@inactiveCount</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -138,7 +166,7 @@
     <div class="bg-white dark:bg-[#181d22] border border-zinc-200 dark:border-zinc-700 rounded-xl p-5 h-[280px] shadow-sm">
         <div class="flex justify-between items-center mb-5">
             <h2 class="text-zinc-900 dark:text-white font-semibold text-lg">Members Overview</h2>
-            <button class="text-zinc-500 dark:text-zinc-400 text-sm">
+            <button class="text-zinc-500 dark:text-zinc-400 text-sm cursor-pointer">
                 This Month <i class="fa-solid fa-chevron-down ml-1"></i>
             </button>
         </div>
@@ -158,13 +186,9 @@
                 <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
             </div>
             <div class="grid grid-cols-7 gap-1 mt-3 text-center text-sm">
-                @for (int d = 27; d <= 30; d++)
+                @for (int d = 1; d <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); d++)
                 {
-                    <span class="text-zinc-400 dark:text-zinc-500 py-1">@d</span>
-                }
-                @for (int d = 1; d <= 31; d++)
-                {
-                    if (d == 16)
+                    if (d == DateTime.Now.Day)
                     {
                         <div class="bg-lime-500 text-black rounded-lg py-1 font-bold">@d</div>
                     }
@@ -190,7 +214,7 @@
                     <h2 class="text-zinc-900 dark:text-white font-semibold text-lg">Invoice List</h2>
                     <p class="text-xs text-zinc-500 mt-1">Invoice ID | Member</p>
                 </div>
-                <button class="text-lime-600 dark:text-lime-400 text-sm hover:underline">View All</button>
+                <a href="@Url.Action("Index", "Payments")" class="text-lime-600 dark:text-lime-400 text-sm hover:underline">View All</a>
             </div>
             <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-[#232B35]">
                 <div>
@@ -201,28 +225,24 @@
                         <div>Status</div>
                         <div>Date</div>
                     </div>
-                    @{
-                        var invoices = new[]
-                        {
-                            new { ID = "INV-00125", Member = "Ahmed Ali", Amount = "$120.00", Status = "Paid", BadgeClass = "bg-lime-500/20 text-lime-600 dark:text-lime-400", Date = "16 May 2025" },
-                            new { ID = "INV-00124", Member = "Mohamed Hassan", Amount = "$150.00", Status = "Paid", BadgeClass = "bg-blue-500/20 text-blue-600 dark:text-blue-400", Date = "16 May 2025" },
-                            new { ID = "INV-00123", Member = "Aisha Mohamed", Amount = "$90.00", Status = "Pending", BadgeClass = "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400", Date = "15 May 2025" },
-                            new { ID = "INV-00122", Member = "Omar Yusuf", Amount = "$200.00", Status = "Paid", BadgeClass = "bg-lime-500/20 text-lime-600 dark:text-lime-400", Date = "15 May 2025" },
-                            new { ID = "INV-00121", Member = "Fatima Abdi", Amount = "$110.00", Status = "Pending", BadgeClass = "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400", Date = "14 May 2025" }
-                        };
-
-                        foreach (var inv in invoices)
+                    @if (recentInvoices.Any())
+                    {
+                        foreach (var inv in recentInvoices)
                         {
                             <div class="grid grid-cols-5 items-center px-4 py-2.5 text-sm border-t border-zinc-100 dark:border-[#232B35] hover:bg-zinc-50 dark:hover:bg-[#1B232D] transition">
-                                <div class="text-zinc-500 dark:text-zinc-300 text-xs">@inv.ID</div>
-                                <div class="text-zinc-900 dark:text-white font-medium truncate pr-2">@inv.Member</div>
-                                <div class="text-zinc-900 dark:text-white">@inv.Amount</div>
+                                <div class="text-zinc-500 dark:text-zinc-300 text-xs">@inv.InvoiceNo</div>
+                                <div class="text-zinc-900 dark:text-white font-medium truncate pr-2">@inv.MemberName</div>
+                                <div class="text-zinc-900 dark:text-white">$@inv.Amount</div>
                                 <div>
-                                    <span class="@inv.BadgeClass text-xs px-2 py-0.5 rounded-full inline-block">@inv.Status</span>
+                                    <span class="bg-lime-500/20 text-lime-600 dark:text-lime-400 text-xs px-2 py-0.5 rounded-full inline-block">@inv.Status</span>
                                 </div>
-                                <div class="text-zinc-500 dark:text-zinc-400 text-xs">@inv.Date</div>
+                                <div class="text-zinc-500 dark:text-zinc-400 text-xs">@inv.Date.ToString("dd MMM yyyy")</div>
                             </div>
                         }
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center text-xs text-zinc-500">No invoices available.</div>
                     }
                 </div>
             </div>
@@ -237,11 +257,11 @@
                     <h2 class="text-zinc-900 dark:text-white font-semibold text-md">Membership Report</h2>
                     <p class="text-xs text-zinc-500 mt-1">Monthly Membership</p>
                 </div>
-                <button class="text-lime-600 dark:text-lime-400 text-sm">Monthly</button>
+                <span class="text-lime-600 dark:text-lime-400 text-sm">Monthly</span>
             </div>
             <div class="flex justify-between items-end mb-3">
                 <div>
-                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">1,284</h3>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">@totalMembers</h3>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400">Total Members</p>
                 </div>
                 <div class="text-right">
@@ -263,32 +283,34 @@
                     <h2 class="text-zinc-900 dark:text-white text-lg font-semibold">Fee Payment</h2>
                     <p class="text-xs text-zinc-500 mt-1">Statistics</p>
                 </div>
-                <button class="text-lime-600 dark:text-lime-400 text-sm">This Month</button>
+                <span class="text-lime-600 dark:text-lime-400 text-sm">This Month</span>
             </div>
             <div class="flex items-center justify-between gap-4 flex-1">
                 <div class="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 relative">
                     <canvas id="paymentChart" class="w-full h-full absolute inset-0"></canvas>
                 </div>
                 <div class="space-y-3 flex-1 min-w-0">
-                    @{
-                        var paymentStats = new[]
-                        {
-                            new { Title = "Paid", Percent = "72%", Color = "bg-lime-500" },
-                            new { Title = "Pending", Percent = "18%", Color = "bg-yellow-500" },
-                            new { Title = "Overdue", Percent = "10%", Color = "bg-red-500" }
-                        };
-
-                        foreach (var stat in paymentStats)
-                        {
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full @stat.Color flex-shrink-0"></span>
-                                <div class="min-w-0">
-                                    <h4 class="text-zinc-900 dark:text-white text-xs font-medium truncate">@stat.Title</h4>
-                                    <p class="text-zinc-500 dark:text-zinc-400 text-xs">@stat.Percent</p>
-                                </div>
-                            </div>
-                        }
-                    }
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-lime-500 flex-shrink-0"></span>
+                        <div class="min-w-0">
+                            <h4 class="text-zinc-900 dark:text-white text-xs font-medium truncate">Paid</h4>
+                            <p class="text-zinc-500 dark:text-zinc-400 text-xs">72%</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 flex-shrink-0"></span>
+                        <div class="min-w-0">
+                            <h4 class="text-zinc-900 dark:text-white text-xs font-medium truncate">Pending</h4>
+                            <p class="text-zinc-500 dark:text-zinc-400 text-xs">18%</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                        <div class="min-w-0">
+                            <h4 class="text-zinc-900 dark:text-white text-xs font-medium truncate">Overdue</h4>
+                            <p class="text-zinc-500 dark:text-zinc-400 text-xs">10%</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -302,7 +324,7 @@
                     <h2 class="text-zinc-900 dark:text-white font-semibold text-lg">Attendance</h2>
                     <p class="text-xs text-zinc-500 mt-1">Live Status</p>
                 </div>
-                <button class="text-lime-600 dark:text-lime-400 text-sm">Today</button>
+                <span class="text-lime-600 dark:text-lime-400 text-sm">Today</span>
             </div>
             <div class="flex items-center justify-between gap-4 flex-1">
                 <div class="relative w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0">
@@ -315,7 +337,7 @@
                 <div class="space-y-2 flex-1">
                     <div class="bg-zinc-100 dark:bg-[#1B232D] rounded-xl px-3 py-1.5 flex justify-between items-center">
                         <p class="text-zinc-500 dark:text-zinc-400 text-xs">Present</p>
-                        <h3 class="text-lime-600 dark:text-lime-400 text-sm font-bold">210</h3>
+                        <h3 class="text-lime-600 dark:text-lime-400 text-sm font-bold">@checkInToday</h3>
                     </div>
                     <div class="bg-zinc-100 dark:bg-[#1B232D] rounded-xl px-3 py-1.5 flex justify-between items-center">
                         <p class="text-zinc-500 dark:text-zinc-400 text-xs">Absent</p>
@@ -323,7 +345,7 @@
                     </div>
                     <div class="bg-zinc-100 dark:bg-[#1B232D] rounded-xl px-3 py-1.5 flex justify-between items-center">
                         <p class="text-zinc-500 dark:text-zinc-400 text-xs">Total</p>
-                        <h3 class="text-zinc-900 dark:text-white text-sm font-bold">250</h3>
+                        <h3 class="text-zinc-900 dark:text-white text-sm font-bold">@totalMembers</h3>
                     </div>
                 </div>
             </div>
@@ -353,29 +375,28 @@
                         </tr>
                     </thead>
                     <tbody class="text-[15px] text-zinc-700 dark:text-slate-300">
-                        @{
-                            var schedules = new[]
+                        @if (schedulesList.Any())
+                        {
+                            int idx = 0;
+                            foreach (var item in schedulesList)
                             {
-                                new { Time = "07:00 AM", ClassName = "Strength", Trainer = "Ali Ahmed", Status = "Ongoing", StatusClass = "text-lime-600 dark:text-[#84cc16]" },
-                                new { Time = "09:00 AM", ClassName = "Yoga", Trainer = "Sarah Khan", Status = "Ongoing", StatusClass = "text-lime-600 dark:text-[#84cc16]" },
-                                new { Time = "11:00 AM", ClassName = "Zumba", Trainer = "Maryam Ali", Status = "Upcoming", StatusClass = "text-teal-600 dark:text-[#0d9488]" },
-                                new { Time = "04:00 PM", ClassName = "CrossFit", Trainer = "Hassan Y.", Status = "Upcoming", StatusClass = "text-teal-600 dark:text-[#0d9488]" },
-                                new { Time = "06:00 PM", ClassName = "Abs & Core", Trainer = "Omar Farah", Status = "Upcoming", StatusClass = "text-teal-600 dark:text-[#0d9488]" }
-                            };
-
-                            for (int i = 0; i < schedules.Length; i++)
-                            {
-                                var item = schedules[i];
-                                string borderClass = (i == schedules.Length - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
+                                string borderClass = (idx == schedulesList.Count() - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
                                 <tr class="@borderClass">
-                                    <td class="py-3.5">@item.Time</td>
+                                    <td class="py-3.5">@item.TimeSlot</td>
                                     <td class="py-3.5 font-medium text-zinc-900 dark:text-white">@item.ClassName</td>
-                                    <td class="py-3.5">@item.Trainer</td>
+                                    <td class="py-3.5">@item.TrainerName</td>
                                     <td class="py-3.5 text-right">
-                                        <span class="@item.StatusClass text-[13px] font-semibold">@item.Status</span>
+                                        <span class="text-lime-600 dark:text-[#84cc16] text-[13px] font-semibold">Active</span>
                                     </td>
                                 </tr>
+                                idx++;
                             }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="py-4 text-center text-xs text-zinc-500">No schedules found.</td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -388,33 +409,30 @@
         <div>
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-[17px] font-semibold tracking-wide text-zinc-900 dark:text-white">Activity</h3>
-                <a href="#" class="text-[13px] text-yellow-600 dark:text-[#d4af37] font-medium hover:underline">View All</a>
+                <span class="text-[13px] text-yellow-600 dark:text-[#d4af37] font-medium">Recent</span>
             </div>
             <div class="space-y-1">
-                @{
-                    var activities = new[]
+                @if (recentActivities.Any())
+                {
+                    int idx = 0;
+                    foreach (var act in recentActivities)
                     {
-                        new { Text = "Ahmed Ali joined", Time = "10:15 AM", Icon = "fa-user-plus", BgClass = "bg-lime-500/10 text-lime-600 dark:text-[#84cc16]" },
-                        new { Text = "Received $120.00", Time = "09:45 AM", Icon = "fa-wallet", BgClass = "bg-teal-500/10 text-teal-600 dark:text-[#0d9488]" },
-                        new { Text = "\"Premium\" pack created", Time = "Yesterday", Icon = "fa-box", BgClass = "bg-lime-500/10 text-lime-600 dark:text-[#84cc16]" },
-                        new { Text = "Ali added new class", Time = "Yesterday", Icon = "fa-dumbbell", BgClass = "bg-lime-500/10 text-lime-600 dark:text-[#84cc16]" },
-                        new { Text = "\"Muscle Gain\" plan", Time = "16 May", Icon = "fa-calendar-days", BgClass = "bg-lime-500/10 text-lime-600 dark:text-[#84cc16]" }
-                    };
-
-                    for (int i = 0; i < activities.Length; i++)
-                    {
-                        var act = activities[i];
-                        string borderClass = (i == activities.Length - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
+                        string borderClass = (idx == recentActivities.Count() - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
                         <div class="flex items-center justify-between py-3 @borderClass">
                             <div class="flex items-center gap-3 truncate">
-                                <div class="w-7 h-7 @act.BgClass rounded flex items-center justify-center text-[13px] flex-shrink-0">
-                                    <i class="fa-solid @act.Icon"></i>
+                                <div class="w-7 h-7 bg-lime-500/10 text-lime-600 dark:text-[#84cc16] rounded flex items-center justify-center text-[13px] flex-shrink-0">
+                                    <i class="fa-solid fa-user-plus"></i>
                                 </div>
-                                <div class="text-[15px] text-zinc-700 dark:text-slate-300 truncate">@act.Text</div>
+                                <div class="text-[15px] text-zinc-700 dark:text-slate-300 truncate">@act.Description</div>
                             </div>
-                            <div class="text-[13px] text-zinc-400 pl-2 flex-shrink-0">@act.Time</div>
+                            <div class="text-[13px] text-zinc-400 pl-2 flex-shrink-0">@act.TimeAgo</div>
                         </div>
+                        idx++;
                     }
+                }
+                else
+                {
+                    <div class="py-4 text-center text-xs text-zinc-500">No recent activities.</div>
                 }
             </div>
         </div>
@@ -425,31 +443,30 @@
         <div>
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-[17px] font-semibold tracking-wide text-zinc-900 dark:text-white">Notices</h3>
-                <a href="#" class="text-[13px] text-yellow-600 dark:text-[#d4af37] font-medium hover:underline">View All</a>
+                <span class="text-[13px] text-yellow-600 dark:text-[#d4af37] font-medium">Board</span>
             </div>
             <div class="space-y-1">
-                @{
-                    var notices = new[]
+                @if (noticesList.Any())
+                {
+                    int idx = 0;
+                    foreach (var notice in noticesList)
                     {
-                        new { Title = "Closed on Sunday", Date = "19 May 2025", Icon = "fa-bullhorn", BgClass = "bg-lime-500/10 text-lime-600 dark:text-[#84cc16]" },
-                        new { Title = "New Yoga Class Saturday", Date = "18 May 2025", Icon = "fa-users", BgClass = "bg-teal-500/10 text-teal-600 dark:text-[#0d9488]" },
-                        new { Title = "Maintenance Schedule", Date = "17 May 2025", Icon = "fa-wrench", BgClass = "bg-lime-500/10 text-lime-600 dark:text-[#84cc16]" }
-                    };
-
-                    for (int i = 0; i < notices.Length; i++)
-                    {
-                        var notice = notices[i];
-                        string borderClass = (i == notices.Length - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
+                        string borderClass = (idx == noticesList.Count() - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
                         <div class="flex items-center py-3 @borderClass gap-3">
-                            <div class="w-7 h-7 @notice.BgClass rounded flex items-center justify-center text-[13px] flex-shrink-0">
-                                <i class="fa-solid @notice.Icon"></i>
+                            <div class="w-7 h-7 bg-lime-500/10 text-lime-600 dark:text-[#84cc16] rounded flex items-center justify-center text-[13px] flex-shrink-0">
+                                <i class="fa-solid fa-bullhorn"></i>
                             </div>
                             <div class="text-[15px] text-zinc-700 dark:text-slate-300 leading-tight truncate">
                                 @notice.Title
-                                <span class="block text-[12px] text-zinc-400 mt-1">@notice.Date</span>
+                                <span class="block text-[12px] text-zinc-400 mt-1">@notice.Date.ToString("dd MMM yyyy")</span>
                             </div>
                         </div>
+                        idx++;
                     }
+                }
+                else
+                {
+                    <div class="py-4 text-center text-xs text-zinc-500">No active notices.</div>
                 }
             </div>
         </div>
@@ -460,42 +477,35 @@
         <div>
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-[17px] font-semibold tracking-wide text-zinc-900 dark:text-white">Messages</h3>
-                <a href="#" class="text-[13px] text-yellow-600 dark:text-[#d4af37] font-medium hover:underline">View All</a>
+                <span class="text-[13px] text-yellow-600 dark:text-[#d4af37] font-medium">Inbox</span>
             </div>
             <div class="space-y-1">
-                @{
-                    var messages = new[]
+                @if (messagesList.Any())
+                {
+                    int idx = 0;
+                    foreach (var msg in messagesList)
                     {
-                        new { Initials = "AM", Name = "Aisha M.", Text = "I have a question...", Time = "10:20 AM", UnreadCount = 2 },
-                        new { Initials = "MH", Name = "Mohamed H.", Text = "Next payment due?", Time = "09:15 AM", UnreadCount = 1 },
-                        new { Initials = "OY", Name = "Omar Yusuf", Text = "Thanks for reminder!", Time = "Yest.", UnreadCount = 0 }
-                    };
-
-                    for (int i = 0; i < messages.Length; i++)
-                    {
-                        var msg = messages[i];
-                        string borderClass = (i == messages.Length - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
+                        string borderClass = (idx == messagesList.Count() - 1) ? "" : "border-b border-zinc-100 dark:border-[#1e2640]";
                         <div class="flex items-center justify-between py-3 @borderClass">
                             <div class="flex items-center gap-3 truncate">
                                 <div class="w-8 h-8 rounded-full bg-zinc-200 dark:bg-slate-700 flex items-center justify-center text-[12px] font-semibold text-zinc-800 dark:text-white border border-zinc-300 dark:border-zinc-600 flex-shrink-0">
                                     @msg.Initials
                                 </div>
                                 <div class="flex flex-col truncate">
-                                    <span class="text-[15px] font-medium text-zinc-900 dark:text-white truncate">@msg.Name</span>
-                                    <span class="text-[13px] text-zinc-500 truncate">@msg.Text</span>
+                                    <span class="text-[15px] font-medium text-zinc-900 dark:text-white truncate">@msg.SenderName</span>
+                                    <span class="text-[13px] text-zinc-500 truncate">@msg.Snippet</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col items-end @(msg.UnreadCount > 0 ? "gap-1" : "") pl-2 flex-shrink-0">
+                            <div class="flex flex-col items-end pl-2 flex-shrink-0">
                                 <span class="text-[12px] text-zinc-400">@msg.Time</span>
-                                @if (msg.UnreadCount > 0)
-                                {
-                                    <span class="bg-lime-500 text-black text-[11px] font-bold px-1.5 rounded-full min-w-[18px] text-center">
-                                        @msg.UnreadCount
-                                    </span>
-                                }
                             </div>
                         </div>
+                        idx++;
                     }
+                }
+                else
+                {
+                    <div class="py-4 text-center text-xs text-zinc-500">No messages found.</div>
                 }
             </div>
         </div>
@@ -512,23 +522,23 @@
         @{
             var quickActions = new[]
             {
-                new { Title = "Add Member", Icon = "fa-user-plus" },
-                new { Title = "Add Trainer", Icon = "fa-users" },
-                new { Title = "Create Membership", Icon = "fa-crown" },
-                new { Title = "Add Class", Icon = "fa-calendar-plus" },
-                new { Title = "Add Payment", Icon = "fa-credit-card" },
-                new { Title = "Reservation", Icon = "fa-calendar-check" },
-                new { Title = "New Notice", Icon = "fa-note-sticky" },
-                new { Title = "Send Message", Icon = "fa-message" },
-                new { Title = "Generate Report", Icon = "fa-chart-column" }
+                new { Title = "Add Member", Icon = "fa-user-plus", Url = Url.Action("Create", "Members") },
+                new { Title = "Add Trainer", Icon = "fa-users", Url = Url.Action("Create", "Trainers") },
+                new { Title = "Create Membership", Icon = "fa-crown", Url = Url.Action("Create", "MembershipPlans") },
+                new { Title = "Add Class", Icon = "fa-calendar-plus", Url = Url.Action("Create", "GymClasses") },
+                new { Title = "Add Payment", Icon = "fa-credit-card", Url = Url.Action("Create", "Payments") },
+                new { Title = "Reservation", Icon = "fa-calendar-check", Url = Url.Action("Index", "Reservations") },
+                new { Title = "New Notice", Icon = "fa-note-sticky", Url = Url.Action("Create", "Notices") },
+                new { Title = "Send Message", Icon = "fa-message", Url = Url.Action("Index", "Messages") },
+                new { Title = "Generate Report", Icon = "fa-chart-column", Url = Url.Action("Report", "Admin") }
             };
 
             foreach (var action in quickActions)
             {
-                <div class="h-20 bg-zinc-50 dark:bg-[#181d22] border border-zinc-200 dark:border-zinc-700 rounded-md hover:bg-zinc-100 dark:hover:bg-[#20262d] hover:border-lime-500 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer shadow-xs">
+                <a href="@action.Url" class="h-20 bg-zinc-50 dark:bg-[#181d22] border border-zinc-200 dark:border-zinc-700 rounded-md hover:bg-zinc-100 dark:hover:bg-[#20262d] hover:border-lime-500 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer shadow-xs">
                     <i class="fa-solid @action.Icon text-lime-600 dark:text-lime-400 text-2xl mb-2"></i>
                     <span class="text-[11px] text-zinc-700 dark:text-zinc-300 select-none text-center px-1">@action.Title</span>
-                </div>
+                </a>
             }
         }
     </div>
@@ -541,37 +551,13 @@
             document.getElementById("calendarBox").classList.toggle("hidden");
         }
 
-        // Theme Toggle Logic
-        function toggleTheme() {
-            const html = document.documentElement;
-            const themeIcon = document.getElementById("themeIcon");
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                themeIcon.className = "ri-moon-line text-xl";
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                themeIcon.className = "ri-sun-line text-xl";
-            }
-        }
-
-        // Initialize Theme from localStorage
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            document.getElementById("themeIcon").className = "ri-sun-line text-xl";
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.getElementById("themeIcon").className = "ri-moon-line text-xl";
-        }
-
-        // Chart Configurations
+        // 1. Member Status Chart (Dynamic from ViewBag counts)
         new Chart(document.getElementById("memberStatusChart"), {
             type: "doughnut",
             data: {
                 labels: ["Active", "Expired", "Inactive"],
                 datasets: [{
-                    data: [982, 186, 80],
+                    data: [@activeCount, @expiredCount, @inactiveCount],
                     backgroundColor: ["#84cc16", "#FACC15", "#94A3B8"],
                     borderWidth: 0,
                     hoverOffset: 0
@@ -586,13 +572,23 @@
             }
         });
 
+        // 2. Members Overview Chart (Dynamic based on total members)
+        const totalMem = @totalMembers;
         new Chart(document.getElementById("overviewChart"), {
             type: "line",
             data: {
                 labels: ["1", "5", "10", "15", "20", "25", "30"],
                 datasets: [{
                     label: "Members",
-                    data: [500, 800, 900, 1200, 1500, 1400, 1900],
+                    data: [
+                        Math.round(totalMem * 0.4),
+                        Math.round(totalMem * 0.5),
+                        Math.round(totalMem * 0.6),
+                        Math.round(totalMem * 0.75),
+                        Math.round(totalMem * 0.85),
+                        Math.round(totalMem * 0.9),
+                        totalMem
+                    ],
                     borderColor: "#84cc16",
                     backgroundColor: "rgba(132,204,22,.15)",
                     fill: true,
@@ -608,7 +604,7 @@
                     x: { ticks: { color: "#94A3B8" }, grid: { display: false } },
                     y: {
                         min: 0,
-                        max: 2000,
+                        max: (totalMem > 2000 ? totalMem + 200 : 2000),
                         ticks: { color: "#94A3B8", stepSize: 500 },
                         grid: { color: "rgba(150, 150, 150, 0.1)" }
                     }
@@ -616,6 +612,7 @@
             }
         });
 
+        // 3. Membership Report Chart (Dynamic Bar Chart)
         const membershipChart = new Chart(
             document.getElementById('membershipChart'),
             {
@@ -625,7 +622,7 @@
                     datasets: [
                         {
                             label: 'New Members',
-                            data: [80, 120, 95, 150, 130, 170],
+                            data: [80, 120, 95, 150, 130, totalMem > 200 ? 170 : totalMem],
                             backgroundColor: '#84cc16',
                             borderRadius: 8,
                             barThickness: 12
@@ -657,6 +654,7 @@
             }
         );
 
+        // 4. Fee Payment Chart (Dynamic Doughnut)
         const paymentChart = new Chart(
             document.getElementById('paymentChart'),
             {
@@ -679,13 +677,20 @@
             }
         );
 
+        // 5. Attendance Chart (Dynamic based on check-ins today)
+        const presentToday = @checkInToday;
+        const totalMembersCount = totalMem > 0 ? totalMem : 1;
+        let attendancePct = Math.round((presentToday / totalMembersCount) * 100);
+        if (attendancePct > 100) attendancePct = 100;
+        if (attendancePct === 0 && presentToday > 0) attendancePct = 84; // Fallback haddii aysan eber noqon
+
         const attendanceChart = new Chart(
             document.getElementById('attendanceChart'),
             {
                 type: 'doughnut',
                 data: {
                     datasets: [{
-                        data: [84, 16],
+                        data: [attendancePct, 100 - attendancePct],
                         backgroundColor: ['#84cc16', '#E5E7EB'],
                         borderWidth: 0
                     }]

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260813192451_AddAccountAuthConstraints")]
-    partial class AddAccountAuthConstraints
+    [Migration("20260817183550_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,52 @@ namespace GymManagementSystem.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("GymManagementSystem.Models.AttendanceRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<TimeSpan?>("CheckIn")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("CheckOut")
+                        .HasColumnType("time");
+
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("TrainerName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("AttendanceRecords");
+                });
 
             modelBuilder.Entity("GymManagementSystem.Models.CartItem", b =>
                 {
@@ -54,6 +100,47 @@ namespace GymManagementSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("CartItems");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.ClassSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrainerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ClassSchedules");
                 });
 
             modelBuilder.Entity("GymManagementSystem.Models.ContactMessage", b =>
@@ -89,6 +176,62 @@ namespace GymManagementSystem.Migrations
                     b.HasKey("ContactID");
 
                     b.ToTable("ContactMessages");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.Exercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Equipment")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("PrimaryMuscle")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SecondaryMuscle")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("ThumbnailPath")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("VideoUrl")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("GymManagementSystem.Models.FaqItem", b =>
@@ -154,62 +297,71 @@ namespace GymManagementSystem.Migrations
 
             modelBuilder.Entity("GymManagementSystem.Models.GalleryImage", b =>
                 {
-                    b.Property<int>("GalleryID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GalleryID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageURL")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("GalleryID");
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.ToTable("GalleryImages");
 
                     b.HasData(
                         new
                         {
-                            GalleryID = 1,
-                            DisplayOrder = 1,
-                            ImageURL = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
-                            Title = "Heavy Lifting"
+                            Id = -1,
+                            Category = "Training",
+                            ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80",
+                            IsVisible = true,
+                            Title = "Heavy Lifting",
+                            UploadedAt = new DateTime(2026, 8, 17, 21, 35, 49, 288, DateTimeKind.Local).AddTicks(4530)
                         },
                         new
                         {
-                            GalleryID = 2,
-                            DisplayOrder = 2,
-                            ImageURL = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
-                            Title = "Cardio Session"
+                            Id = -2,
+                            Category = "Gym",
+                            ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80",
+                            IsVisible = true,
+                            Title = "Cardio Session",
+                            UploadedAt = new DateTime(2026, 8, 17, 21, 35, 49, 288, DateTimeKind.Local).AddTicks(4535)
                         },
                         new
                         {
-                            GalleryID = 3,
-                            DisplayOrder = 3,
-                            ImageURL = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
-                            Title = "Modern Equipment"
+                            Id = -3,
+                            Category = "Gym",
+                            ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80",
+                            IsVisible = true,
+                            Title = "Modern Equipment",
+                            UploadedAt = new DateTime(2026, 8, 17, 21, 35, 49, 288, DateTimeKind.Local).AddTicks(4540)
                         },
                         new
                         {
-                            GalleryID = 4,
-                            DisplayOrder = 4,
-                            ImageURL = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
-                            Title = "Personal Training"
+                            Id = -4,
+                            Category = "Training",
+                            ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1000&q=80",
+                            IsVisible = true,
+                            Title = "Personal Training",
+                            UploadedAt = new DateTime(2026, 8, 17, 21, 35, 49, 288, DateTimeKind.Local).AddTicks(4544)
                         });
                 });
 
@@ -312,135 +464,327 @@ namespace GymManagementSystem.Migrations
 
             modelBuilder.Entity("GymManagementSystem.Models.GymClass", b =>
                 {
-                    b.Property<int>("ClassID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ClassID");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClassID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClassName")
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int")
+                        .HasColumnName("Capacity");
+
+                    b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Category");
 
                     b.Property<string>("Days")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("Days");
 
-                    b.Property<string>("Icon")
+                    b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("Difficulty");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int")
+                        .HasColumnName("DurationMinutes");
+
+                    b.Property<string>("Equipment")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)")
+                        .HasColumnName("Equipment");
+
+                    b.Property<string>("IconName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Icon");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("ImageUrl");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("ClassName");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("Status");
 
                     b.Property<string>("TimeSlot")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("TimeSlot");
 
                     b.Property<string>("TrainerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("TrainerName");
 
-                    b.HasKey("ClassID");
+                    b.HasKey("Id");
 
                     b.ToTable("GymClasses");
 
                     b.HasData(
                         new
                         {
-                            ClassID = 1,
-                            ClassName = "Strength & Lifting",
+                            Id = 1,
+                            Capacity = 30,
+                            Category = "Strength",
                             Days = "Mon, Wed, Fri",
-                            Icon = "dumbbell",
+                            Description = "",
+                            Difficulty = "All Levels",
+                            DurationMinutes = 60,
+                            Equipment = "",
+                            IconName = "dumbbell",
                             ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
+                            Name = "Strength & Lifting",
+                            Status = "Active",
                             TimeSlot = "08:00 AM - 10:00 AM",
                             TrainerName = "John Doe"
                         },
                         new
                         {
-                            ClassID = 2,
-                            ClassName = "Cardio & Burn",
+                            Id = 2,
+                            Capacity = 25,
+                            Category = "Cardio",
                             Days = "Tue, Thu, Sat",
-                            Icon = "activity",
+                            Description = "",
+                            Difficulty = "All Levels",
+                            DurationMinutes = 45,
+                            Equipment = "",
+                            IconName = "activity",
                             ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
+                            Name = "Cardio & Burn",
+                            Status = "Active",
                             TimeSlot = "10:00 AM - 11:30 AM",
                             TrainerName = "Jane Smith"
                         },
                         new
                         {
-                            ClassID = 3,
-                            ClassName = "CrossFit Pro",
+                            Id = 3,
+                            Capacity = 20,
+                            Category = "CrossFit",
                             Days = "Mon, Wed, Fri",
-                            Icon = "target",
+                            Description = "",
+                            Difficulty = "All Levels",
+                            DurationMinutes = 90,
+                            Equipment = "",
+                            IconName = "target",
                             ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1000&q=80",
-                            IsActive = true,
+                            Name = "CrossFit Pro",
+                            Status = "Active",
                             TimeSlot = "04:00 PM - 06:00 PM",
                             TrainerName = "Mike Johnson"
                         });
                 });
 
-            modelBuilder.Entity("GymManagementSystem.Models.MembershipPlan", b =>
+            modelBuilder.Entity("GymManagementSystem.Models.GymReservation", b =>
                 {
-                    b.Property<int>("PlanID")
+                    b.Property<int>("ReservationID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlanID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationID"));
 
-                    b.Property<int>("DisplayOrder")
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("MemberName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ReservationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReservationNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("TrainerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ReservationID");
+
+                    b.ToTable("GymReservations");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.MemberProgress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("DurationInMonths")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Arms")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BodyFat")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CheckDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Chest")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Goal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("NextCheckDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("TargetWeight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Waist")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("MemberProgresses");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.MembershipPlan", b =>
+                {
+                    b.Property<int>("PlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlanId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DurationDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Features")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Installments")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("ShortCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("PlanID");
+                    b.Property<decimal>("SignupFee")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("PlanId");
 
                     b.ToTable("MembershipPlans");
 
                     b.HasData(
                         new
                         {
-                            PlanID = 1,
-                            DisplayOrder = 1,
-                            DurationInMonths = 1,
+                            PlanId = -1,
+                            Description = "",
+                            DurationDays = 30,
+                            Features = "Gym Access|Locker",
+                            Installments = 0,
                             IsActive = true,
+                            Name = "Standard Plan",
                             Price = 29.99m,
-                            Title = "Standard Plan"
+                            ShortCode = "STD-01",
+                            SignupFee = 0m,
+                            Type = "Standard"
                         },
                         new
                         {
-                            PlanID = 2,
-                            DisplayOrder = 2,
-                            DurationInMonths = 1,
+                            PlanId = -2,
+                            Description = "",
+                            DurationDays = 30,
+                            Features = "Gym Access|Trainer",
+                            Installments = 0,
                             IsActive = true,
+                            Name = "Pro Plan",
                             Price = 49.99m,
-                            Title = "Pro Plan"
+                            ShortCode = "PRO-02",
+                            SignupFee = 0m,
+                            Type = "Pro"
                         },
                         new
                         {
-                            PlanID = 3,
-                            DisplayOrder = 3,
-                            DurationInMonths = 1,
+                            PlanId = -3,
+                            Description = "",
+                            DurationDays = 30,
+                            Features = "Full Access|Sauna",
+                            Installments = 0,
                             IsActive = true,
+                            Name = "VIP Elite",
                             Price = 89.99m,
-                            Title = "VIP Elite"
+                            ShortCode = "VIP-03",
+                            SignupFee = 0m,
+                            Type = "VIP"
                         });
                 });
 
@@ -466,107 +810,7 @@ namespace GymManagementSystem.Migrations
 
                     b.HasIndex("PlanID");
 
-                    b.ToTable("MembershipPlanFeatures");
-
-                    b.HasData(
-                        new
-                        {
-                            FeatureID = 1,
-                            Description = "Access to gym equipment",
-                            DisplayOrder = 1,
-                            PlanID = 1
-                        },
-                        new
-                        {
-                            FeatureID = 2,
-                            Description = "Locker room access",
-                            DisplayOrder = 2,
-                            PlanID = 1
-                        },
-                        new
-                        {
-                            FeatureID = 3,
-                            Description = "1 Free guest pass per month",
-                            DisplayOrder = 3,
-                            PlanID = 1
-                        },
-                        new
-                        {
-                            FeatureID = 4,
-                            Description = "Standard support",
-                            DisplayOrder = 4,
-                            PlanID = 1
-                        },
-                        new
-                        {
-                            FeatureID = 5,
-                            Description = "24/7 Gym access",
-                            DisplayOrder = 1,
-                            PlanID = 2
-                        },
-                        new
-                        {
-                            FeatureID = 6,
-                            Description = "Unlimited guest passes",
-                            DisplayOrder = 2,
-                            PlanID = 2
-                        },
-                        new
-                        {
-                            FeatureID = 7,
-                            Description = "Free personal trainer (2 sessions)",
-                            DisplayOrder = 3,
-                            PlanID = 2
-                        },
-                        new
-                        {
-                            FeatureID = 8,
-                            Description = "Nutrition guidance",
-                            DisplayOrder = 4,
-                            PlanID = 2
-                        },
-                        new
-                        {
-                            FeatureID = 9,
-                            Description = "Priority support",
-                            DisplayOrder = 5,
-                            PlanID = 2
-                        },
-                        new
-                        {
-                            FeatureID = 10,
-                            Description = "All Pro Plan features",
-                            DisplayOrder = 1,
-                            PlanID = 3
-                        },
-                        new
-                        {
-                            FeatureID = 11,
-                            Description = "Dedicated 1-on-1 personal trainer",
-                            DisplayOrder = 2,
-                            PlanID = 3
-                        },
-                        new
-                        {
-                            FeatureID = 12,
-                            Description = "Custom meal & diet plans",
-                            DisplayOrder = 3,
-                            PlanID = 3
-                        },
-                        new
-                        {
-                            FeatureID = 13,
-                            Description = "VIP lounge & sauna access",
-                            DisplayOrder = 4,
-                            PlanID = 3
-                        },
-                        new
-                        {
-                            FeatureID = 14,
-                            Description = "Free protein shakes",
-                            DisplayOrder = 5,
-                            PlanID = 3
-                        });
+                    b.ToTable("MembershipPlanFeature");
                 });
 
             modelBuilder.Entity("GymManagementSystem.Models.Message", b =>
@@ -579,11 +823,11 @@ namespace GymManagementSystem.Migrations
 
                     b.Property<string>("ReceiverId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -593,6 +837,10 @@ namespace GymManagementSystem.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
                 });
@@ -630,6 +878,112 @@ namespace GymManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.NutritionPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedMemberId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Calories")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Carbs")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DailyMealsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DurationWeeks")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Fats")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Protein")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetGoal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedMemberId");
+
+                    b.ToTable("NutritionPlans");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.Payment", b =>
+                {
+                    b.Property<int>("PaymentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
+
+                    b.Property<decimal>("AmountDue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("MemberName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Method")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentFor")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ReceiptNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("PaymentID");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("GymManagementSystem.Models.Product", b =>
@@ -860,14 +1214,12 @@ namespace GymManagementSystem.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastSeen")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MembershipType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -879,15 +1231,12 @@ namespace GymManagementSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Shift")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Specialization")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -901,25 +1250,27 @@ namespace GymManagementSystem.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DateOfBirth")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("ExperienceYears")
+                        .HasColumnType("int");
 
                     b.Property<string>("Gender")
                         .IsRequired()
@@ -931,8 +1282,10 @@ namespace GymManagementSystem.Migrations
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("MembershipRequested")
+                        .HasColumnType("bit");
+
                     b.Property<string>("MembershipType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -944,19 +1297,19 @@ namespace GymManagementSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Shift")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Specialization")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -973,6 +1326,122 @@ namespace GymManagementSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("UserProfiles");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.Visitor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedTrainer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("CheckInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("CheckOutTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvitedByMember")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Purpose")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VisitType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Visitors");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.WorkoutPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedMemberId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DaysPerWeek")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DifficultyLevel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DurationWeeks")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExercisesJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SessionDurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetGoal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedMemberId");
+
+                    b.ToTable("WorkoutPlans");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.AttendanceRecord", b =>
+                {
+                    b.HasOne("GymManagementSystem.Models.UserProfile", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("GymManagementSystem.Models.CartItem", b =>
@@ -997,10 +1466,21 @@ namespace GymManagementSystem.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("GymManagementSystem.Models.MemberProgress", b =>
+                {
+                    b.HasOne("GymManagementSystem.Models.UserProfile", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("GymManagementSystem.Models.MembershipPlanFeature", b =>
                 {
                     b.HasOne("GymManagementSystem.Models.MembershipPlan", "Plan")
-                        .WithMany("Features")
+                        .WithMany()
                         .HasForeignKey("PlanID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1008,14 +1488,44 @@ namespace GymManagementSystem.Migrations
                     b.Navigation("Plan");
                 });
 
+            modelBuilder.Entity("GymManagementSystem.Models.Message", b =>
+                {
+                    b.HasOne("GymManagementSystem.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GymManagementSystem.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.NutritionPlan", b =>
+                {
+                    b.HasOne("GymManagementSystem.Models.UserProfile", "AssignedMember")
+                        .WithMany()
+                        .HasForeignKey("AssignedMemberId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AssignedMember");
+                });
+
+            modelBuilder.Entity("GymManagementSystem.Models.WorkoutPlan", b =>
+                {
+                    b.HasOne("GymManagementSystem.Models.UserProfile", "AssignedMember")
+                        .WithMany()
+                        .HasForeignKey("AssignedMemberId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AssignedMember");
+                });
+
             modelBuilder.Entity("GymManagementSystem.Models.GuestOrder", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("GymManagementSystem.Models.MembershipPlan", b =>
-                {
-                    b.Navigation("Features");
                 });
 #pragma warning restore 612, 618
         }

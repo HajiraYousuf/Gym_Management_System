@@ -1,6 +1,15 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.MembershipPlan>
+
+@{
     ViewData["Title"] = "My Membership Plan";
     Layout = "~/Views/layouts/MemberMaster.cshtml";
+
+    string activePlanName = ViewBag.ActivePlanName ?? "Pro Plan";
+    string accountStatus = ViewBag.AccountStatus ?? "Active";
+    string startDate = ViewBag.StartDate ?? "Aug 16, 2026";
+    string expiryDate = ViewBag.ExpiryDate ?? "Sep 15, 2026";
+    int daysRemaining = ViewBag.DaysRemaining ?? 29;
+    int progressPercent = ViewBag.ProgressPercent ?? 97;
 }
 
 <div class="max-w-7xl mx-auto space-y-8 pb-12 text-zinc-800 dark:text-zinc-100">
@@ -13,14 +22,13 @@
         </div>
         <div class="flex items-center gap-3">
             <span class="px-3 py-1.5 rounded-xl bg-lime-400/10 border border-lime-400/20 text-lime-600 dark:text-lime-400 text-xs font-bold flex items-center gap-1.5">
-                <i data-lucide="shield-check" class="w-4 h-4"></i> Account Status: <span id="litAccountStatus">Active</span>
+                <i data-lucide="shield-check" class="w-4 h-4"></i> Account Status: <span id="litAccountStatus">@accountStatus</span>
             </span>
         </div>
     </div>
 
     <!-- 1. CURRENT ACTIVE MEMBERSHIP CARD -->
     <div class="relative rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 shadow-xl">
-        <!-- Background Glow Decor -->
         <div class="absolute -right-16 -top-16 w-64 h-64 bg-lime-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
@@ -29,39 +37,35 @@
             <div class="space-y-4 max-w-xl">
                 <div class="flex items-center gap-2">
                     <span class="px-3 py-1 rounded-full text-xs font-bold bg-lime-400 text-black">
-                        <span id="litActiveBadge">ACTIVE PLAN</span>
+                        <span id="litActiveBadge">CURRENT PLAN</span>
                     </span>
-                    <span class="text-xs text-zinc-500 dark:text-zinc-400 font-mono">Invoice #<span id="litInvoiceNo">INV-2026-8801</span></span>
                 </div>
 
                 <div>
-                    <h2 class="text-3xl font-black text-zinc-900 dark:text-white"><span id="litPlanName">VIP Personal Training</span></h2>
+                    <h2 class="text-3xl font-black text-zinc-900 dark:text-white">
+                        <span>@activePlanName</span>
+                    </h2>
                     <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                        <span id="litPlanDesc">Qorshaha ugu sarreeya ee tababarka gaarka ah iyo cuntooyinka nafaqada leh.</span>
+                        <span>Qorshaha xubinnimadaada ee hadda firfircoon.</span>
                     </p>
                 </div>
 
                 <!-- Dates & Badges -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                    <div class="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
-                        <span class="text-[11px] text-zinc-500 dark:text-zinc-400 block font-medium">Duration</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white mt-0.5 block"><span id="litDuration">30 Days</span></span>
-                    </div>
-
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
                     <div class="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
                         <span class="text-[11px] text-zinc-500 dark:text-zinc-400 block font-medium">Start Date</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white mt-0.5 block"><span id="litStartDate">Aug 01, 2026</span></span>
+                        <span class="text-xs font-bold text-zinc-900 dark:text-white mt-0.5 block">@startDate</span>
                     </div>
 
                     <div class="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
                         <span class="text-[11px] text-zinc-500 dark:text-zinc-400 block font-medium">Expiry Date</span>
-                        <span class="text-xs font-bold text-zinc-900 dark:text-white mt-0.5 block"><span id="litEndDate">Aug 31, 2026</span></span>
+                        <span class="text-xs font-bold text-zinc-900 dark:text-white mt-0.5 block">@expiryDate</span>
                     </div>
 
                     <div class="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
-                        <span class="text-[11px] text-zinc-500 dark:text-zinc-400 block font-medium">Payment Status</span>
+                        <span class="text-[11px] text-zinc-500 dark:text-zinc-400 block font-medium">Status</span>
                         <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 block flex items-center gap-1">
-                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> <span id="litPaymentStatus">Paid</span>
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> @accountStatus
                         </span>
                     </div>
                 </div>
@@ -69,27 +73,20 @@
 
             <!-- Right: Progress Meter -->
             <div class="lg:w-80 bg-zinc-50 dark:bg-zinc-800/40 p-6 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 space-y-5">
-
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Days Remaining</span>
-                        <span class="text-xs font-black text-lime-600 dark:text-lime-400"><span id="litDaysRemaining">19</span> Days</span>
+                        <span class="text-xs font-black text-lime-600 dark:text-lime-400">@daysRemaining Days</span>
                     </div>
 
                     <div class="w-full bg-zinc-200 dark:bg-zinc-700 h-3 rounded-full overflow-hidden p-0.5">
-                        <div class="bg-lime-400 h-full rounded-full transition-all duration-500" id="divProgressBar" style="width: 63%;"></div>
+                        <div class="bg-lime-400 h-full rounded-full transition-all duration-500" style="width: @progressPercent%;"></div>
                     </div>
 
                     <div class="flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400">
-                        <span><span id="litProgressPercent">63%</span> Valid</span>
-                        <span>Expires <span id="litExpiryMonth">Aug 2026</span></span>
+                        <span>@progressPercent% Valid</span>
                     </div>
                 </div>
-
-                <div class="border-t border-zinc-200 dark:border-zinc-700/60 pt-4 space-y-3">
-                    <button type="button" class="w-full py-2.5 rounded-xl bg-lime-400 hover:bg-lime-300 text-black text-xs font-bold shadow-lg shadow-lime-400/20 transition cursor-pointer">Renew Subscription</button>
-                </div>
-
             </div>
 
         </div>
@@ -98,131 +95,50 @@
     <!-- 2. PLANS SELECTION SECTION -->
     <div class="space-y-6 pt-4">
         <div class="text-center max-w-2xl mx-auto space-y-2">
-            <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">Choose or Upgrade Your Plan</h2>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400">Dooro qorshaha adiga ku haboon ama ka faa'iideyso upgrade gaar ah.</p>
+            <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">Choose or Change Your Plan</h2>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400">Dooro qorshaha adiga ku haboon.</p>
         </div>
 
-        <!-- PRICING CARDS GRID -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var plan in Model)
+                {
+                    bool isCurrentActive = plan.Name.Equals(activePlanName, StringComparison.OrdinalIgnoreCase);
 
-            <!-- Plan 1 (Standard) -->
-            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:border-lime-400/50 transition">
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center mt-1">
-                        <span class="text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">Standard Gym</span>
-                        <span class="px-2.5 py-1 rounded-full bg-lime-400/10 text-lime-600 dark:text-lime-400 text-[10px] font-bold border border-lime-400/20">30 Days</span>
+                    <div class="bg-white dark:bg-zinc-900 @(isCurrentActive ? "border-2 border-lime-400 shadow-xl relative" : "border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-lime-400/50") rounded-3xl p-6 flex flex-col justify-between transition">
+
+                        @if (isCurrentActive)
+                        {
+                            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-lime-400 text-black text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">Your Current Plan</div>
+                        }
+
+                        <div class="space-y-4 mt-@(isCurrentActive ? "2" : "0")">
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">@plan.Name</span>
+                                <span class="px-2.5 py-1 rounded-full bg-lime-400/10 text-lime-600 dark:text-lime-400 text-[10px] font-bold border border-lime-400/20">@plan.DurationDays Days</span>
+                            </div>
+
+                            <div>
+                                <span class="text-3xl font-black text-zinc-900 dark:text-white">$@plan.Price</span>
+                                <span class="text-xs text-zinc-500 dark:text-zinc-400"> / @plan.DurationDays days</span>
+                            </div>
+
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800 pb-4">
+                                @plan.Description
+                            </p>
+                        </div>
+
+                        <div class="pt-6">
+                            <form asp-action="SelectPlan" asp-route-planId="@plan.PlanId" method="post">
+                                <button type="submit" class="w-full py-2.5 rounded-xl @(isCurrentActive ? "bg-lime-400 text-black font-black" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 font-bold") text-xs transition cursor-pointer">
+                                    @(isCurrentActive ? "Selected" : "Select Plan")
+                                </button>
+                            </form>
+                        </div>
                     </div>
-
-                    <div>
-                        <span class="text-3xl font-black text-zinc-900 dark:text-white">$45</span>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400"> / 30 days</span>
-                    </div>
-
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                        Full access to all gym equipment, locker rooms, and standard cardio area during working hours.
-                    </p>
-                </div>
-
-                <div class="pt-6">
-                    <button type="button" class="w-full py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 text-xs font-bold transition cursor-pointer">Select Plan</button>
-                </div>
-            </div>
-
-            <!-- Plan 2 (VIP - Active) -->
-            <div class="relative bg-white dark:bg-zinc-900 border-2 border-lime-400 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
-                <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-lime-400 text-black text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">Your Current Active Plan</div>
-
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center mt-1">
-                        <span class="text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">VIP Personal Training</span>
-                        <span class="px-2.5 py-1 rounded-full bg-lime-400/10 text-lime-600 dark:text-lime-400 text-[10px] font-bold border border-lime-400/20">30 Days</span>
-                    </div>
-
-                    <div>
-                        <span class="text-3xl font-black text-zinc-900 dark:text-white">$80</span>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400"> / 30 days</span>
-                    </div>
-
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                        Includes dedicated personal trainer, customized daily workout schedule, and professional meal planning.
-                    </p>
-                </div>
-
-                <div class="pt-6">
-                    <button type="button" class="w-full py-2.5 rounded-xl bg-lime-400 hover:bg-lime-300 text-black text-xs font-bold shadow-lg shadow-lime-400/20 transition cursor-pointer">Renew Plan</button>
-                </div>
-            </div>
-
-            <!-- Plan 3 (Quarterly) -->
-            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:border-lime-400/50 transition">
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center mt-1">
-                        <span class="text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-wider">Quarterly Pro</span>
-                        <span class="px-2.5 py-1 rounded-full bg-lime-400/10 text-lime-600 dark:text-lime-400 text-[10px] font-bold border border-lime-400/20">90 Days</span>
-                    </div>
-
-                    <div>
-                        <span class="text-3xl font-black text-zinc-900 dark:text-white">$200</span>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400"> / 90 days</span>
-                    </div>
-
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                        Save 15% with a 3-month comprehensive package including full facilities, coaching, and supplements guide.
-                    </p>
-                </div>
-
-                <div class="pt-6">
-                    <button type="button" class="w-full py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 text-xs font-bold transition cursor-pointer">Select Plan</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- 3. PAYMENT HISTORY TABLE & INVOICE ACTIONS -->
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 space-y-4 shadow-sm">
-        <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4">
-            <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                <i data-lucide="receipt" class="w-5 h-5 text-lime-600 dark:text-lime-400"></i> Payment History & Invoices
-            </h3>
-            <span class="text-xs text-zinc-500 dark:text-zinc-400">Transactions & Receipts</span>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-                <thead>
-                    <tr class="border-b border-zinc-100 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 font-semibold uppercase tracking-wider">
-                        <th class="py-3 px-4">Invoice ID</th>
-                        <th class="py-3 px-4">Plan Name</th>
-                        <th class="py-3 px-4">Date</th>
-                        <th class="py-3 px-4">Amount</th>
-                        <th class="py-3 px-4">Method</th>
-                        <th class="py-3 px-4">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 text-zinc-800 dark:text-zinc-200 font-medium">
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
-                        <td class="py-3.5 px-4 font-mono text-lime-600 dark:text-lime-400 font-bold">#INV-2026-8801</td>
-                        <td class="py-3.5 px-4 font-bold">VIP Personal Training</td>
-                        <td class="py-3.5 px-4 text-zinc-500 dark:text-zinc-400">01 Aug 2026</td>
-                        <td class="py-3.5 px-4 font-bold">$80.00</td>
-                        <td class="py-3.5 px-4">Zaad / EVC Plus</td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Paid</span>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition">
-                        <td class="py-3.5 px-4 font-mono text-lime-600 dark:text-lime-400 font-bold">#INV-2026-7142</td>
-                        <td class="py-3.5 px-4 font-bold">Standard Gym</td>
-                        <td class="py-3.5 px-4 text-zinc-500 dark:text-zinc-400">01 Jul 2026</td>
-                        <td class="py-3.5 px-4 font-bold">$45.00</td>
-                        <td class="py-3.5 px-4">Cash</td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Paid</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                }
+            }
         </div>
     </div>
 

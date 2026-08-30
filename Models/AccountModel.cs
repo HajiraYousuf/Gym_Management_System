@@ -45,6 +45,7 @@ namespace GymManagementSystem.Models
         public const string Trainer = "Trainer";
         public const string Receptionist = "Receptionist";
         public const string Member = "Member";
+        public const string Guest = "Guest"; // Marka uu is-diiwaangeliyo
 
         public static string DashboardController(string? role) => role switch
         {
@@ -52,11 +53,18 @@ namespace GymManagementSystem.Models
             Receptionist => "Receptionist",
             Member => "Member",
             Admin => "Admin",
+            Guest => "Guest",
             _ => "Guest"
         };
 
-        public static string DashboardAction(string? role) => role is Admin or Trainer or Receptionist or Member
-            ? "Dashboard"
-            : "HomePage";
+        public static string DashboardAction(string? role) => role switch
+        {
+            Admin => "Dashboard",
+            Trainer => "Dashboard",
+            Receptionist => "Dashboard",
+            Member => "Dashboard",
+            Guest => "HomePage", // Bogga uu ku sugayo in la ogolaado
+            _ => "HomePage"
+        };
     }
 }

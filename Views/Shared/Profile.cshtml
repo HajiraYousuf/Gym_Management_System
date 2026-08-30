@@ -1,8 +1,9 @@
 ﻿@model GymManagementSystem.Models.SharedModel
 
 @{
-    Layout = Model.LayoutPath;
-    ViewData["Title"] = "Admin Profile Settings";
+    Layout = Model?.LayoutPath;
+    var userRole = Model?.Profile?.Role ?? "User";
+    ViewData["Title"] = $"{userRole} Profile Settings";
 }
 
 <div class="space-y-6 min-h-screen bg-gray-50 dark:bg-black text-gray-800 dark:text-gray-100 p-2 sm:p-4 transition-colors duration-300 pb-16">
@@ -11,9 +12,9 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 dark:border-zinc-800 pb-5">
         <div>
             <div class="flex items-center gap-2 text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-0.5">
-                <span>System Management</span> • <span class="font-mono">Admin Control</span>
+                <span>Account Management</span> • <span class="font-mono">@userRole Control</span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Admin Profile Settings</h1>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">@userRole Profile Settings</h1>
         </div>
 
         <!-- Global Page Action Form / Button -->
@@ -25,51 +26,66 @@
     </div>
 
     <!-- Main Form Wrapper -->
-    <!-- Beddel foomka oo ka dhig sidan si uusan u khaldamin -->
     <form id="mainProfileForm" action="/Shared/UpdateProfile" method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <input type="hidden" name="Id" value="@Model.Profile.Id" />
+        <input type="hidden" name="Id" value="@Model?.Profile?.Id" />
+
         <!-- Left Column: Profile Header & Summary Card -->
         <div class="space-y-6">
             <div class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm text-center">
 
                 <!-- Editable Profile Photo -->
                 <div class="relative w-32 h-32 mx-auto mb-4 group">
-                    <div class="w-full h-full rounded-full bg-gradient-to-tr from-lime-400 to-emerald-500 text-zinc-950 font-black text-3xl flex items-center justify-center shadow-md border-2 border-lime-400 p-1">
-                        @Model.Profile.Avatar
+                    <!-- Avatar Container -->
+                    <div class="w-full h-full rounded-full bg-gradient-to-tr from-lime-400 to-emerald-500 overflow-hidden shadow-md border-2 border-lime-400 p-0.5 flex items-center justify-center">
+                        @if (!string.IsNullOrEmpty(Model?.Profile?.Avatar))
+                        {
+                            <!-- Sawirka Profile-ka haddii uu ka jiro Database-ka ama URL yahay -->
+                            <img src="@Model.Profile.Avatar" alt="Profile Photo" class="w-full h-full rounded-full object-cover" />
+                        }
+                        else
+                        {
+                            <!-- Dynamic UI-Avatar oo magaca ku dhacaya haddii sawir la waayo -->
+                            <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model?.Profile?.Name ?? "User")&background=a3e635&color=000"
+                                 alt="Profile Photo"
+                                 class="w-full h-full rounded-full object-cover" />
+                        }
                     </div>
+
+                    <!-- Hover Photo Change Label -->
                     <label for="fileUploadPhoto" class="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
                         <i class="fas fa-camera text-xl mb-1 text-lime-400"></i>
                         <span class="text-[10px] font-bold uppercase tracking-wider">Change Photo</span>
                     </label>
-                    <input type="file" id="fileUploadPhoto" name="photoFile" class="hidden" />
-                </div>
 
+                    <input type="file" id="fileUploadPhoto" name="photoFile" class="hidden" onchange="previewImage(this)" />
+                </div>
                 <!-- Editable Header Fields -->
                 <div class="space-y-3 mt-4 text-left">
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Full Name</label>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">@Model.Profile.Name</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">@(Model?.Profile?.Name ?? "User")</p>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Email Address</label>
-                        <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Profile.Email</p>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">@(Model?.Profile?.Email ?? "No Email")</p>
                     </div>
                 </div>
+
                 <!-- Read-Only Header Badges -->
                 <div class="mt-6 pt-4 border-t border-gray-100 dark:border-zinc-800 space-y-2 text-left">
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-500 dark:text-zinc-400 font-medium">System Role:</span>
-                        <span class="font-bold text-lime-600 dark:text-lime-400 bg-lime-400/10 px-2.5 py-1 rounded-md border border-lime-500/20">@Model.Profile.Role</span>
+                        <span class="font-bold text-lime-600 dark:text-lime-400 bg-lime-400/10 px-2.5 py-1 rounded-md border border-lime-500/20">@userRole</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-500 dark:text-zinc-400 font-medium">Account Status:</span>
                         <span class="font-bold text-lime-600 dark:text-lime-400 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse"></span> @Model.Profile.Status
+                            <span class="w-2 h-2 rounded-full bg-lime-400 inline-block animate-pulse"></span> @(Model?.Profile?.Status ?? "Active")
                         </span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-500 dark:text-zinc-400 font-medium">Admin ID:</span>
-                        <span class="font-mono font-bold text-gray-900 dark:text-white">@Model.Profile.Id</span>
+                        <span class="text-gray-500 dark:text-zinc-400 font-medium">User ID:</span>
+                        <span class="font-mono font-bold text-gray-900 dark:text-white">@Model?.Profile?.Id</span>
                     </div>
                 </div>
             </div>
@@ -89,41 +105,44 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Admin ID</label>
-                        <input type="text" value="@Model.Profile.Id" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-gray-500 dark:text-zinc-400 cursor-not-allowed" />
+                        <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">User ID</label>
+                        <input type="text" value="@Model?.Profile?.Id" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-gray-500 dark:text-zinc-400 cursor-not-allowed" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Full Name</label>
-                        <input type="text" name="Name" value="@Model.Profile.Name" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
+                        <input type="text" name="Name" value="@Model?.Profile?.Name" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Gender</label>
                         <select name="Gender" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors">
-                            <option value="Male" selected="@(Model.Profile.Gender == "Male")">Male</option>
-                            <option value="Female" selected="@(Model.Profile.Gender == "Female")">Female</option>
+                            <option value="Male" selected="@(Model?.Profile?.Gender == "Male")">Male</option>
+                            <option value="Female" selected="@(Model?.Profile?.Gender == "Female")">Female</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Date of Birth</label>
-                        <input type="date" name="DateOfBirth" value="@Model.Profile.DateOfBirth" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
-                    </div>
+                        <input type="date" name="DateOfBirth"
+                               value="@(Model?.Profile?.DateOfBirth != null && DateTime.TryParse(Model.Profile.DateOfBirth.ToString(), out DateTime parsedDob) ? parsedDob.ToString("yyyy-MM-dd") : "")"
+                               class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
+                   
+                           </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Phone Number</label>
-                        <input type="text" name="Phone" value="@Model.Profile.Phone" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
+                        <input type="text" name="Phone" value="@Model?.Profile?.Phone" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Email Address</label>
-                        <input type="email" name="Email" value="@Model.Profile.Email" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
+                        <input type="email" name="Email" value="@Model?.Profile?.Email" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Address</label>
-                        <input type="text" name="Address" value="@Model.Profile.Address" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
+                        <input type="text" name="Address" value="@Model?.Profile?.Address" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
                     </div>
                 </div>
             </div>
@@ -140,27 +159,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1">Username</label>
-                        <input type="text" name="Username" value="@Model.Profile.Username" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
+                        <input type="text" name="Username" value="@Model?.Profile?.Username" class="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:border-lime-500 transition-colors" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Role</label>
-                        <input type="text" value="@Model.Profile.Role" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-bold text-lime-600 dark:text-lime-400 cursor-not-allowed" />
+                        <input type="text" value="@userRole" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-bold text-lime-600 dark:text-lime-400 cursor-not-allowed" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Account Created Date</label>
-                        <input type="text" value="@Model.Profile.JoinDate.ToString("dd/MM/yyyy")" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-500 dark:text-zinc-400 cursor-not-allowed" />
+                        <input type="text" value="@(Model?.Profile?.JoinDate.ToString("dd/MM/yyyy") ?? "-")" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-500 dark:text-zinc-400 cursor-not-allowed" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Last Login</label>
-                        <input type="text" value="@Model.Profile.LastLogin.ToString("MMM dd, yyyy HH:mm")" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-500 dark:text-zinc-400 cursor-not-allowed" />
+                        <input type="text" value="@(Model?.Profile?.LastLogin.ToString("MMM dd, yyyy HH:mm") ?? "-")" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-gray-500 dark:text-zinc-400 cursor-not-allowed" />
                     </div>
 
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-1">Account Status</label>
-                        <input type="text" value="@Model.Profile.Status" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-bold text-lime-600 dark:text-lime-400 cursor-not-allowed" />
+                        <input type="text" value="@(Model?.Profile?.Status ?? "Active")" readonly class="w-full bg-gray-100 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm font-bold text-lime-600 dark:text-lime-400 cursor-not-allowed" />
                     </div>
                 </div>
             </div>
@@ -197,14 +216,13 @@
             </div>
 
             <!-- Bottom Actions -->
-                <div class="flex items-center justify-end gap-3 pt-2">
-                    <a href="@Url.Action("Profile", "Shared", new { userId = Model.Profile.Id })" class="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-gray-200 px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-center">Cancel</a>
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <a href="@Url.Action("Profile", "Shared", new { userId = Model?.Profile?.Id })" class="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-gray-200 px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-center">Cancel</a>
 
-                    <!-- Ku dar form="mainProfileForm" halkaan si uu u shaqeeyo badhanka hoose -->
-                    <button type="submit" form="mainProfileForm" class="bg-lime-400 hover:bg-lime-500 text-black font-extrabold px-6 py-2.5 rounded-xl text-sm shadow-lg shadow-lime-500/20 cursor-pointer transition-all flex items-center gap-2">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
-                </div>
+                <button type="submit" form="mainProfileForm" class="bg-lime-400 hover:bg-lime-500 text-black font-extrabold px-6 py-2.5 rounded-xl text-sm shadow-lg shadow-lime-500/20 cursor-pointer transition-all flex items-center gap-2">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
 
         </div>
 

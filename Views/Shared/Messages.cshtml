@@ -1,7 +1,7 @@
 ﻿@model GymManagementSystem.Models.SharedModel
 
 @{
-    // MasterPage dinamiga ah oo ku xiran doorka (Member, Trainer, Receptionist, Admin)
+    // Dynamic Layout linked to the active role (Member, Trainer, Receptionist, Admin)
     Layout = Model.LayoutPath;
 }
 
@@ -10,38 +10,52 @@
 
     <!-- SIDEBAR: Contacts List -->
     <div id="sidebar" class="w-full md:w-80 lg:w-96 bg-white dark:bg-zinc-900/90 backdrop-blur-xl border-r border-zinc-200 dark:border-zinc-800/80 flex flex-col transition-all duration-300">
-        
+
         <!-- Header & Search Box -->
         <div class="p-5 border-b border-zinc-200 dark:border-zinc-800/80">
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <h2 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-lime-400 to-emerald-500 bg-clip-text text-transparent">Messages</h2>
-                    <p class="text-xs text-zinc-400 mt-0.5">Doorka: <span class="text-lime-500 font-bold">@Model.CurrentUser.Role</span></p>
+                    <p class="text-xs text-zinc-400 mt-0.5">Role: <span class="text-lime-500 font-bold">@Model.CurrentUser.Role</span></p>
                 </div>
             </div>
-            
-            <!-- Search Box (Wuxuu qariyaa dadka aan la raadinayn) -->
+
+            <!-- Search Box -->
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-400">
                     <i class="fas fa-search text-xs"></i>
                 </span>
-                <input type="text" id="search-contact" onkeyup="filterContacts()" placeholder="Raadi qof ama door (Admin, Trainer...)" 
+                <input type="text" id="search-contact" onkeyup="filterContacts()" placeholder="Search by name or role..."
                        class="w-full pl-10 pr-4 py-2.5 text-xs bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 dark:focus:border-lime-500 rounded-2xl focus:outline-none transition text-zinc-800 dark:text-zinc-200 placeholder-zinc-400">
             </div>
         </div>
 
-        <!-- Contacts List (Database-driven Contacts) -->
+        <!-- Contacts List -->
         <div class="flex-1 overflow-y-auto p-3 space-y-2">
             @foreach (var contact in Model.Contacts)
             {
                 bool isActive = Model.ActiveContact != null && Model.ActiveContact.Id == contact.Id;
                 string activeClass = isActive ? "bg-lime-50/80 dark:bg-zinc-800/50 border-lime-200/60 dark:border-lime-500/30" : "hover:bg-zinc-100 dark:hover:bg-zinc-800/40 border-transparent";
 
-                <a href="@Url.Action("Messages", new { userId = Model.CurrentUser.Id, activeContactId = contact.Id })" 
+                // Check if avatar is a full URL or text initials
+                string avatarHtml = "";
+                if (!string.IsNullOrEmpty(contact.Avatar) && contact.Avatar.StartsWith("http"))
+                {
+                    avatarHtml = $"<img src=\"{contact.Avatar}\" class=\"w-full h-full object-cover rounded-2xl\" alt=\"{contact.Name}\" />";
+                }
+                else
+                {
+                    string initials = !string.IsNullOrEmpty(contact.Avatar) ? contact.Avatar : (contact.Name.Length >= 2 ? contact.Name.Substring(0, 2).ToUpper() : "US");
+                    avatarHtml = $"<span class=\"font-bold text-zinc-950\">{initials}</span>";
+                }
+
+                <a href="@Url.Action("Messages", new { userId = Model.CurrentUser.Id, activeContactId = contact.Id })"
                    class="contact-item flex items-center gap-3.5 p-3.5 rounded-2xl cursor-pointer border transition group @activeClass"
                    data-name="@contact.Name.ToLower()" data-role="@contact.Role.ToLower()">
                     <div class="relative">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-lime-500 to-emerald-500 flex items-center justify-center text-zinc-950 font-bold shadow-md shadow-lime-500/20">@contact.Avatar</div>
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-lime-500 to-emerald-500 flex items-center justify-center overflow-hidden shadow-md shadow-lime-500/20">
+                            @Html.Raw(avatarHtml)
+                        </div>
                         <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 @(contact.Status == "Online" ? "bg-emerald-500" : "bg-zinc-400") border-2 border-white dark:border-zinc-900 rounded-full"></span>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -49,13 +63,20 @@
                             <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate">@contact.Name (@contact.Role)</h4>
                         </div>
                         <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
-                            @if (!string.IsNullOrEmpty(contact.Specialization)) {
-                                @:Khibrad: @contact.Specialization
-                            } else if (!string.IsNullOrEmpty(contact.MembershipType)) {
-                                @:Nooc: @contact.MembershipType
-                            } else if (!string.IsNullOrEmpty(contact.Shift)) {
+                            @if (!string.IsNullOrEmpty(contact.Specialization))
+                            {
+                                @:Specialization: @contact.Specialization
+                            }
+                            else if (!string.IsNullOrEmpty(contact.MembershipType))
+                            {
+                                @:Membership: @contact.MembershipType
+                            }
+                            else if (!string.IsNullOrEmpty(contact.Shift))
+                            {
                                 @:Shift: @contact.Shift
-                            } else {
+                            }
+                            else
+                            {
                                 @:Last seen: @contact.LastSeen
                             }
                         </p>
@@ -67,28 +88,61 @@
 
     <!-- CHAT AREA: Active Conversation -->
     <div id="chat-area" class="flex-1 flex flex-col bg-white dark:bg-zinc-900 transition-all duration-300">
-        
+
         @if (Model.ActiveContact != null)
         {
+            // Active Contact Avatar parsing
+            string activeAvatarHtml = "";
+            if (!string.IsNullOrEmpty(Model.ActiveContact.Avatar) && Model.ActiveContact.Avatar.StartsWith("http"))
+            {
+                activeAvatarHtml = $"<img src=\"{Model.ActiveContact.Avatar}\" class=\"w-full h-full object-cover rounded-2xl\" alt=\"{Model.ActiveContact.Name}\" />";
+            }
+            else
+            {
+                string initials = !string.IsNullOrEmpty(Model.ActiveContact.Avatar) ? Model.ActiveContact.Avatar : (Model.ActiveContact.Name.Length >= 2 ? Model.ActiveContact.Name.Substring(0, 2).ToUpper() : "US");
+                activeAvatarHtml = $"<span class=\"font-bold text-zinc-950\">{initials}</span>";
+            }
+
+            // Current User Avatar parsing
+            string currentUserAvatarHtml = "";
+            if (!string.IsNullOrEmpty(Model.CurrentUser.Avatar) && Model.CurrentUser.Avatar.StartsWith("http"))
+            {
+                currentUserAvatarHtml = $"<img src=\"{Model.CurrentUser.Avatar}\" class=\"w-full h-full object-cover rounded-xl\" alt=\"{Model.CurrentUser.Name}\" />";
+            }
+            else
+            {
+                string initials = !string.IsNullOrEmpty(Model.CurrentUser.Avatar) ? Model.CurrentUser.Avatar : (Model.CurrentUser.Name.Length >= 2 ? Model.CurrentUser.Name.Substring(0, 2).ToUpper() : "CU");
+                currentUserAvatarHtml = $"<span class=\"font-bold text-white\">{initials}</span>";
+            }
+
             <!-- Chat Header -->
             <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800/80 flex items-center justify-between bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md">
                 <div class="flex items-center gap-3.5">
                     <button onclick="backToSidebar()" class="md:hidden p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
                         <i class="fas fa-arrow-left text-xs"></i>
                     </button>
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-500 flex items-center justify-center text-zinc-950 font-bold text-sm shadow-md shadow-lime-500/10">@Model.ActiveContact.Avatar</div>
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-500 flex items-center justify-center overflow-hidden text-sm shadow-md shadow-lime-500/10">
+                        @Html.Raw(activeAvatarHtml)
+                    </div>
                     <div>
                         <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">@Model.ActiveContact.Name (@Model.ActiveContact.Role)</h3>
                         <p class="text-xs text-emerald-500 font-medium flex items-center gap-1.5 mt-0.5">
-                            <span class="w-2 h-2 rounded-full @(Model.ActiveContact.Status == "Online" ? "bg-emerald-500 animate-pulse" : "bg-zinc-400")"></span> 
+                            <span class="w-2 h-2 rounded-full @(Model.ActiveContact.Status == "Online" ? "bg-emerald-500 animate-pulse" : "bg-zinc-400")"></span>
                             <span>
-                                @if (!string.IsNullOrEmpty(Model.ActiveContact.Specialization)) {
+                                @if (!string.IsNullOrEmpty(Model.ActiveContact.Specialization))
+                                {
                                     @:Specialized: @Model.ActiveContact.Specialization
-                                } else if (!string.IsNullOrEmpty(Model.ActiveContact.MembershipType)) {
+                                }
+                                else if (!string.IsNullOrEmpty(Model.ActiveContact.MembershipType))
+                                {
                                     @:Membership: @Model.ActiveContact.MembershipType
-                                } else if (!string.IsNullOrEmpty(Model.ActiveContact.Shift)) {
+                                }
+                                else if (!string.IsNullOrEmpty(Model.ActiveContact.Shift))
+                                {
                                     @:Shift: @Model.ActiveContact.Shift
-                                } else {
+                                }
+                                else
+                                {
                                     @:Status: @Model.ActiveContact.Status
                                 }
                             </span>
@@ -97,7 +151,7 @@
                 </div>
             </div>
 
-            <!-- Chat Messages History (Database Timestamps) -->
+            <!-- Chat Messages History -->
             <div class="flex-1 overflow-y-auto p-6 space-y-5 bg-zinc-50/40 dark:bg-zinc-950/40" id="messages-scroll">
                 @foreach (var msg in Model.Messages)
                 {
@@ -106,7 +160,9 @@
                     {
                         <!-- Received Message -->
                         <div class="flex items-end gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-lime-400 flex items-center justify-center text-zinc-950 text-xs font-bold shadow-sm">@Model.ActiveContact.Avatar</div>
+                            <div class="w-8 h-8 rounded-xl bg-lime-400 flex items-center justify-center overflow-hidden text-xs font-bold shadow-sm">
+                                @Html.Raw(activeAvatarHtml)
+                            </div>
                             <div class="max-w-xs md:max-w-md bg-white dark:bg-zinc-900 p-4 rounded-2xl rounded-bl-sm shadow-sm border border-zinc-200/80 dark:border-zinc-800 text-sm text-zinc-800 dark:text-zinc-200">
                                 <p class="leading-relaxed">@msg.Text</p>
                                 <span class="block text-[10px] text-zinc-400 text-right mt-1.5 font-medium">@msg.Timestamp</span>
@@ -121,20 +177,23 @@
                                 <p class="leading-relaxed">@msg.Text</p>
                                 <span class="block text-[10px] text-zinc-900/70 text-right mt-1.5 font-semibold">@msg.Timestamp <i class="fas fa-check-double ml-1"></i></span>
                             </div>
-                            <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">@Model.CurrentUser.Avatar</div>
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center overflow-hidden text-xs font-bold shadow-sm">
+                                @Html.Raw(currentUserAvatarHtml)
+                            </div>
                         </div>
                     }
                 }
             </div>
 
-            <!-- Chat Input Footer (POST to Database) -->
-            <form action="/Shared/SendMessage" method="post" class="p-4 border-t border-zinc-200 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md flex items-center gap-3">                <input type="hidden" name="senderId" value="@Model.CurrentUser.Id" />
+            <!-- Chat Input Footer -->
+            <form action="/Shared/SendMessage" method="post" class="p-4 border-t border-zinc-200 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md flex items-center gap-3">
+                <input type="hidden" name="senderId" value="@Model.CurrentUser.Id" />
                 <input type="hidden" name="receiverId" value="@Model.ActiveContact.Id" />
-                
-                <input type="text" name="text" placeholder="Qor fariintaada halkan..." autocomplete="off"
+
+                <input type="text" name="text" placeholder="Type your message here..." autocomplete="off"
                        class="flex-1 bg-zinc-100 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 dark:focus:border-lime-500 px-4 py-3 rounded-2xl text-xs focus:outline-none transition text-zinc-800 dark:text-zinc-100 placeholder-zinc-400">
                 <button type="submit" class="px-5 py-3 bg-gradient-to-r from-lime-500 to-emerald-500 text-zinc-950 rounded-2xl hover:opacity-95 transition shadow-lg shadow-lime-500/20 font-bold text-xs flex items-center gap-2">
-                    <span>Dir</span>
+                    <span>Send</span>
                     <i class="fas fa-paperplane text-[10px]"></i>
                 </button>
             </form>
@@ -142,7 +201,7 @@
         else
         {
             <div class="flex-1 flex items-center justify-center text-zinc-400 text-xs">
-                Fadlan dooro xiriir si aad u bilowdo wada-sheekaysiga.
+                Please select a contact to start messaging.
             </div>
         }
     </div>
@@ -151,24 +210,23 @@
 
 <!-- JavaScript for Search Filtering & Mobile View Switcher -->
 <script>
-    // Search Filtering: Hides non-matching contacts instantly from the left side
-    function filterContacts() {
-        const query = document.getElementById('search-contact').value.toLowerCase();
-        const contactItems = document.querySelectorAll('.contact-item');
+function filterContacts() {
+    const query = document.getElementById('search-contact').value.toLowerCase().trim();
+    const contactItems = document.querySelectorAll('.contact-item');
 
-        contactItems.forEach(item => {
-            const name = item.getAttribute('data-name');
-            const role = item.getAttribute('data-role');
-            
-            if (name.includes(query) || role.includes(query)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
+    contactItems.forEach(item => {
+        const name = (item.getAttribute('data-name') || '').toLowerCase();
+        const role = (item.getAttribute('data-role') || '').toLowerCase();
 
-    // Scroll chat to bottom on load
+        if (name.includes(query) || role.includes(query)) {
+            item.classList.remove('hidden');
+            item.style.display = 'flex';
+        } else {
+            item.classList.add('hidden');
+            item.style.display = 'none';
+        }
+    });
+}
     window.onload = function() {
         const scrollContainer = document.getElementById('messages-scroll');
         if (scrollContainer) {
@@ -176,7 +234,6 @@
         }
     };
 
-    // Mobile View Switcher
     function backToSidebar() {
         if (window.innerWidth < 768) {
             document.getElementById('sidebar').classList.remove('hidden');

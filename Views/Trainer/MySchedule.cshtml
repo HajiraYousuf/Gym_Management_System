@@ -1,0 +1,348 @@
+﻿@model IEnumerable<GymManagementSystem.Models.ClassSchedule>
+
+@{
+    ViewData["Title"] = "My Schedule";
+    Layout = "~/Views/layouts/TrainerMaster.cshtml";
+
+    // Xisaabinta Metric-yada (Metrics Calculation based on database data)
+    var today = DateTime.Today;
+    var todaysClasses = Model.Where(s => s.Date.Date == today).ToList();
+    var totalClassesCount = todaysClasses.Count;
+    var totalEnrolledMembers = todaysClasses.Sum(s => s.Capacity); // Ama tiro xaqiiq ah haddii aad haysato Enrollment table
+    var completedClassesCount = todaysClasses.Count(s => s.Status == "Completed");
+    var upcomingClassesCount = todaysClasses.Count(s => s.Status == "Scheduled" || s.Status == "Ongoing");
+}
+
+<!-- FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="p-4 md:p-6 bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 min-h-screen transition-colors duration-200">
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white flex items-center gap-3">
+                <i class="fa-solid fa-calendar-days text-lime-500"></i>
+                My Class Schedule
+            </h1>
+            <p class="text-zinc-500 dark:text-zinc-400 text-xs md:text-sm mt-1">Manage your group fitness classes, track member attendance, and view class rosters.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+            <button type="button" onclick="openClassNoteModal()" class="w-full sm:w-auto bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-lime-500/20 transition duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Add Class Note
+            </button>
+        </div>
+    </div>
+
+    <!-- Metric Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6 md:mb-8">
+        <!-- Today's Classes -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Today's Classes</p>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">@totalClassesCount Classes</h3>
+                </div>
+                <div class="w-12 h-12 bg-lime-500/10 border border-lime-500/20 rounded-xl flex items-center justify-center text-lime-600 dark:text-lime-400">
+                    <i class="fa-solid fa-people-group text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Enrolled Members -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Capacity Today</p>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">@totalEnrolledMembers Slots</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <i class="fa-solid fa-users text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Classes -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Completed Classes</p>
+                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">@completedClassesCount Finished</h3>
+                </div>
+                <div class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                    <i class="fa-solid fa-circle-check text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Classes -->
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Upcoming Classes</p>
+                    <h3 class="text-2xl font-bold text-amber-500 dark:text-amber-400 mt-1">@upcomingClassesCount Remaining</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-500 dark:text-amber-400">
+                    <i class="fa-solid fa-hourglass-start text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Controls & View Mode Toggle -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+            <button type="button" class="p-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition cursor-pointer">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+
+            <div class="text-center">
+                <span id="dateDisplay" class="text-base font-bold text-zinc-900 dark:text-white block">@DateTime.Now.ToString("dddd, MMM d, yyyy")</span>
+                <span id="viewSubtitle" class="text-[11px] font-semibold text-lime-600 dark:text-lime-400">Today Classes</span>
+            </div>
+
+            <button type="button" class="p-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition cursor-pointer">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <select class="w-full sm:w-auto bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 cursor-pointer">
+                <option value="All">All Group Classes</option>
+                @if (Model != null)
+                {
+                    foreach (var className in Model.Select(m => m.ClassName).Distinct())
+                    {
+                        <option value="@className">@className</option>
+                    }
+                }
+            </select>
+
+            <!-- JS View Switcher Buttons -->
+            <div class="flex items-center bg-zinc-100 dark:bg-zinc-950 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 w-full sm:w-auto">
+                <button type="button" id="btnDayView" onclick="switchScheduleView('day')" class="w-1/2 sm:w-auto bg-lime-500 text-zinc-950 font-bold px-4 py-1.5 rounded-lg text-xs transition cursor-pointer">
+                    Day View
+                </button>
+                <button type="button" id="btnWeekView" onclick="switchScheduleView('week')" class="w-1/2 sm:w-auto text-zinc-500 dark:text-zinc-400 font-medium px-4 py-1.5 rounded-lg text-xs hover:text-zinc-900 dark:hover:text-white transition cursor-pointer">
+                    Week View
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY VIEW SECTION -->
+    <div id="dayViewContainer" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 md:p-6 shadow-sm mb-8">
+        <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-lime-500"></i>
+            Daily Group Classes Timeline (@DateTime.Now.ToString("MMM d, yyyy"))
+        </h2>
+
+        <div class="space-y-4">
+            @if (todaysClasses != null && todaysClasses.Any())
+            {
+                foreach (var item in todaysClasses)
+                {
+                    string borderColor = item.Status == "Completed" ? "border-emerald-500 bg-emerald-500/10" : item.Status == "Ongoing" ? "border-cyan-500 bg-cyan-500/10" : "border-lime-500 bg-lime-500/10";
+                    string badgeColor = item.Status == "Completed" ? "bg-emerald-500 text-zinc-950" : "bg-lime-500 text-zinc-950";
+
+                    <div class="flex flex-col md:flex-row gap-2 md:gap-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
+                        <div class="w-full md:w-32 flex-shrink-0">
+                            <span class="text-sm font-bold text-zinc-900 dark:text-white">@item.StartTime.ToString(@"hh\:mm")</span>
+                            <span class="text-xs text-zinc-400 block">@item.StartTime.ToString(@"hh\:mm") - @item.EndTime.ToString(@"hh\:mm")</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="border-l-4 @borderColor rounded-r-xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase @badgeColor">@item.Status</span>
+                                        <h4 class="text-sm font-bold text-zinc-900 dark:text-white">@item.ClassName</h4>
+                                    </div>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-300"><i class="fa-solid fa-users text-lime-600 dark:text-lime-400 mr-1.5"></i>Trainer: @item.TrainerName | Capacity: @item.Capacity Members</p>
+                                    <p class="text-xs text-zinc-400"><i class="fa-solid fa-location-dot mr-1.5"></i>@item.Location</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <a href="#" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1">
+                                        <i class="fa-solid fa-users text-xs text-zinc-400"></i> View Members
+                                    </a>
+                                    @if (item.Status == "Completed")
+                                    {
+                                        <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                            <i class="fa-solid fa-check text-xs"></i> Completed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="bg-cyan-500 hover:bg-cyan-400 text-zinc-950 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                            <i class="fa-solid fa-clipboard-user text-xs"></i> Take Attendance
+                                        </a>
+                                        <button type="button" onclick="openClassNoteModal('@item.ClassName')" class="bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition flex items-center gap-1 cursor-pointer">
+                                            <i class="fa-solid fa-note-sticky text-xs text-cyan-500"></i> Class Notes
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-8 text-zinc-500">
+                    <p>No classes scheduled for today.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- WEEK VIEW SECTION -->
+    <div id="weekViewContainer" class="hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 md:p-6 shadow-sm mb-8 overflow-x-auto">
+        <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-week text-lime-500"></i>
+            Weekly Group Class Schedule
+        </h2>
+
+        <div class="min-w-[800px]">
+            <!-- Grid Days Header -->
+            <div class="grid grid-cols-7 gap-2 mb-3 text-center border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                @{
+                    var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+                }
+                @for (int i = 0; i < 7; i++)
+                {
+                    var loopDate = startOfWeek.AddDays(i);
+                    bool isToday = loopDate.Date == DateTime.Today;
+                    <div class="p-2 rounded-xl @(isToday ? "bg-lime-500/10 border border-lime-500/30" : "bg-zinc-100 dark:bg-zinc-800/50")">
+                        <span class="text-xs @(isToday ? "text-lime-600 dark:text-lime-400 font-bold" : "text-zinc-400 font-semibold") block">@loopDate.ToString("ddd").ToUpper() @(isToday ? "(Today)" : "")</span>
+                        <span class="text-sm font-extrabold text-zinc-900 dark:text-white">@loopDate.ToString("MMM d")</span>
+                    </div>
+                }
+            </div>
+
+            <!-- Grid Classes Row -->
+            <div class="grid grid-cols-7 gap-2 min-h-[350px]">
+                @for (int i = 0; i < 7; i++)
+                {
+                    var loopDate = startOfWeek.AddDays(i);
+                    var dayClasses = Model.Where(s => s.Date.Date == loopDate.Date).ToList();
+                    bool isToday = loopDate.Date == DateTime.Today;
+
+                    <div class="space-y-2 @(isToday ? "bg-zinc-50/50 dark:bg-zinc-800/20 p-1 rounded-xl" : "")">
+                        @if (dayClasses.Any())
+                        {
+                            foreach (var c in dayClasses)
+                            {
+                                <div class="p-2.5 bg-lime-500/10 border-l-2 border-lime-500 rounded-lg text-xs">
+                                    <span class="text-[10px] font-bold text-lime-600 dark:text-lime-400 block">@c.StartTime.ToString(@"hh\:mm")</span>
+                                    <p class="font-bold text-zinc-900 dark:text-white truncate">@c.ClassName</p>
+                                    <span class="text-[10px] text-zinc-400 block truncate">@c.Location</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl text-center flex items-center justify-center h-24">
+                                <span class="text-[11px] font-bold text-zinc-400">No Class</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ==================== ADD CLASS NOTE MODAL ==================== -->
+<div id="classNoteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-8">
+
+        <!-- Modal Header -->
+        <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950">
+            <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-lime-500"></i>
+                <span id="classNoteModalTitle">Add Class Note</span>
+            </h3>
+            <button type="button" onclick="closeClassNoteModal()" class="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-lime-400 hover:text-black flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-4 text-xs">
+            <div>
+                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Select Class</label>
+                <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition cursor-pointer">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <option value="@item.ClassName">@item.ClassName (@item.StartTime.ToString(@"hh\:mm"))</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="block font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Class Note / Feedback</label>
+                <textarea id="classNoteTextArea" rows="4" placeholder="Enter notes regarding equipment, session intensity, or room changes..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3 focus:outline-none focus:border-lime-500 transition resize-none"></textarea>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end gap-3 bg-zinc-50 dark:bg-zinc-950">
+            <button type="button" onclick="closeClassNoteModal()" class="px-5 py-2.5 rounded-xl bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold transition cursor-pointer text-xs">
+                Cancel
+            </button>
+            <button type="button" onclick="alert('Class note saved successfully!'); closeClassNoteModal();" class="px-6 py-2.5 rounded-xl bg-lime-400 hover:bg-lime-500 text-black font-extrabold shadow-lg shadow-lime-500/20 transition cursor-pointer text-xs">
+                Save Note
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- JavaScript View Switcher & Modal Control -->
+<script type="text/javascript">
+    function switchScheduleView(viewMode) {
+        const dayContainer = document.getElementById('dayViewContainer');
+        const weekContainer = document.getElementById('weekViewContainer');
+        const btnDay = document.getElementById('btnDayView');
+        const btnWeek = document.getElementById('btnWeekView');
+        const dateDisplay = document.getElementById('dateDisplay');
+        const viewSubtitle = document.getElementById('viewSubtitle');
+
+        if (viewMode === 'day') {
+            dayContainer.classList.remove('hidden');
+            weekContainer.classList.add('hidden');
+
+            btnDay.className = "w-1/2 sm:w-auto bg-lime-500 text-zinc-950 font-bold px-4 py-1.5 rounded-lg text-xs transition cursor-pointer";
+            btnWeek.className = "w-1/2 sm:w-auto text-zinc-500 dark:text-zinc-400 font-medium px-4 py-1.5 rounded-lg text-xs hover:text-zinc-900 dark:hover:text-white transition cursor-pointer";
+
+            dateDisplay.innerText = "@DateTime.Now.ToString("dddd, MMM d, yyyy")";
+            viewSubtitle.innerText = "Today Classes";
+        } else {
+            dayContainer.classList.add('hidden');
+            weekContainer.classList.remove('hidden');
+
+            btnWeek.className = "w-1/2 sm:w-auto bg-lime-500 text-zinc-950 font-bold px-4 py-1.5 rounded-lg text-xs transition cursor-pointer";
+            btnDay.className = "w-1/2 sm:w-auto text-zinc-500 dark:text-zinc-400 font-medium px-4 py-1.5 rounded-lg text-xs hover:text-zinc-900 dark:hover:text-white transition cursor-pointer";
+
+            dateDisplay.innerText = "Weekly Schedule Overview";
+            viewSubtitle.innerText = "Current Week Classes";
+        }
+    }
+
+    function openClassNoteModal(className) {
+        if (className) {
+            document.getElementById('classNoteModalTitle').innerText = 'Class Note for ' + className;
+        } else {
+            document.getElementById('classNoteModalTitle').innerText = 'Add Class Note';
+        }
+        document.getElementById('classNoteTextArea').value = '';
+        document.getElementById('classNoteModal').classList.remove('hidden');
+    }
+
+    function closeClassNoteModal() {
+        document.getElementById('classNoteModal').classList.add('hidden');
+    }
+</script>

@@ -1,7 +1,12 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.Exercise>
+
+@{
     ViewData["Title"] = "Exercise Library";
     Layout = "~/Views/layouts/AdminMaster.cshtml";
 
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalCount = ViewBag.TotalCount ?? 0;
 }
 
 <div class="p-4 md:p-6 bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 min-h-screen transition-colors duration-200">
@@ -16,187 +21,181 @@
             <p class="text-zinc-500 dark:text-zinc-400 text-xs md:text-sm mt-1">Browse, organize, and manage movement techniques for workout plans.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button type="button" onclick="openModal('addExerciseModal')" class="w-full sm:w-auto bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-lime-500/20 transition duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer">
+            <button type="button" onclick="openAddModal()" class="w-full sm:w-auto bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-lime-500/20 transition duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer">
                 <i class="fa-solid fa-plus"></i>
                 Add New Exercise
             </button>
         </div>
     </div>
 
-    <!-- Metric Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6 md:mb-8">
-        <!-- Total Exercises -->
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Movements</p>
-                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">128</h3>
-                </div>
-                <div class="w-12 h-12 bg-lime-500/10 border border-lime-500/20 rounded-xl flex items-center justify-center text-lime-600 dark:text-lime-400">
-                    <i class="fa-solid fa-dumbbell text-xl"></i>
-                </div>
-            </div>
+    <!-- Alert Messages -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-lime-500/10 border border-lime-500/20 text-lime-600 dark:text-lime-400 text-sm font-semibold">
+            @TempData["Message"]
         </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-sm font-semibold">
+            @TempData["Error"]
+        </div>
+    }
 
-        <!-- Major Muscle Groups -->
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Muscle Groups</p>
-                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">8 Category</h3>
-                </div>
-                <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    <i class="fa-solid fa-child-reaching text-xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Video Demos Available -->
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Video Tutorials</p>
-                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">94 Demos</h3>
-                </div>
-                <div class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center text-cyan-600 dark:text-cyan-400">
-                    <i class="fa-solid fa-circle-play text-xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Custom Variations -->
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Custom Variations</p>
-                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mt-1">16 Custom</h3>
-                </div>
-                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-500 dark:text-amber-400">
-                    <i class="fa-solid fa-sliders text-xl"></i>
-                </div>
-            </div>
-        </div>
+    <!-- Filter & Search Bar Form -->
+    <!-- Filter & Search Bar Form -->
+<form method="get" asp-action="ExerciseLibrary" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center shadow-sm">
+    <!-- Search -->
+    <div class="relative w-full md:w-96">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-sm"></i>
+        <input type="text" name="search" value="@ViewBag.Search" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="Search by exercise or muscle group..." />
     </div>
+    
+    <!-- Filters -->
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        <select name="muscle" class="w-full sm:w-auto bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500">
+            <option value="All" selected="@(ViewBag.Muscle == "All")">All Muscle Groups</option>
+            <option value="Chest" selected="@(ViewBag.Muscle == "Chest")">Chest</option>
+            <option value="Back" selected="@(ViewBag.Muscle == "Back")">Back</option>
+            <option value="Legs" selected="@(ViewBag.Muscle == "Legs")">Legs (Quads/Hamstrings)</option>
+            <option value="Shoulders" selected="@(ViewBag.Muscle == "Shoulders")">Shoulders</option>
+            <option value="Arms" selected="@(ViewBag.Muscle == "Arms")">Arms (Biceps/Triceps)</option>
+            <option value="Core" selected="@(ViewBag.Muscle == "Core")">Core / Abs</option>
+        </select>
 
-    <!-- Filter & Search Bar -->
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center shadow-sm">
-        <!-- Search -->
-        <div class="relative w-full md:w-96">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-sm"></i>
-            <input type="text" id="txtSearchExercise" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="Search by exercise or muscle group..." />
-        </div>
-        
-        <!-- Filters -->
-        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-            <select id="ddlTargetMuscle" class="w-full sm:w-auto bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500">
-                <option value="All">All Muscle Groups</option>
-                <option value="Chest">Chest</option>
-                <option value="Back">Back</option>
-                <option value="Legs">Legs (Quads/Hamstrings)</option>
-                <option value="Shoulders">Shoulders</option>
-                <option value="Arms">Arms (Biceps/Triceps)</option>
-                <option value="Core">Core / Abs</option>
-            </select>
+        <select name="equipment" class="w-full sm:w-auto bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500">
+            <option value="All" selected="@(ViewBag.Equipment == "All")">All Equipment</option>
+            <option value="Barbell" selected="@(ViewBag.Equipment == "Barbell")">Barbell</option>
+            <option value="Dumbbell" selected="@(ViewBag.Equipment == "Dumbbell")">Dumbbell</option>
+            <option value="Cable" selected="@(ViewBag.Equipment == "Cable")">Cable Machine</option>
+            <option value="Bodyweight" selected="@(ViewBag.Equipment == "Bodyweight")">Bodyweight</option>
+            <option value="Smith" selected="@(ViewBag.Equipment == "Smith")">Smith Machine</option>
+        </select>
 
-            <select id="ddlEquipment" class="w-full sm:w-auto bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500">
-                <option value="All">All Equipment</option>
-                <option value="Barbell">Barbell</option>
-                <option value="Dumbbell">Dumbbell</option>
-                <option value="Cable">Cable Machine</option>
-                <option value="Bodyweight">Bodyweight</option>
-                <option value="Smith">Smith Machine</option>
-            </select>
-
-            <button type="button" class="w-full sm:w-auto bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white font-medium px-5 py-2.5 rounded-xl transition cursor-pointer text-sm">Filter</button>
-        </div>
+        <button type="submit" class="w-full sm:w-auto bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white font-medium px-5 py-2.5 rounded-xl transition cursor-pointer text-sm">Filter</button>
     </div>
+</form>
 
-    <!-- Exercise Cards Grid -->
+    <!-- Exercise Cards Grid (DYNAMIC) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var ex in Model)
+            {
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between">
+                    <div>
+                        <!-- Visual Header / Video Placeholder -->
+                        <div class="relative h-44 bg-zinc-800 flex items-center justify-center overflow-hidden group">
+                            <img src="@(string.IsNullOrEmpty(ex.ThumbnailPath) ? "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=600&q=80" : ex.ThumbnailPath)" alt="@ex.Name" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-80" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent"></div>
+                            
+                            <!-- Badges -->
+                            <span class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md text-lime-400 border border-lime-500/30 text-[11px] font-bold px-2.5 py-1 rounded-lg">
+                                @ex.Equipment
+                            </span>
+                            <span class="absolute top-3 right-3 bg-zinc-950/80 backdrop-blur-md text-zinc-300 text-[11px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-fire text-amber-400"></i> @ex.Difficulty
+                            </span>
 
-        <!-- Exercise Card 1: Barbell Bench Press -->
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between">
-            <div>
-                <!-- Visual Header / Video Placeholder -->
-                <div class="relative h-44 bg-zinc-800 flex items-center justify-center overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=600&q=80" alt="Bench Press" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-80" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent"></div>
-                    
-                    <!-- Badges -->
-                    <span class="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md text-lime-400 border border-lime-500/30 text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                        Barbell
-                    </span>
-                    <span class="absolute top-3 right-3 bg-zinc-950/80 backdrop-blur-md text-zinc-300 text-[11px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1">
-                        <i class="fa-solid fa-fire text-amber-400"></i> High Impact
-                    </span>
-
-                    <!-- Play Button Icon -->
-                    <a href="#" class="absolute w-12 h-12 bg-lime-500/90 hover:bg-lime-400 text-zinc-950 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-110">
-                        <i class="fa-solid fa-play text-sm ml-0.5"></i>
-                    </a>
-                </div>
-
-                <!-- Card Body -->
-                <div class="p-5">
-                    <div class="flex items-center justify-between mb-1">
-                        <h3 class="text-lg font-bold text-zinc-900 dark:text-white">Barbell Bench Press</h3>
-                        <span class="text-xs font-semibold text-lime-600 dark:text-lime-400 bg-lime-500/10 px-2 py-0.5 rounded-md">Chest</span>
-                    </div>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2">Primary compound movement targeting upper body push strength, pectorals, front deltoids, and triceps.</p>
-
-                    <!-- Specifications Grid -->
-                    <div class="grid grid-cols-2 gap-2 text-xs bg-zinc-50 dark:bg-zinc-950 p-3 rounded-xl border border-zinc-100 dark:border-zinc-800/60 mb-2">
-                        <div>
-                            <span class="text-zinc-400 block font-medium">Secondary Muscle</span>
-                            <span class="font-semibold text-zinc-700 dark:text-zinc-300">Triceps, Deltoids</span>
+                            <!-- Play Button Icon -->
+                            @if (!string.IsNullOrEmpty(ex.VideoUrl))
+                            {
+                                <a href="@ex.VideoUrl" target="_blank" class="absolute w-12 h-12 bg-lime-500/90 hover:bg-lime-400 text-zinc-950 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-110">
+                                    <i class="fa-solid fa-play text-sm ml-0.5"></i>
+                                </a>
+                            }
                         </div>
-                        <div>
-                            <span class="text-zinc-400 block font-medium">Difficulty Level</span>
-                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">Intermediate</span>
+
+                        <!-- Card Body -->
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="text-lg font-bold text-zinc-900 dark:text-white">@ex.Name</h3>
+                                <span class="text-xs font-semibold text-lime-600 dark:text-lime-400 bg-lime-500/10 px-2 py-0.5 rounded-md">@ex.PrimaryMuscle</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2">@(string.IsNullOrEmpty(ex.Description) ? "No description provided." : ex.Description)</p>
+
+                            <!-- Specifications Grid -->
+                            <div class="grid grid-cols-2 gap-2 text-xs bg-zinc-50 dark:bg-zinc-950 p-3 rounded-xl border border-zinc-100 dark:border-zinc-800/60 mb-2">
+                                <div>
+                                    <span class="text-zinc-400 block font-medium">Secondary Muscle</span>
+                                    <span class="font-semibold text-zinc-700 dark:text-zinc-300">@(string.IsNullOrEmpty(ex.SecondaryMuscle) ? "N/A" : ex.SecondaryMuscle)</span>
+                                </div>
+                                <div>
+                                    <span class="text-zinc-400 block font-medium">Difficulty Level</span>
+                                    <span class="font-semibold text-emerald-600 dark:text-emerald-400">@ex.Difficulty</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Action Buttons -->
+                    <div class="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/80 mt-2 grid grid-cols-3 gap-2">
+                        <button type="button" onclick="loadDetails(@ex.Id)" class="bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-eye text-zinc-500 dark:text-zinc-400"></i> Details
+                        </button>
+                        <button type="button" onclick="loadEdit(@ex.Id)" class="bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square text-zinc-500 dark:text-zinc-400"></i> Edit
+                        </button>
+                        <form asp-action="DeleteExercise" asp-route-id="@ex.Id" method="post" onsubmit="return confirm('Ma hubtaa inaad tirtirto exercise-kan?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+                        </form>
+                    </div>
                 </div>
+            }
+        }
+        else
+        {
+            <div class="col-span-3 text-center py-12 text-zinc-500">
+                <i class="fa-solid fa-folder-open text-4xl mb-3 text-zinc-400"></i>
+                <p class="text-base font-semibold">Lama helin wax Exercise ah.</p>
             </div>
-
-            <!-- Action Buttons -->
-            <div class="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/80 mt-2 grid grid-cols-3 gap-2">
-                <button type="button" onclick="openModal('detailsExerciseModal')" class="bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
-                    <i class="fa-solid fa-eye text-zinc-500 dark:text-zinc-400"></i> Details
-                </button>
-                <a href="#" class="bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-pen-to-square text-zinc-500 dark:text-zinc-400"></i> Edit
-                </a>
-                <a href="#" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-trash-can"></i> Delete
-                </a>
-            </div>
-        </div>
-
+        }
     </div>
 
-    <!-- Pagination Controls -->
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400 shadow-sm">
-        <span>Showing 1 to 3 of 128 Exercises</span>
-        <div class="flex items-center gap-2">
-            <button type="button" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">Previous</button>
-            <button type="button" class="px-3 py-1.5 rounded-lg bg-lime-500 text-zinc-950 font-bold">1</button>
-            <button type="button" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">2</button>
-            <button type="button" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">3</button>
-            <button type="button" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">Next</button>
+    <!-- Pagination Controls (DYNAMIC) -->
+    @if (totalPages > 1)
+    {
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400 shadow-sm">
+            <span>Showing page @currentPage of @totalPages (Total: @totalCount Exercises)</span>
+            <div class="flex items-center gap-2">
+                @if (currentPage > 1)
+                {
+                    <a href="@Url.Action("ExerciseLibrary", new { page = currentPage - 1, search = ViewBag.Search, muscle = ViewBag.Muscle, equipment = ViewBag.Equipment })" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">Previous</a>
+                }
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    if (i == currentPage)
+                    {
+                        <span class="px-3 py-1.5 rounded-lg bg-lime-500 text-zinc-950 font-bold">@i</span>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("ExerciseLibrary", new { page = i, search = ViewBag.Search, muscle = ViewBag.Muscle, equipment = ViewBag.Equipment })" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">@i</a>
+                    }
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <a href="@Url.Action("ExerciseLibrary", new { page = currentPage + 1, search = ViewBag.Search, muscle = ViewBag.Muscle, equipment = ViewBag.Equipment })" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition">Next</a>
+                }
+            </div>
         </div>
-    </div>
+    }
 
 </div>
 
 <!-- ========================================== -->
-<!-- ADD EXERCISE MODAL (POP-UP)                -->
+<!-- ADD / EDIT EXERCISE MODAL                  -->
 <!-- ========================================== -->
 <div id="addExerciseModal" class="fixed inset-0 bg-zinc-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
-        <!-- Modal Header -->
         <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-950/50">
-            <h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <h2 id="modalHeaderTitle" class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-dumbbell text-lime-500"></i>
                 Add New Exercise
             </h2>
@@ -205,143 +204,127 @@
             </button>
         </div>
 
-        <!-- Modal Body (Scrollable) -->
-        <div class="p-6 overflow-y-auto custom-scrollbar">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                
-                <!-- Exercise Name -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Exercise Name <span class="text-rose-500">*</span></label>
-                    <input type="text" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="e.g., Barbell Bench Press" />
-                </div>
+        <form asp-action="SaveExercise" method="post" enctype="multipart/form-data" id="exerciseForm" class="flex flex-col flex-grow overflow-hidden">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="Id" name="Id" value="0" />
 
-                <!-- Primary Muscle -->
-                <div>
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Primary Muscle <span class="text-rose-500">*</span></label>
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition">
-                        <option value="">Select Muscle</option>
-                        <option value="Chest">Chest</option>
-                        <option value="Back">Back</option>
-                        <option value="Legs">Legs</option>
-                        <option value="Shoulders">Shoulders</option>
-                        <option value="Arms">Arms</option>
-                        <option value="Core">Core</option>
-                    </select>
-                </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-grow">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Exercise Name <span class="text-rose-500">*</span></label>
+                        <input type="text" id="Name" name="Name" required class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="e.g., Barbell Bench Press" />
+                    </div>
 
-                <!-- Equipment -->
-                <div>
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Equipment <span class="text-rose-500">*</span></label>
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition">
-                        <option value="">Select Equipment</option>
-                        <option value="Barbell">Barbell</option>
-                        <option value="Dumbbell">Dumbbell</option>
-                        <option value="Machine">Machine</option>
-                        <option value="Bodyweight">Bodyweight</option>
-                    </select>
-                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Primary Muscle <span class="text-rose-500">*</span></label>
+                        <select id="PrimaryMuscle" name="PrimaryMuscle" required class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition">
+                            <option value="">Select Muscle</option>
+                            <option value="Chest">Chest</option>
+                            <option value="Back">Back</option>
+                            <option value="Legs">Legs</option>
+                            <option value="Shoulders">Shoulders</option>
+                            <option value="Arms">Arms</option>
+                            <option value="Core">Core</option>
+                        </select>
+                    </div>
 
-                <!-- Difficulty Level -->
-                <div>
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Difficulty Level</label>
-                    <select class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition">
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                    </select>
-                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Secondary Muscle</label>
+                        <input type="text" id="SecondaryMuscle" name="SecondaryMuscle" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="e.g., Triceps, Deltoids" />
+                    </div>
 
-                <!-- Video URL -->
-                <div>
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Video Demo URL</label>
-                    <input type="text" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="https://youtube.com/..." />
-                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Equipment <span class="text-rose-500">*</span></label>
+                        <select id="Equipment" name="Equipment" required class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition">
+                            <option value="">Select Equipment</option>
+                            <option value="Barbell">Barbell</option>
+                            <option value="Dumbbell">Dumbbell</option>
+                            <option value="Cable">Cable Machine</option>
+                            <option value="Bodyweight">Bodyweight</option>
+                            <option value="Smith">Smith Machine</option>
+                        </select>
+                    </div>
 
-                <!-- Description -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Instructions / Description</label>
-                    <textarea rows="3" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="Enter step-by-step instructions..."></textarea>
-                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Difficulty Level</label>
+                        <select id="Difficulty" name="Difficulty" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
 
-                <!-- Image Upload -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Thumbnail Image</label>
-                    <input type="file" class="w-full text-sm text-zinc-500 dark:text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-lime-500/10 file:text-lime-600 dark:file:text-lime-400 hover:file:bg-lime-500/20 cursor-pointer border border-zinc-300 dark:border-zinc-800 rounded-xl bg-zinc-100 dark:bg-zinc-950" />
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Video Demo URL</label>
+                        <input type="text" id="VideoUrl" name="VideoUrl" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="https://youtube.com/..." />
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Instructions / Description</label>
+                        <textarea id="Description" name="Description" rows="3" class="w-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-lime-500 transition" placeholder="Enter step-by-step instructions..."></textarea>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">Thumbnail Image</label>
+                        <input type="file" name="Thumbnail" class="w-full text-sm text-zinc-500 dark:text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-lime-500/10 file:text-lime-600 dark:file:text-lime-400 hover:file:bg-lime-500/20 cursor-pointer border border-zinc-300 dark:border-zinc-800 rounded-xl bg-zinc-100 dark:bg-zinc-950" />
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex justify-end gap-3">
-            <button type="button" onclick="closeModal('addExerciseModal')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition cursor-pointer">
-                Cancel
-            </button>
-            <button type="button" class="bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-lime-500/20 transition cursor-pointer text-sm">
-                Save Exercise
-            </button>
-        </div>
+            <div class="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeModal('addExerciseModal')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-lime-500/20 transition cursor-pointer text-sm">
+                    Save Exercise
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- ========================================== -->
-<!-- EXERCISE DETAILS MODAL (POP-UP FIXED)      -->
+<!-- EXERCISE DETAILS MODAL                     -->
 <!-- ========================================== -->
 <div id="detailsExerciseModal" class="fixed inset-0 bg-zinc-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] relative">
         
-        <!-- Close Button (Fixed Top-Right) -->
         <button type="button" onclick="closeModal('detailsExerciseModal')" class="absolute top-4 right-4 bg-black/60 hover:bg-rose-500 text-white transition cursor-pointer w-9 h-9 flex items-center justify-center rounded-full backdrop-blur-md z-20">
             <i class="fa-solid fa-xmark text-lg"></i>
         </button>
 
-        <!-- Modal Body (Scrollable Container) -->
-        <div class="overflow-y-auto custom-scrollbar">
-            
-            <!-- Video/Image Header -->
+        <div class="overflow-y-auto custom-scrollbar flex-grow">
             <div class="relative h-56 sm:h-64 bg-zinc-950 w-full shrink-0">
-                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80" alt="Exercise View" class="w-full h-full object-cover opacity-60" />
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <button type="button" class="w-14 h-14 bg-lime-500 hover:bg-lime-400 text-zinc-950 rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(132,204,22,0.5)] transition transform hover:scale-110 cursor-pointer">
+                <img id="detailThumb" src="" alt="Exercise View" class="w-full h-full object-cover opacity-60" />
+                <div class="absolute inset-0 flex items-center justify-center" id="detailPlayWrapper">
+                    <a id="detailVideoLink" href="#" target="_blank" class="w-14 h-14 bg-lime-500 hover:bg-lime-400 text-zinc-950 rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(132,204,22,0.5)] transition transform hover:scale-110 cursor-pointer">
                         <i class="fa-solid fa-play text-xl ml-1"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
 
-            <!-- Details Content -->
             <div class="p-6">
-                <!-- Badges -->
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold px-3 py-1 rounded-lg">
-                        <i class="fa-solid fa-dumbbell mr-1"></i> Barbell
-                    </span>
-                    <span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold px-3 py-1 rounded-lg">
-                        <i class="fa-solid fa-gauge-high mr-1"></i> Intermediate
-                    </span>
+                    <span id="detailEquipment" class="bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold px-3 py-1 rounded-lg"></span>
+                    <span id="detailDifficulty" class="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold px-3 py-1 rounded-lg"></span>
                 </div>
 
-                <!-- Title & Primary Muscle -->
-                <h2 class="text-2xl font-black text-zinc-900 dark:text-white mb-1">Barbell Bench Press</h2>
+                <h2 id="detailTitle" class="text-2xl font-black text-zinc-900 dark:text-white mb-1"></h2>
                 
                 <div class="flex items-center gap-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-6">
-                    <span class="text-lime-600 dark:text-lime-400"><i class="fa-solid fa-bullseye mr-1"></i> Primary: Chest</span>
+                    <span id="detailPrimary" class="text-lime-600 dark:text-lime-400"></span>
                     <span class="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
-                    <span>Secondary: Triceps, Deltoids</span>
+                    <span id="detailSecondary"></span>
                 </div>
 
-                <!-- Instructions -->
                 <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
                     <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-3">Instructions</h3>
-                    <ol class="space-y-2.5 text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed list-decimal list-inside">
-                        <li>Lie flat on the bench with your feet firmly on the ground.</li>
-                        <li>Grip the bar slightly wider than shoulder-width apart.</li>
-                        <li>Unrack the bar and lower it slowly to your mid-chest.</li>
-                        <li>Press the bar back up until your arms are fully extended.</li>
-                    </ol>
+                    <p id="detailDescription" class="text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed whitespace-pre-line"></p>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
         <div class="px-6 py-3.5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex justify-end shrink-0">
             <button type="button" onclick="closeModal('detailsExerciseModal')" class="bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-semibold px-5 py-2 rounded-xl transition cursor-pointer text-sm">
                 Close
@@ -350,8 +333,73 @@
     </div>
 </div>
 
-<!-- JavaScript for Modals -->
+<!-- JavaScript for Modals & AJAX Fetch -->
 <script>
+    function openAddModal() {
+        document.getElementById('exerciseForm').reset();
+        document.getElementById('Id').value = "0";
+        document.getElementById('modalHeaderTitle').innerHTML = '<i class="fa-solid fa-dumbbell text-lime-500"></i> Add New Exercise';
+        openModal('addExerciseModal');
+    }
+
+    async function loadEdit(id) {
+    try {
+        // Beddel kan
+        const response = await fetch('@Url.Action("GetExercise", "Admin")/' + id);  
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+
+        document.getElementById('Id').value = data.id;
+        document.getElementById('Name').value = data.name || '';
+        document.getElementById('PrimaryMuscle').value = data.primaryMuscle || '';
+        document.getElementById('SecondaryMuscle').value = data.secondaryMuscle || '';
+        document.getElementById('Equipment').value = data.equipment || '';
+        document.getElementById('Difficulty').value = data.difficulty || '';
+        document.getElementById('VideoUrl').value = data.videoUrl || '';
+        document.getElementById('Description').value = data.description || '';
+
+        document.getElementById('modalHeaderTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-lime-500"></i> Edit Exercise';
+        openModal('addExerciseModal');
+    } catch (error) {
+        console.error(error); // Tani waxay ku tusi doontaa console-ka sababta dhabta ah
+        alert('C Khalad ayaa dhacay intii la soo jiidanayay xogta.');
+    }
+}
+
+async function loadDetails(id) {
+    try {
+        // Beddel kan sidoo kale
+        const response = await fetch('@Url.Action("GetExercise", "Admin")/' + id);
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+
+        document.getElementById('detailTitle').innerText = data.name || '';
+        document.getElementById('detailPrimary').innerHTML = `<i class="fa-solid fa-bullseye mr-1"></i> Primary: ${data.primaryMuscle || 'N/A'}`;
+        document.getElementById('detailSecondary').innerText = `Secondary: ${data.secondaryMuscle || 'N/A'}`;
+        document.getElementById('detailEquipment').innerHTML = `<i class="fa-solid fa-dumbbell mr-1"></i> ${data.equipment || 'N/A'}`;
+        document.getElementById('detailDifficulty').innerHTML = `<i class="fa-solid fa-gauge-high mr-1"></i> ${data.difficulty || 'N/A'}`;
+        document.getElementById('detailDescription').innerText = data.description || 'No instructions provided.';
+        document.getElementById('detailThumb').src = data.thumbnailPath || '...';
+
+        const videoWrapper = document.getElementById('detailPlayWrapper');
+        if (data.videoUrl && data.videoUrl.includes('youtube.com')) {
+            const videoId = data.videoUrl.split('v=')[1]?.split('&')[0];
+            if (videoId) {
+                videoWrapper.innerHTML = `
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}" 
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>`;
+            }
+        } else {
+            videoWrapper.innerHTML = `<p class="text-white">Video unavailable</p>`;
+        }
+
+        openModal('detailsExerciseModal');
+    } catch (error) {
+        console.error(error);
+        alert('Waa la waayay xogta.');
+    }
+}
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if(modal) {
@@ -368,15 +416,10 @@
         }
     }
 
-    // Close modal when clicking outside the box
     window.onclick = function(event) {
         const addModal = document.getElementById('addExerciseModal');
         const detailModal = document.getElementById('detailsExerciseModal');
-        if (event.target === addModal) {
-            closeModal('addExerciseModal');
-        }
-        if (event.target === detailModal) {
-            closeModal('detailsExerciseModal');
-        }
+        if (event.target === addModal) closeModal('addExerciseModal');
+        if (event.target === detailModal) closeModal('detailsExerciseModal');
     }
 </script>

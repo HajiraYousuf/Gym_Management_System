@@ -1,397 +1,438 @@
-﻿@{
-    ViewData["Title"] = "Members Directory";
-    Layout = "~/Views/layouts/ReceptionMaster.cshtml";
+﻿@model IEnumerable<GymManagementSystem.Models.UserProfile>
+
+@{
+    ViewData["Title"] = "Members Management";
+    Layout = "~/Views/Layouts/ReceptionMaster.cshtml";
 }
 
-<!-- FontAwesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-<div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
-
-    <!-- PAGE HEADER -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-6 min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 p-2 sm:p-4 transition-colors duration-300">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Members Directory</h1>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Receptionist View • Manage gym members and subscription statuses.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Members Management</h1>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Manage, filter, and view all registered gym members.</p>
         </div>
-        <button type="button" onclick="openAddMemberModal()" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-xs shadow-xl shadow-lime-500/15 transition-all cursor-pointer">
-            <i class="fa-solid fa-user-plus"></i> Add New Member
-        </button>
-    </div>
-
-    <!-- STAT CARDS (Weeyn oo leh Hover effects) -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-zinc-400 dark:hover:border-zinc-700 transition-all">
-            <span class="text-xs font-bold uppercase tracking-wider text-zinc-400 block">Total Members</span>
-            <h2 class="text-4xl font-black text-zinc-900 dark:text-white mt-2">412</h2>
-        </div>
-        <div class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-emerald-500/40 transition-all">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">Active Members</span>
-            <h2 class="text-4xl font-black text-emerald-600 dark:text-emerald-400 mt-2">380</h2>
-        </div>
-        <div class="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-red-500/40 transition-all">
-            <span class="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400 block">Expired Members</span>
-            <h2 class="text-4xl font-black text-red-600 dark:text-red-400 mt-2">32</h2>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button type="button" class="flex-1 sm:flex-none justify-center bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 font-medium flex items-center gap-2 shadow-sm transition-all">
+                <i class="fas fa-file-export text-lime-600 dark:text-lime-400"></i> Export
+            </button>
+            <button type="button" onclick="openAddModal()" class="flex-1 sm:flex-none justify-center bg-lime-500 hover:bg-lime-600 text-zinc-950 font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-lime-500/20 transition-all">
+                <i class="fas fa-plus text-xs"></i> Add Member
+            </button>
         </div>
     </div>
 
-    <!-- CONTROLS BAR: SEARCH & FILTERS -->
-    <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+    <!-- Top Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Total Members -->
+        <div class="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm hover:border-lime-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Total Members</p>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">@ViewBag.TotalMembers</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-lime-100 dark:bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Active Members -->
+        <div class="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm hover:border-emerald-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Active Members</p>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">@ViewBag.ActiveMembers</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-user-check"></i>
+                </div>
+            </div>
+        </div>
+        <!-- New This Month -->
+        <div class="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm hover:border-blue-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">New This Month</p>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">@ViewBag.NewThisMonth</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Expired -->
+        <div class="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm hover:border-rose-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Expired</p>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">@ViewBag.ExpiredMembers</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <form method="get" asp-action="Members" class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
         <div class="relative w-full md:w-96">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"></i>
-            <input type="text" id="txtSearchMember" placeholder="Search by Name, ID, or Phone..." 
-                class="w-full h-11 pl-11 pr-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-lime-500 rounded-xl text-zinc-900 dark:text-white placeholder-zinc-400 text-xs font-medium outline-none transition" />
+            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"></i>
+            <input type="text" name="searchString" value="@ViewContext.HttpContext.Request.Query["searchString"]" placeholder="Search by ID, Name, Phone, Class..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-lime-500 transition-all" />
         </div>
-
         <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-zinc-500 font-semibold">Status:</span>
-                <select id="ddlStatusFilter" class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-white text-xs font-semibold rounded-xl px-3 h-11 outline-none">
-                    <option value="All">All Statuses</option>
-                    <option value="Active">Active</option>
-                    <option value="Expired">Expired</option>
-                </select>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-zinc-500 font-semibold">Plan:</span>
-                <select id="ddlPlanFilter" class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-white text-xs font-semibold rounded-xl px-3 h-11 outline-none">
-                    <option value="All">All Plans</option>
-                    <option value="VIP">VIP Premium</option>
-                    <option value="Standard">Standard Monthly</option>
-                </select>
-            </div>
+            <select name="statusFilter" class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-lime-500">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Expired">Expired</option>
+            </select>
+            <button type="submit" class="bg-zinc-900 dark:bg-lime-500 hover:bg-zinc-800 dark:hover:bg-lime-600 text-white dark:text-zinc-950 font-semibold px-5 py-2.5 rounded-xl shadow transition-all">
+                Filter
+            </button>
         </div>
-    </div>
+    </form>
 
-    <!-- MEMBERS DATA TABLE -->
-    <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+    <!-- Members Table -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
-                        <th class="py-4 px-6">Member Profile</th>
-                        <th class="py-4 px-6">Current Plan</th>
-                        <th class="py-4 px-6">Contact Info</th>
-                        <th class="py-4 px-6">Status</th>
-                        <th class="py-4 px-6 text-right">Action</th>
+            <table class="w-full text-left text-sm text-zinc-600 dark:text-zinc-300">
+                <thead class="bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-400 uppercase text-xs font-semibold tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                    <tr>
+                        <th class="px-6 py-4">ID</th>
+                        <th class="px-6 py-4">Photo</th>
+                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4">Membership</th>
+                        <th class="px-6 py-4">Class</th>
+                        <th class="px-6 py-4">Phone</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Join Date</th>
+                        <th class="px-6 py-4 text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 text-xs">
-                    
-                    <!-- SAMPLE ROW -->
-                    <tr class="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/30 transition">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center gap-3">
-                                <img src="https://i.pravatar.cc/150?img=33" alt="Member" class="w-11 h-11 rounded-xl object-cover border border-zinc-200 dark:border-zinc-700 shadow-sm" />
-                                <div>
-                                    <h3 class="font-bold text-zinc-900 dark:text-white text-sm">Ahmed Mohamed Hassan</h3>
-                                    <span class="text-[10px] font-mono text-emerald-600 dark:text-lime-400 bg-emerald-50 dark:bg-lime-400/10 px-2 py-0.5 rounded font-semibold">ID: MEM-8821</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="font-bold text-zinc-900 dark:text-white block">VIP Premium ($150)</span>
-                            <span class="text-[11px] text-zinc-400">Joined: 25 May, 2026</span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="font-medium text-zinc-800 dark:text-zinc-200 block"><i class="fa-solid fa-phone text-[10px] text-zinc-400 mr-1.5"></i> +252 61 555 1234</span>
-                            <span class="text-[11px] text-zinc-400"><i class="fa-solid fa-envelope text-[10px] text-zinc-400 mr-1.5"></i> ahmed.m@email.com</span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ACTIVE
-                            </span>
-                        </td>
-                        <td class="py-4 px-6 text-right">
-                            <button type="button" onclick="openDetailsModal('Ahmed Mohamed Hassan', 'MEM-8821', 'VIP Premium ($150 / 6 Months)', '+252 61 555 1234', 'ahmed.m@email.com', 'Male', 'Fatima M. (+252 61 111 2222)', 'Locker #14', 'ZAAD Service', 'Paid (Full)', '25 May, 2026', '25 Nov, 2026', 'https://i.pravatar.cc/150?img=33')" 
-                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-zinc-100 hover:bg-lime-400 hover:text-zinc-950 dark:bg-zinc-800 dark:hover:bg-lime-400 dark:hover:text-zinc-950 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-xl transition cursor-pointer shadow-sm">
-                                <i class="fa-regular fa-eye"></i> View Details
-                            </button>
-                        </td>
-                    </tr>
-
+                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var member in Model)
+                        {
+                            <tr class="hover:bg-lime-500/5 dark:hover:bg-zinc-800/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-zinc-900 dark:text-white">@member.Id</td>
+                                <td class="px-6 py-4">
+                                    <div class="w-10 h-10 rounded-full bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 font-bold flex items-center justify-center border border-lime-300 dark:border-lime-500/30 overflow-hidden">
+                                        @if (!string.IsNullOrEmpty(member.Avatar) && member.Avatar.StartsWith("http"))
+                                        {
+                                            <img src="@member.Avatar" alt="@member.Name" class="w-full h-full object-cover" />
+                                        }
+                                        else
+                                        {
+                                            <span class="text-xs">@(member.Name?.Length >= 2 ? member.Name.Substring(0, 2).ToUpper() : "MEM")</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">@member.Name</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-lime-700 dark:text-lime-400 font-semibold bg-lime-100 dark:bg-lime-500/10 px-2.5 py-1 rounded-md border border-lime-300 dark:border-lime-500/20">
+                                        @(string.IsNullOrEmpty(member.MembershipType) ? "Not assigned" : member.MembershipType)
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300">
+                                    <span class="bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 px-2.5 py-1 rounded-md text-xs font-semibold border border-zinc-200 dark:border-zinc-700">
+                                        @(string.IsNullOrEmpty(member.ClassName) ? "Not Assigned" : member.ClassName)
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 font-mono text-zinc-600 dark:text-zinc-400">@member.Phone</td>
+                                <td class="px-6 py-4">
+                                    @if (member.Status == "Active")
+                                    {
+                                        <span class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> @member.Status
+                                        </span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300">@member.JoinDate.ToString("dd MMM yyyy")</td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <button type="button" onclick="openDetailsModal('@member.Id', '@member.Name', '@member.Gender', '@member.DateOfBirth', '@member.Phone', '@member.Email', '@member.Address', '@member.MembershipType', '@member.JoinDate.ToString("dd MMM yyyy")', '@member.Status', '@member.Username', '@member.Name')" class="p-2 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors" title="View Details"><i class="fas fa-eye"></i></button>
+                                        <button type="button" onclick="openEditModal('@member.Id', '@member.Name', '@member.Gender', '@member.DateOfBirth', '@member.Phone', '@member.Email', '@member.Address', '@member.MembershipType', '@member.Username', '@member.Name')" class="p-2 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors" title="Edit Member"><i class="fas fa-edit"></i></button>
+                                        <form asp-action="DeleteMember" asp-route-id="@member.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this member?');" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Delete Member"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">No members found in the database.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
-        </div>
-
-        <!-- PAGINATION BAR -->
-        <div class="p-4 bg-zinc-50 dark:bg-zinc-950/40 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-            <span class="text-zinc-500 font-medium">Showing <b class="text-zinc-900 dark:text-white">1 to 10</b> of <b class="text-zinc-900 dark:text-white">412</b> entries</span>
-            
-            <div class="flex items-center gap-1.5">
-                <button type="button" class="px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 font-bold transition disabled:opacity-40 cursor-pointer" disabled>Previous</button>
-                <button type="button" class="w-9 h-9 rounded-xl bg-lime-500 text-zinc-950 font-black shadow-sm flex items-center justify-center cursor-pointer">1</button>
-                <button type="button" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer">2</button>
-                <button type="button" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer">3</button>
-                <span class="text-zinc-400 px-1">...</span>
-                <button type="button" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer">42</button>
-                <button type="button" class="px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 font-bold transition cursor-pointer">Next</button>
-            </div>
         </div>
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- 1. ADD NEW MEMBER MODAL (LANDSCAPE 2-COL)  -->
-<!-- ========================================== -->
-<div id="addMemberModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-4xl p-8 shadow-2xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
-        
-        <!-- Header -->
-        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4 sticky top-0 bg-white dark:bg-zinc-900 z-10">
-            <div>
-                <h3 class="text-xl font-black text-zinc-900 dark:text-white">Register New Member</h3>
-                <p class="text-xs text-zinc-500 mt-0.5">Fill in personal details, membership package, and payment info.</p>
-            </div>
-            <button type="button" onclick="closeAddMemberModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
-                <i class="fa-solid fa-xmark text-base"></i>
-            </button>
-        </div>
+<!-- ================= ADD / EDIT MEMBER MODAL ================= -->
+<div id="addMemberModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl my-auto landscape:my-4">
+        <form id="memberForm" method="post" action="/Receptionist/CreateMember">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="MemberId" name="Id" />
 
-        <!-- Form 2-Columns Landscape Layout -->
-        <form asp-action="CreateMember" method="post" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            
-            <!-- COLUMN 1: Personal Information -->
-            <div class="space-y-4 bg-zinc-50 dark:bg-zinc-950/50 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800">
-                <h4 class="font-extrabold uppercase tracking-wider text-lime-600 dark:text-lime-400 text-xs">1. Personal Information</h4>
-                
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
                 <div>
-                    <label class="block font-bold text-zinc-500 mb-1">Upload Member Photo</label>
-                    <input type="file" name="MemberPhoto" accept=".jpg, .png, .webp" 
-                        class="w-full text-zinc-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-lime-500/10 file:text-lime-600 dark:file:text-lime-400 hover:file:bg-lime-500/20 cursor-pointer" />
+                    <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Add New Member</h3>
+                    <p id="modalSubtitle" class="text-xs text-zinc-500 dark:text-zinc-400">Register a new gym member and setup their credentials.</p>
                 </div>
-
-                <div>
-                    <label class="block font-bold uppercase text-zinc-500 mb-1">Full Name *</label>
-                    <input type="text" name="FullName" required placeholder="e.g. Mohamed Ali" 
-                        class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold uppercase text-zinc-500 mb-1">Phone Number *</label>
-                        <input type="text" name="Phone" required placeholder="+252 61..." 
-                            class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
-                    </div>
-                    <div>
-                        <label class="block font-bold uppercase text-zinc-500 mb-1">Gender *</label>
-                        <select name="Gender" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold uppercase text-zinc-500 mb-1">Email Address</label>
-                    <input type="email" name="Email" placeholder="member@email.com" 
-                        class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold uppercase text-zinc-500 mb-1">Emergency Name</label>
-                        <input type="text" name="EmergencyName" placeholder="Relative Name" 
-                            class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
-                    </div>
-                    <div>
-                        <label class="block font-bold uppercase text-zinc-500 mb-1">Emergency Phone</label>
-                        <input type="text" name="EmergencyPhone" placeholder="+252 63..." 
-                            class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
-                    </div>
-                </div>
+                <button type="button" onclick="closeAddModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
             </div>
 
-            <!-- COLUMN 2: Membership Package & Payment -->
-            <div class="space-y-4 flex flex-col justify-between">
-                <div class="space-y-4 bg-zinc-50 dark:bg-zinc-950/50 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800">
-                    <h4 class="font-extrabold uppercase tracking-wider text-lime-600 dark:text-lime-400 text-xs">2. Package & Payment Details</h4>
-
-                    <div>
-                        <label class="block font-bold uppercase text-zinc-500 mb-1">Select Package *</label>
-                        <select name="Package" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="">-- Choose Membership Plan --</option>
-                            <option value="Standard Monthly">Standard Monthly ($30 / 1 Month)</option>
-                            <option value="Quarterly Saver">Quarterly Saver ($80 / 3 Months)</option>
-                            <option value="VIP Premium">VIP Premium ($150 / 6 Months)</option>
-                            <option value="Annual VIP Pass">Annual VIP Pass ($280 / 12 Months)</option>
-                        </select>
+            <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
+                <!-- Personal Information -->
+                <div>
+                    <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Personal Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Full Name *</label>
+                            <input type="text" id="Name" name="Name" required placeholder="e.g. Mohamed Ali" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Gender *</label>
+                            <select id="Gender" name="Gender" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Date of Birth</label>
+                            <input type="date" id="DateOfBirth" name="DateOfBirth" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Phone Number *</label>
+                            <input type="text" id="Phone" name="Phone" required placeholder="+252 61XXXXXXX" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Email Address</label>
+                            <input type="email" id="Email" name="Email" placeholder="member@example.com" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Address</label>
+                            <input type="text" id="Address" name="Address" placeholder="District, City" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                <!-- Membership & Class Information -->
+                <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
+                    <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Membership Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                            <label class="block font-bold uppercase text-zinc-500 mb-1">Start Date *</label>
-                            <input type="date" name="StartDate" required 
-                                class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Membership Type *</label>
+                            <select id="MembershipType" name="MembershipType" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                                <option value="">Select Membership</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Standard">Standard</option>
+                                <option value="Basic">Basic</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="block font-bold uppercase text-zinc-500 mb-1">Locker No.</label>
-                            <input type="text" name="LockerNo" placeholder="Optional" 
-                                class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500" />
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-bold uppercase text-zinc-500 mb-1">Amount Paid ($) *</label>
-                            <input type="number" step="0.01" name="Amount" required placeholder="0.00" 
-                                class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 text-zinc-900 dark:text-white outline-none focus:border-lime-500 font-bold" />
-                        </div>
-                        <div>
-                            <label class="block font-bold uppercase text-zinc-500 mb-1">Payment Method *</label>
-                            <select name="PaymentMethod" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
-                                <option value="">Select Method</option>
-                                <option value="ZAAD Service">ZAAD Service</option>
-                                <option value="EVC Plus">EVC Plus</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Credit Card">Credit Card</option>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Assigned Gym Class *</label>
+                            <select id="ClassName" name="ClassName" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                                <option value="">-- Select Gym Class --</option>
+                                <option value="Strength & Lifting">Strength & Lifting</option>
+                                <option value="Cardio & Burn">Cardio & Burn</option>
+                                <option value="CrossFit Pro">CrossFit Pro</option>
                             </select>
                         </div>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="block font-bold uppercase text-zinc-500 mb-1">Payment Status *</label>
-                        <select name="PaymentStatus" required class="w-full h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 text-zinc-900 dark:text-white outline-none focus:border-lime-500 cursor-pointer">
-                            <option value="Paid">Paid (Full)</option>
-                            <option value="Partial">Partial Payment</option>
-                            <option value="Pending">Pending / Unpaid</option>
-                        </select>
+                <!-- Account Information -->
+                <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
+                    <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Account Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Username *</label>
+                            <input type="text" id="Username" name="Username" required placeholder="e.g. mohamed_member" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div id="passwordFieldContainer">
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Password *</label>
+                            <input type="password" id="Password" name="Password" placeholder="••••••••" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Footer Buttons inside Form -->
-                <div class="flex justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                    <button type="button" onclick="closeAddMemberModal()" class="px-6 py-3 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl transition cursor-pointer">Cancel</button>
-                    <button type="submit" class="px-6 py-3 bg-lime-500 hover:bg-lime-400 text-zinc-950 font-extrabold rounded-xl shadow-lg transition cursor-pointer">Save Member</button>
-                </div>
+            <div class="flex justify-end gap-3 px-4 sm:px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+                <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-sm font-semibold bg-lime-500 hover:bg-lime-600 text-zinc-950">Save Member</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- 2. MEMBER DETAILS MODAL                    -->
-<!-- ========================================== -->
-<div id="memberDetailsModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
-        
-        <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4">
+<!-- ================= MEMBER DETAILS MODAL ================= -->
+<div id="memberDetailsModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl my-auto landscape:my-4">
+        <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
             <div class="flex items-center gap-3">
-                <img id="modalAvatar" src="" alt="Profile" class="w-14 h-14 rounded-2xl object-cover border border-zinc-200 dark:border-zinc-700 shadow-sm" />
-                <div>
-                    <h3 class="text-base font-bold text-zinc-900 dark:text-white" id="modalName">---</h3>
-                    <p class="text-xs text-lime-600 dark:text-lime-400 font-mono font-bold" id="modalId">ID: ---</p>
-                </div>
+                <span id="modalMemberId" class="text-xs font-mono bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 border border-lime-300 dark:border-lime-500/30 px-2.5 py-1 rounded-md">MEM-101</span>
+                <h3 id="modalMemberName" class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Mohamed Ali</h3>
             </div>
-            <button type="button" onclick="closeDetailsModal()" class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center cursor-pointer transition">
-                <i class="fa-solid fa-xmark text-base"></i>
-            </button>
+            <button type="button" onclick="closeDetailsModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
         </div>
-
-        <div class="space-y-4 text-xs">
-            <div class="grid grid-cols-2 gap-4 bg-zinc-50 dark:bg-zinc-950/50 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
+            <!-- Personal Info Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
                 <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Package / Plan</span>
-                    <span class="font-bold text-zinc-900 dark:text-white text-sm" id="modalPlan">-</span>
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Gender</span>
+                    <span id="modalGender" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Status</span>
-                    <span id="modalStatusBadge" class="inline-flex px-2.5 py-1 rounded-md font-extrabold">-</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 px-1">
-                <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Phone Number</span>
-                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalPhone">-</span>
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Date of Birth</span>
+                    <span id="modalDob" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Email Address</span>
-                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalEmail">-</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 px-1">
-                <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Gender</span>
-                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalGender">-</span>
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Phone</span>
+                    <span id="modalPhone" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Assigned Locker</span>
-                    <span class="font-semibold text-lime-600 dark:text-lime-400" id="modalLocker">-</span>
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Email</span>
+                    <span id="modalEmail" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
+                </div>
+                <div class="col-span-2">
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Address</span>
+                    <span id="modalAddress" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
             </div>
 
-            <div class="bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-2xl space-y-1">
-                <span class="block font-bold uppercase text-amber-600 dark:text-amber-400 text-[10px]">Emergency Contact Info</span>
-                <p class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalEmergency">-</p>
+            <!-- Membership & Class Information -->
+            <div>
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-2.5">Membership Information</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Membership Plan</span>
+                        <span id="modalMembership" class="text-sm font-semibold text-lime-600 dark:text-lime-400">-</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Gym Class</span>
+                        <span id="modalClassName" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Join Date</span>
+                        <span id="modalJoinDate" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Status</span>
+                        <span id="modalStatus" class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">-</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 px-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Payment Method</span>
-                    <span class="font-semibold text-zinc-800 dark:text-zinc-200" id="modalPaymentMethod">-</span>
-                </div>
-                <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Payment Status</span>
-                    <span class="font-semibold text-emerald-600 dark:text-emerald-400" id="modalPaymentStatus">-</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 px-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Joining Date</span>
-                    <span class="font-mono text-zinc-700 dark:text-zinc-300" id="modalJoined">-</span>
-                </div>
-                <div>
-                    <span class="block font-bold uppercase text-zinc-400 mb-1">Expiry Date</span>
-                    <span class="font-mono text-zinc-700 dark:text-zinc-300" id="modalExpiry">-</span>
+            <!-- Account Information -->
+            <div>
+                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-2.5">Account Information</h4>
+                <div class="grid grid-cols-2 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">System Username</span>
+                        <span id="modalUsername" class="text-sm font-semibold text-zinc-900 dark:text-white font-mono">-</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Portal Access</span>
+                        <span class="text-sm font-semibold text-lime-600 dark:text-lime-400">Active</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="flex justify-end pt-4 border-t border-zinc-100 dark:border-zinc-800">
-            <button type="button" onclick="closeDetailsModal()" class="px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl transition cursor-pointer">Close</button>
+        <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+            <button type="button" onclick="closeDetailsModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300">Back to Members</button>
         </div>
     </div>
 </div>
 
-<!-- JavaScript Logic -->
 <script>
-    function openAddMemberModal() {
+    function openAddModal() {
+        document.getElementById('memberForm').action = '/Receptionist/CreateMember';
+        document.getElementById('modalTitle').innerText = 'Add New Member';
+        document.getElementById('modalSubtitle').innerText = 'Register a new gym member and setup their credentials.';
+
+        document.getElementById('memberForm').reset();
+        document.getElementById('MemberId').value = '';
+
+        document.getElementById('passwordFieldContainer').style.display = 'block';
+        document.getElementById('Password').required = true;
+
         document.getElementById('addMemberModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
     }
-    function closeAddMemberModal() {
+
+    function openEditModal(id, name, gender, dob, phone, email, address, membershipType, username, className) {
+        document.getElementById('memberForm').action = '/Receptionist/EditMember/' + id;
+        document.getElementById('modalTitle').innerText = 'Edit Member';
+        document.getElementById('modalSubtitle').innerText = 'Update existing member details.';
+
+        document.getElementById('MemberId').value = id;
+        document.getElementById('Name').value = name || '';
+        document.getElementById('Gender').value = gender || '';
+
+        if (dob) {
+            try {
+                let parsedDate = new Date(dob);
+                if (!isNaN(parsedDate.getTime())) {
+                    document.getElementById('DateOfBirth').value = parsedDate.toISOString().split('T')[0];
+                } else {
+                    document.getElementById('DateOfBirth').value = '';
+                }
+            } catch (e) {
+                document.getElementById('DateOfBirth').value = '';
+            }
+        } else {
+            document.getElementById('DateOfBirth').value = '';
+        }
+
+        document.getElementById('Phone').value = phone || '';
+        document.getElementById('Email').value = email || '';
+        document.getElementById('Address').value = address || '';
+        document.getElementById('MembershipType').value = membershipType || '';
+        document.getElementById('ClassName').value = className || '';
+        document.getElementById('Username').value = username || '';
+
+        document.getElementById('passwordFieldContainer').style.display = 'none';
+        document.getElementById('Password').required = false;
+
+        document.getElementById('addMemberModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
         document.getElementById('addMemberModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
     }
 
-    function openDetailsModal(name, id, plan, phone, email, gender, emergency, locker, payMethod, payStatus, joined, expiry, avatar) {
-        document.getElementById('modalName').innerText = name;
-        document.getElementById('modalId').innerText = "ID: " + id;
-        document.getElementById('modalPlan').innerText = plan;
-        document.getElementById('modalPhone').innerText = phone;
-        document.getElementById('modalEmail').innerText = email;
-        document.getElementById('modalGender').innerText = gender;
-        document.getElementById('modalEmergency').innerText = emergency;
-        document.getElementById('modalLocker').innerText = locker;
-        document.getElementById('modalPaymentMethod').innerText = payMethod;
-        document.getElementById('modalPaymentStatus').innerText = payStatus;
-        document.getElementById('modalJoined').innerText = joined;
-        document.getElementById('modalExpiry').innerText = expiry;
-        document.getElementById('modalAvatar').src = avatar;
-
-        const badge = document.getElementById('modalStatusBadge');
-        badge.className = "inline-flex px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20";
-        badge.innerText = "ACTIVE";
+    function openDetailsModal(id, name, gender, dob, phone, email, address, membershipType, joinDate, status, username, className) {
+        document.getElementById('modalMemberId').innerText = id;
+        document.getElementById('modalMemberName').innerText = name;
+        document.getElementById('modalGender').innerText = gender || '-';
+        document.getElementById('modalDob').innerText = dob || '-';
+        document.getElementById('modalPhone').innerText = phone || '-';
+        document.getElementById('modalEmail').innerText = email || '-';
+        document.getElementById('modalAddress').innerText = address || '-';
+        document.getElementById('modalMembership').innerText = membershipType || 'Standard';
+        document.getElementById('modalClassName').innerText = className || 'Not Assigned';
+        document.getElementById('modalJoinDate').innerText = joinDate || '-';
+        document.getElementById('modalStatus').innerText = status || '-';
+        document.getElementById('modalUsername').innerText = username || '-';
 
         document.getElementById('memberDetailsModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
     }
+
     function closeDetailsModal() {
         document.getElementById('memberDetailsModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
     }
 </script>

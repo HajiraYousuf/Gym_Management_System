@@ -1,10 +1,12 @@
-﻿@{
+﻿@model IEnumerable<GymManagementSystem.Models.UserProfile>
+
+@{
     ViewData["Title"] = "Reception Staff Management";
     Layout = "~/Views/Layouts/AdminMaster.cshtml";
 }
 
 <div class="space-y-6 min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-100 p-2 sm:p-4 transition-colors duration-300">
-      
+
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -28,7 +30,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Total Staff</p>
-                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">6</h3>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">@ViewBag.TotalStaff</h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-lime-100 dark:bg-lime-500/10 text-lime-600 dark:text-lime-400 flex items-center justify-center text-xl">
                     <i class="fas fa-user-tie"></i>
@@ -40,7 +42,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Present</p>
-                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">4</h3>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">@ViewBag.PresentStaff</h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl">
                     <i class="fas fa-check-circle"></i>
@@ -52,7 +54,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Absent</p>
-                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">1</h3>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">@ViewBag.AbsentStaff</h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
                     <i class="fas fa-times-circle"></i>
@@ -64,7 +66,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-zinc-500 dark:text-zinc-400 text-xs font-semibold uppercase tracking-wider">Late</p>
-                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">1</h3>
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white mt-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">@ViewBag.LateStaff</h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
                     <i class="fas fa-clock"></i>
@@ -74,12 +76,13 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+    <form method="get" asp-action="Reception" class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
         <div class="relative w-full md:w-96">
             <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"></i>
-            <input type="text" placeholder="Search Staff by ID, Name, Phone..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-lime-500 transition-all" />
+            <input type="text" name="searchString" value="@ViewContext.HttpContext.Request.Query["searchString"]" placeholder="Search Staff by ID, Name, Phone..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-lime-500 transition-all" />
         </div>
-    </div>
+        <button type="submit" class="w-full md:w-auto px-5 py-2.5 bg-zinc-900 dark:bg-lime-500 text-white dark:text-zinc-950 font-semibold rounded-xl text-sm transition-all">Search</button>
+    </form>
 
     <!-- Reception Staff Expanded Table -->
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
@@ -100,132 +103,165 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
-                    <tr class="hover:bg-lime-500/5 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td class="px-6 py-4 font-mono font-medium text-zinc-900 dark:text-white">REC-1001</td>
-                        <td class="px-6 py-4">
-                            <div class="w-10 h-10 rounded-full bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 font-bold flex items-center justify-center border border-lime-300 dark:border-lime-500/30">MA</div>
-                        </td>
-                        <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">Marian Ali</td>
-                        <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">Senior Receptionist</td>
-                        <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">Morning Shift</td>
-                        <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">$450.00</td>
-                        <td class="px-6 py-4 font-mono text-zinc-600 dark:text-zinc-400">+252 61 2223344</td>
-                        <td class="px-6 py-4 font-mono text-zinc-600 dark:text-zinc-400">marian@gym.com</td>
-                        <td class="px-6 py-4">
-                            <span class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active Duty
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <div class="flex items-center justify-center gap-1">
-                                <button type="button" onclick="openDetailsModal()" class="p-2 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button type="button" class="p-2 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors" title="Edit Staff"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Delete Staff"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var staff in Model)
+                        {
+                            <tr class="hover:bg-lime-500/5 dark:hover:bg-zinc-800/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-zinc-900 dark:text-white">@staff.Id</td>
+                                <td class="px-6 py-4">
+                                    <div class="w-10 h-10 rounded-full bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 font-bold flex items-center justify-center border border-lime-300 dark:border-lime-500/30 overflow-hidden">
+                                        @if (!string.IsNullOrEmpty(staff.Avatar) && staff.Avatar.StartsWith("http"))
+                                        {
+                                            <img src="@staff.Avatar" alt="@staff.Name" class="w-full h-full object-cover" />
+                                        }
+                                        else if (!string.IsNullOrEmpty(staff.Avatar))
+                                        {
+                                            <span class="text-xs">@staff.Avatar</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-xs">@(staff.Name.Length >= 2 ? staff.Name.Substring(0, 2).ToUpper() : "REC")</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">@staff.Name</td>
+                                <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">Receptionist</td>
+                                <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">@staff.Shift</td>
+                                <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">$@staff.Salary.ToString("N2")</td>
+                                <td class="px-6 py-4 font-mono text-zinc-600 dark:text-zinc-400">@staff.Phone</td>
+                                <td class="px-6 py-4 font-mono text-zinc-600 dark:text-zinc-400">@staff.Email</td>
+                                <td class="px-6 py-4">
+                                    @if (staff.Status == "Active")
+                                    {
+                                        <span class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> @staff.Status
+                                        </span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <button type="button" onclick="openDetailsModal('@staff.Id', '@staff.Name', '@staff.Gender', '@staff.DateOfBirth', '@staff.Phone', '@staff.Email', '@staff.Address', '$@staff.Salary.ToString("N2")', '@staff.Shift', '@staff.JoinDate.ToString("dd MMM yyyy")', '@staff.Status', '@staff.Username')" class="p-2 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors" title="View Details"><i class="fas fa-eye"></i></button>
+                                        <button type="button" onclick="openEditModal('@staff.Id', '@staff.Name', '@staff.Gender', '@staff.DateOfBirth', '@staff.Phone', '@staff.Email', '@staff.Address', '@staff.Salary', '@staff.Shift', '@staff.Username')" class="p-2 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors" title="Edit Staff"><i class="fas fa-edit"></i></button>
+                                        <form asp-action="DeleteReceptionist" asp-route-id="@staff.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this receptionist?');" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors" title="Delete Staff"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" class="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">No reception staff found in the database.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- ================= ADD RECEPTIONIST MODAL ================= -->
+<!-- ================= ADD / EDIT RECEPTIONIST MODAL ================= -->
 <div id="addStaffModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl my-auto landscape:my-4">
-        <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <div>
-                <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Add New Receptionist</h3>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400">Register a new receptionist staff and configure system access.</p>
+        <form id="staffForm" method="post" action="/Admin/CreateReceptionist">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="StaffId" name="Id" />
+
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+                <div>
+                    <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Add New Receptionist</h3>
+                    <p id="modalSubtitle" class="text-xs text-zinc-500 dark:text-zinc-400">Register a new receptionist staff and configure system access.</p>
+                </div>
+                <button type="button" onclick="closeAddModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
             </div>
-            <button type="button" onclick="closeAddModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
-        </div>
-        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
-            <!-- Personal Information -->
-            <div>
-                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Personal Information</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Reception ID *</label>
-                        <input type="text" placeholder="REC-1002" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+
+            <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[60vh] landscape:max-h-[50vh] overflow-y-auto">
+                <!-- Personal Information -->
+                <div>
+                    <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Personal Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Full Name *</label>
+                            <input type="text" id="Name" name="Name" required placeholder="e.g. Marian Ali" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Gender *</label>
+                            <select id="Gender" name="Gender" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                                <option value="">Select Gender</option>
+                                <option value="Female">Female</option>
+                                <option value="Male">Male</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Date of Birth</label>
+                            <input type="date" id="DateOfBirth" name="DateOfBirth" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Phone Number *</label>
+                            <input type="text" id="Phone" name="Phone" required placeholder="+252 61XXXXXXX" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Email Address *</label>
+                            <input type="email" id="Email" name="Email" required placeholder="staff@gym.com" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div class="sm:col-span-2 lg:col-span-3">
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Address</label>
+                            <input type="text" id="Address" name="Address" placeholder="District, City" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Full Name *</label>
-                        <input type="text" placeholder="e.g. Marian Ali" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                </div>
+
+                <!-- Employment & Shift -->
+                <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
+                    <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Employment & Shift</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Salary ($) *</label>
+                            <input type="number" step="0.01" id="Salary" name="Salary" required placeholder="e.g. 450" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Shift *</label>
+                            <select id="Shift" name="Shift" required class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
+                                <option value="Morning Shift">Morning Shift</option>
+                                <option value="Afternoon Shift">Afternoon Shift</option>
+                                <option value="Evening Shift">Evening Shift</option>
+                                <option value="Full Day">Full Day</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Gender *</label>
-                        <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
-                            <option>Select Gender</option>
-                            <option>Female</option>
-                            <option>Male</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Date of Birth</label>
-                        <input type="date" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Phone Number *</label>
-                        <input type="text" placeholder="+252 61XXXXXXX" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Email Address *</label>
-                        <input type="email" placeholder="staff@gym.com" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                    <div class="sm:col-span-2 lg:col-span-3">
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Address</label>
-                        <input type="text" placeholder="District, City" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                </div>
+
+                <!-- Account Info -->
+                <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
+                    <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Account Info</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Username *</label>
+                            <input type="text" id="Username" name="Username" required placeholder="e.g. marian_rec" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
+                        <div id="passwordFieldContainer">
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Password *</label>
+                            <input type="password" id="Password" name="Password" placeholder="••••••••" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Employment & Shift -->
-            <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
-                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Employment & Shift</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Salary ($) *</label>
-                        <input type="number" placeholder="e.g. 450" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Shift *</label>
-                        <select class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none">
-                            <option>Morning Shift</option>
-                            <option>Afternoon Shift</option>
-                            <option>Evening Shift</option>
-                            <option>Full Day</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Joining Date</label>
-                        <input type="date" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                </div>
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+                <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-sm font-semibold bg-lime-500 hover:bg-lime-600 text-zinc-950">Save Receptionist</button>
             </div>
-
-            <!-- Account Info -->
-            <div class="border-t border-zinc-200 dark:border-zinc-800 pt-4">
-                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-3">Account Info</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Username *</label>
-                        <input type="text" placeholder="e.g. marian_rec" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Password *</label>
-                        <input type="password" placeholder="••••••••" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:outline-none" />
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300">Cancel</button>
-            <div class="flex gap-2">
-                <button type="button" class="px-4 py-2 rounded-xl text-sm font-semibold bg-zinc-900 dark:bg-zinc-800 text-white hover:bg-zinc-800">Save & Add Another</button>
-                <button type="button" class="px-5 py-2 rounded-xl text-sm font-semibold bg-lime-500 hover:bg-lime-600 text-zinc-950">Save Receptionist</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -234,8 +270,8 @@
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl my-auto landscape:my-4">
         <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
             <div class="flex items-center gap-3">
-                <span class="text-xs font-mono bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 border border-lime-300 dark:border-lime-500/30 px-2.5 py-1 rounded-md">REC-1001</span>
-                <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Marian Ali</h3>
+                <span id="modalStaffId" class="text-xs font-mono bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 border border-lime-300 dark:border-lime-500/30 px-2.5 py-1 rounded-md">REC-1001</span>
+                <h3 id="modalStaffName" class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">Marian Ali</h3>
             </div>
             <button type="button" onclick="closeDetailsModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-white"><i class="fas fa-times text-lg"></i></button>
         </div>
@@ -244,23 +280,23 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
                 <div>
                     <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Gender</span>
-                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">Female</span>
+                    <span id="modalGender" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div>
                     <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Date of Birth</span>
-                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">20 Jun 1998</span>
+                    <span id="modalDob" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div>
                     <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Phone</span>
-                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">+252 61 2223344</span>
+                    <span id="modalPhone" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div>
                     <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Email</span>
-                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">marian@gym.com</span>
+                    <span id="modalEmail" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
                 <div class="col-span-2">
                     <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Address</span>
-                    <span class="text-sm font-semibold text-zinc-900 dark:text-white">Karan, Mogadishu</span>
+                    <span id="modalAddress" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                 </div>
             </div>
 
@@ -270,38 +306,19 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <div>
                         <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Salary</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white">$450.00 / Month</span>
+                        <span id="modalSalary" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                     </div>
                     <div>
                         <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Shift Schedule</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white">Morning Shift</span>
+                        <span id="modalShift" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                     </div>
                     <div>
                         <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Joining Date</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white">01 March 2025</span>
+                        <span id="modalJoinDate" class="text-sm font-semibold text-zinc-900 dark:text-white">-</span>
                     </div>
                     <div class="col-span-2">
                         <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Employment Status</span>
-                        <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Active Duty</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity Overview -->
-            <div>
-                <h4 class="text-xs sm:text-sm font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-wider mb-2.5">Activity Overview</h4>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                    <div>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Registered Members</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white">142</span>
-                    </div>
-                    <div>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Processed Payments</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white">$8,520</span>
-                    </div>
-                    <div>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Attendance Records</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white">1,280</span>
+                        <span id="modalStatus" class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">-</span>
                     </div>
                 </div>
             </div>
@@ -312,7 +329,7 @@
                 <div class="grid grid-cols-2 gap-3 bg-zinc-50 dark:bg-zinc-950 p-3.5 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
                     <div>
                         <span class="text-xs text-zinc-500 dark:text-zinc-400 block">System Username</span>
-                        <span class="text-sm font-semibold text-zinc-900 dark:text-white font-mono">marian_rec</span>
+                        <span id="modalUsername" class="text-sm font-semibold text-zinc-900 dark:text-white font-mono">-</span>
                     </div>
                     <div>
                         <span class="text-xs text-zinc-500 dark:text-zinc-400 block">Reception Account</span>
@@ -322,10 +339,6 @@
             </div>
         </div>
         <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-            <div class="flex gap-2">
-                <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20"><i class="fas fa-edit mr-1"></i> Edit</button>
-                <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/20"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
-            </div>
             <button type="button" onclick="closeDetailsModal()" class="px-4 py-2 rounded-xl text-sm font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300">Back to Receptionists</button>
         </div>
     </div>
@@ -333,16 +346,63 @@
 
 <script>
     function openAddModal() {
-        document.getElementById('addStaffModal').classList.remove('hidden');
-    }
-    function closeAddModal() {
-        document.getElementById('addStaffModal').classList.add('hidden');
-    }
+        document.getElementById('staffForm').action = '/Admin/CreateReceptionist';
+        document.getElementById('modalTitle').innerText = 'Add New Receptionist';
+            document.getElementById('modalSubtitle').innerText = 'Register a new receptionist staff and configure system access.';
 
-    function openDetailsModal() {
-        document.getElementById('staffDetailsModal').classList.remove('hidden');
-    }
-    function closeDetailsModal() {
-        document.getElementById('staffDetailsModal').classList.add('hidden');
-    }
+            document.getElementById('staffForm').reset();
+            document.getElementById('StaffId').value = '';
+
+            document.getElementById('passwordFieldContainer').style.display = 'block';
+            document.getElementById('Password').required = true;
+
+            document.getElementById('addStaffModal').classList.remove('hidden');
+        }
+
+        function openEditModal(id, name, gender, dob, phone, email, address, salary, shift, username) {
+            document.getElementById('staffForm').action = '/Admin/EditReceptionist/' + id;
+            document.getElementById('modalTitle').innerText = 'Edit Receptionist';
+            document.getElementById('modalSubtitle').innerText = 'Update existing receptionist details.';
+
+            document.getElementById('StaffId').value = id;
+            document.getElementById('Name').value = name || '';
+            document.getElementById('Gender').value = gender || '';
+            document.getElementById('DateOfBirth').value = dob || '';
+            document.getElementById('Phone').value = phone || '';
+            document.getElementById('Email').value = email || '';
+            document.getElementById('Address').value = address || '';
+            document.getElementById('Salary').value = salary || '';
+            document.getElementById('Shift').value = shift || '';
+            document.getElementById('Username').value = username || '';
+
+            document.getElementById('passwordFieldContainer').style.display = 'none';
+            document.getElementById('Password').required = false;
+
+            document.getElementById('addStaffModal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addStaffModal').classList.add('hidden');
+        }
+
+        function openDetailsModal(id, name, gender, dob, phone, email, address, salary, shift, joinDate, status, username) {
+            document.getElementById('modalStaffId').innerText = id;
+            document.getElementById('modalStaffName').innerText = name;
+            document.getElementById('modalGender').innerText = gender || '-';
+            document.getElementById('modalDob').innerText = dob || '-';
+            document.getElementById('modalPhone').innerText = phone || '-';
+            document.getElementById('modalEmail').innerText = email || '-';
+            document.getElementById('modalAddress').innerText = address || '-';
+            document.getElementById('modalSalary').innerText = salary || '-';
+            document.getElementById('modalShift').innerText = shift || '-';
+            document.getElementById('modalJoinDate').innerText = joinDate || '-';
+            document.getElementById('modalStatus').innerText = status || '-';
+            document.getElementById('modalUsername').innerText = username || '-';
+
+            document.getElementById('staffDetailsModal').classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('staffDetailsModal').classList.add('hidden');
+        }
 </script>
