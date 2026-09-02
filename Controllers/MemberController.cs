@@ -72,48 +72,69 @@ namespace GymManagementSystem.Controllers
         }
 
         // 2. ClassSchedule
+        [Authorize]
         public async Task<IActionResult> ClassSchedule()
         {
-            // 1. Hubi in user-ku uu authenticated yahay
-            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            try
             {
-                return RedirectToAction("Login", "Account");
+                // 1. Hel ID-ga Member-ka hadda logged-in ah (sida Dashboard-ka)
+                string currentMemberId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(currentMemberId))
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                // 2. Ka hel xogta user-ka miiska UserProfiles adigoo ka raadinaya ID-ga
+                var currentUser = await _context.UserProfiles
+                    .FirstOrDefaultAsync(u => u.Id == currentMemberId);
+
+                if (currentUser == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                string memberId = currentUser.Id;       // Tusaale: "member1" ama "MEM-1001"
+                string memberName = currentUser.Name;   // Tusaale: "Amal Ali"
+
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+
+                // 3. Soo qaado fasallada uu book-garaystay
+                var reservations = await _context.GymReservations
+                    .Where(r => r.Status == "Confirmed" &&
+                                (r.MemberName.Contains(memberName) || r.MemberName.Contains(memberId)))
+                    .OrderBy(r => r.ReservationDate)
+                    .ToListAsync();
+
+                // 4. Xisaabi tirada fasallada uu dhameeyay bishan
+                var completedSessionsCount = await _context.AttendanceRecords
+                    .Where(a => (a.MemberId == memberId || a.MemberId == memberName) &&
+                                a.Date.Month == currentMonth &&
+                                a.Date.Year == currentYear &&
+                                (a.Status == "Present" || a.Status == "Late"))
+                    .CountAsync();
+
+                // 5. Xisaabinta Attendance Rate-ka
+                int totalScheduledThisMonth = completedSessionsCount + reservations.Count;
+                int attendanceRate = totalScheduledThisMonth > 0
+                    ? (int)Math.Round((double)completedSessionsCount / totalScheduledThisMonth * 100)
+                    : 100;
+
+                // Gudbinta Xogta (ViewBag)
+                ViewBag.ReservedCount = reservations.Count;
+                ViewBag.CompletedSessions = completedSessionsCount;
+                ViewBag.AttendanceRate = attendanceRate;
+                ViewBag.CurrentMonthName = DateTime.Now.ToString("MMMM yyyy");
+
+                return View(reservations);
             }
-
-            // 2. Hel magaca ama username-ka user-ka hadda soo galay
-            string currentUserName = User.Identity.Name;
-
-            var currentMonth = DateTime.Now.Month;
-            var currentYear = DateTime.Now.Year;
-
-            // 3. Soo qaado fasallada uu book-garaystay (Adigoo bar-bar dhigaya MemberName)
-            var reservations = await _context.GymReservations
-                .Where(r => r.MemberName == currentUserName && r.Status == "Confirmed")
-                .OrderBy(r => r.ReservationDate)
-                .ToListAsync();
-
-            // 4. Xisaabi tirada fasallada uu dhameeyay bishan (AttendanceRecords)
-            var completedSessionsCount = await _context.AttendanceRecords
-                .Where(a => a.MemberId == currentUserName &&
-                            a.Date.Month == currentMonth &&
-                            a.Date.Year == currentYear &&
-                            (a.Status == "Present" || a.Status == "Late"))
-                .CountAsync();
-
-            // Xisaabinta Attendance Rate-ka
-            int totalScheduledThisMonth = completedSessionsCount + reservations.Count;
-            int attendanceRate = totalScheduledThisMonth > 0
-                ? (int)Math.Round((double)completedSessionsCount / totalScheduledThisMonth * 100)
-                : 100;
-
-            // Gudbinta Xogta (ViewBag)
-            ViewBag.ReservedCount = reservations.Count;
-            ViewBag.CompletedSessions = completedSessionsCount;
-            ViewBag.AttendanceRate = attendanceRate;
-            ViewBag.CurrentMonthName = DateTime.Now.ToString("MMMM yyyy");
-
-            return View(reservations);
-        }        // 3. Dashboard
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR IN CLASSSCHEDULE: " + ex.Message);
+                throw;
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
@@ -296,15 +317,13 @@ namespace GymManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> WorkoutPlans()
         {
-            // Hel ID-ga ama Username-ka Member-ka hadda logged-in ah (Authentication)
-            // Tusaale ahaan waxaad isticmaali kartaa User.FindFirstValue(ClaimTypes.NameIdentifier) ama habkaaga session-ka.
-            string currentMemberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "member1"; // Default-ka wuxuu ku xidhayaa xogtaadii hore
+            // Hel ID-ga Member-ka logged-in ah
+            string currentMemberId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "member1";
 
             // Ka soo saar database-ka Workout Plan-ka loo assigned-gareeyay member-kan
             var workoutPlan = await _context.WorkoutPlans
                 .FirstOrDefaultAsync(p => p.AssignedMemberId == currentMemberId);
 
-            // Haddii uusan jirin mid gaar ah loo assigned-iyay, waxaad u soo celin kartaa midkii ugu dambeeyay ama madhan
             if (workoutPlan == null)
             {
                 workoutPlan = new WorkoutPlan
@@ -315,6 +334,35 @@ namespace GymManagementSystem.Controllers
                     Notes = "Fadlan la xiriir macallinkaaga (Trainer) si uu kuu soo geliyo Workout Plan.",
                     ExercisesJson = "[]"
                 };
+            }
+            else if (!string.IsNullOrEmpty(workoutPlan.ExercisesJson) && !workoutPlan.ExercisesJson.StartsWith("["))
+            {
+                // 1. Kala bixi IDs-ka ka soo baxa string-ka "3,4"
+                var exerciseIds = workoutPlan.ExercisesJson
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.TryParse(id.Trim(), out int parsedId) ? parsedId : 0)
+                    .Where(id => id > 0)
+                    .ToList();
+
+                // 2. Ka soo saar Database-ka details-ka saraakiisha exercise-yadaas
+                // Waxaan ku xirnay columns-ka saxda ah: PrimaryMuscle, Equipment, Difficulty, ThumbnailPath
+                var exercises = await _context.Exercises
+                    .Where(e => exerciseIds.Contains(e.Id))
+                    .Select(e => new
+                    {
+                        Name = e.Name,
+                        Target = e.PrimaryMuscle ?? "General", // PrimaryMuscle halkii TargetGoal ka noqon lahaa
+                        Equipment = e.Equipment,
+                        Difficulty = e.Difficulty,
+                        Thumbnail = e.ThumbnailPath,
+                        Sets = 3,
+                        Reps = 10,
+                        Rest = "60"
+                    })
+                    .ToListAsync();
+
+                // 3. U baddal JSON Array buuxa oo uu Javascript View-ka ku fahmo
+                workoutPlan.ExercisesJson = System.Text.Json.JsonSerializer.Serialize(exercises);
             }
 
             return View(workoutPlan);

@@ -213,6 +213,10 @@ namespace GymManagementSystem.Models
         [Required(ErrorMessage = "Category is required")]
         public string Category { get; set; } = string.Empty;
 
+        public string TrainerName { get; set; } = string.Empty;
+        public string Days { get; set; } = string.Empty;
+        public string TimeSlot { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Duration is required")]
         [Range(1, 300)]
         public int DurationMinutes { get; set; }
@@ -224,10 +228,10 @@ namespace GymManagementSystem.Models
         public string Difficulty { get; set; } = "All Levels";
         public string Equipment { get; set; } = string.Empty;
         public string IconName { get; set; } = "dumbbell";
+        public string ImageUrl { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Status { get; set; } = "Active";
     }
-
     public class MembershipPlan
     {
         [Key]

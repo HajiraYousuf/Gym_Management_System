@@ -54,7 +54,8 @@ namespace GymManagementSystem.Models
 
         [ForeignKey(nameof(AssignedMemberId))]
         public UserProfile? AssignedMember { get; set; }
-
+        public int? TrainerId { get; set; }
+        public virtual TrainerProfile? Trainer { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
@@ -85,6 +86,8 @@ namespace GymManagementSystem.Models
         [ForeignKey(nameof(AssignedMemberId))]
         public UserProfile? AssignedMember { get; set; }
 
+        public int? TrainerId { get; set; }
+        public virtual TrainerProfile? Trainer { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -1,4 +1,5 @@
-﻿@model GymManagementSystem.Models.WorkoutPlan
+﻿@using System.Web
+@model GymManagementSystem.Models.WorkoutPlan
 
 @{
     ViewData["Title"] = "My Workout Plan";
@@ -63,7 +64,6 @@
 
                 <!-- Dynamic Container for Exercises parsed from JSON -->
                 <div id="exercisesContainer" class="space-y-4">
-                    <!-- JavaScript will populate exercises here dynamically -->
                     <div class="p-6 text-center text-zinc-400 text-xs">Loading exercises...</div>
                 </div>
             </div>
@@ -78,11 +78,13 @@
                 </h3>
                 <div class="p-4 rounded-2xl bg-lime-400/10 border border-lime-400/20 text-xs text-zinc-700 dark:text-zinc-300 space-y-2">
                     <p class="font-medium italic">
-                        "@(string.IsNullOrEmpty(Model.Notes) ? "No special instructions provided by your trainer." : Model.Notes)"
+                        "@(string.IsNullOrWhiteSpace(Model.Notes) ? "No special instructions provided by your trainer." : Model.Notes)"
                     </p>
-                    <span class="block text-[10px] text-lime-600 dark:text-lime-400 font-bold text-right">
-                        - Assigned Trainer
-                    </span>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-lime-400/20">
+                        <span class="block text-[11px] text-lime-600 dark:text-lime-400 font-bold">
+                            - @(Model.Title != null ? Model.Title : "Assigned Gym Trainer")
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -106,7 +108,6 @@
                     </div>
                 </div>
 
-                <button type="button" class="w-full py-3 rounded-xl bg-lime-400 text-black font-bold text-xs shadow-lg shadow-lime-400/20 hover:bg-lime-300 transition cursor-pointer mt-2">Finish Workout</button>
             </div>
         </div>
 
@@ -114,53 +115,68 @@
 </div>
 
 <!-- JavaScript to parse ExercisesJson dynamically -->
+<!-- JavaScript to parse ExercisesJson safely -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        let rawJson = '@Html.Raw(Model.ExercisesJson)';
+        // Ammaan ahaan, waxaan ka dhigaynaa variable-ka mid aan marnaba undefined ama break noqon karin
+        let rawJson = '@Html.Raw(Model?.ExercisesJson ?? "[]")';
         let container = document.getElementById('exercisesContainer');
         let badge = document.getElementById('exerciseCountBadge');
 
-        try {
-            let exercises = JSON.parse(rawJson);
-            if (Array.isArray(exercises) && exercises.length > 0) {
-                badge.innerText = exercises.length + " Exercises";
-                container.innerHTML = "";
+        let exercises = [];
 
-                exercises.forEach((ex, index) => {
-                    let html = `
-                            <div class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center font-black text-base">
-                                        ${index + 1}
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-zinc-900 dark:text-white">${ex.Name || ex.Title || 'Exercise ' + (index + 1)}</h4>
-                                        <span class="text-xs text-zinc-500">Target: ${ex.Target || 'General'}</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-6 text-right">
-                                    <div>
-                                        <span class="text-xs font-bold text-zinc-900 dark:text-white block">${ex.Sets || 3} Sets x ${ex.Reps || 10} Reps</span>
-                                        <span class="text-[11px] text-zinc-500">Rest: ${ex.Rest || '60'} sec</span>
-                                    </div>
-                                    <input type="checkbox" class="w-5 h-5 accent-lime-400 rounded cursor-pointer" />
-                                </div>
-                            </div>
-                        `;
-                    container.innerHTML += html;
-                });
-            } else {
-                badge.innerText = "0 Exercises";
-                container.innerHTML = `<div class="p-6 text-center text-zinc-400 text-xs">No specific exercises listed in JSON format yet.</div>`;
+        try {
+            // Haddii rawJson uu yahay string mar hore serialized ah ama array
+            if (typeof rawJson === 'string' && rawJson.trim() !== '') {
+                exercises = JSON.parse(rawJson);
+            } else if (Array.isArray(rawJson)) {
+                exercises = rawJson;
             }
         } catch (e) {
-            badge.innerText = "Custom Routine";
-            container.innerHTML = `
-                    <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60 text-xs text-zinc-600 dark:text-zinc-300">
-                        <p class="font-bold mb-1">Routine Details:</p>
-                        <p>${rawJson}</p>
-                    </div>
-                `;
+            console.error("JSON Parse Error: ", e);
+            exercises = [];
+        }
+
+        if (Array.isArray(exercises) && exercises.length > 0) {
+            badge.innerText = exercises.length + " Exercises";
+            container.innerHTML = "";
+
+            exercises.forEach((ex, index) => {
+                let name = ex.Name || ex.name || ('Exercise ' + (index + 1));
+                let target = ex.Target || ex.target || 'General';
+                let equipment = ex.Equipment || ex.equipment || '';
+                let thumbnail = ex.Thumbnail || ex.thumbnail || '';
+                let sets = ex.Sets || ex.sets || 3;
+                let reps = ex.Reps || ex.reps || 10;
+                let rest = ex.Rest || ex.rest || '60';
+
+                let imageHtml = thumbnail
+                    ? `<img src="${thumbnail}" class="w-12 h-12 rounded-xl object-cover" alt="${name}" />`
+                    : `<div class="w-12 h-12 rounded-xl bg-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center font-black text-base">${index + 1}</div>`;
+
+                let html = `
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60 transition hover:border-lime-400/50">
+                            <div class="flex items-center gap-4">
+                                ${imageHtml}
+                                <div>
+                                    <h4 class="text-sm font-bold text-zinc-900 dark:text-white">${name}</h4>
+                                    <span class="text-xs text-zinc-500">Target: ${target} ${equipment ? '• ' + equipment : ''}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6 text-right">
+                                <div>
+                                    <span class="text-xs font-bold text-zinc-900 dark:text-white block">${sets} Sets x ${reps} Reps</span>
+                                    <span class="text-[11px] text-zinc-500">Rest: ${rest} sec</span>
+                                </div>
+                                <input type="checkbox" class="w-5 h-5 accent-lime-400 rounded cursor-pointer" />
+                            </div>
+                        </div>
+                    `;
+                container.innerHTML += html;
+            });
+        } else {
+            badge.innerText = "0 Exercises";
+            container.innerHTML = `<div class="p-6 text-center text-zinc-400 text-xs">No specific exercises attached to this workout plan.</div>`;
         }
     });
 </script>

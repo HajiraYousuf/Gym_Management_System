@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace GymManagementSystem.Controllers
@@ -634,8 +635,13 @@ namespace GymManagementSystem.Controllers
 
             return View(trainerSchedules);
         }
-        // 8. WorkoutPlans
-        // GET: /Trainer/WorkoutPlans
+
+        private string GetCurrentUserId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier)
+                   ?? HttpContext.Session.GetString("UserId")
+                   ?? string.Empty;
+        }
         [HttpGet]
         public async Task<IActionResult> WorkoutPlans(string search, string goalFilter, string levelFilter)
         {
@@ -659,14 +665,19 @@ namespace GymManagementSystem.Controllers
                 query = query.Where(w => w.DifficultyLevel == levelFilter);
             }
 
-            var plans = await query.OrderByDescending(w => w.CreatedAt).ToListAsync();
+            var plans = await query
+                .OrderByDescending(w => w.CreatedAt)
+                .ToListAsync();
 
             // Quick Stats Calculations
             ViewBag.TotalPlans = await _context.WorkoutPlans.CountAsync();
             ViewBag.AssignedCount = await _context.WorkoutPlans.Where(w => !string.IsNullOrEmpty(w.AssignedMemberId)).CountAsync();
             ViewBag.HypertrophyCount = await _context.WorkoutPlans.Where(w => w.TargetGoal == "muscle").CountAsync();
 
-            // List of members for assignment dropdowns
+            // 1. DAAWO HARKAN: Soo saarista Exercises-ka table-ka caadiga ah ee DB-ka ku jira
+            ViewBag.ExercisesList = await _context.Exercises.ToListAsync();
+
+            // 2. List of members for assignment dropdowns
             ViewBag.MembersList = await _context.UserProfiles
                 .Where(u => u.Role != null && u.Role.ToLower() == "member")
                 .ToListAsync();
@@ -677,14 +688,35 @@ namespace GymManagementSystem.Controllers
         // POST: /Trainer/SaveWorkoutPlan (Qabata Labada Create iyo Edit)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveWorkoutPlan(WorkoutPlan model)
+        public async Task<IActionResult> SaveWorkoutPlan(WorkoutPlan model, List<int> selectedExercises)
         {
+            // Waxaan ka saaraynaa ModelState Validation-ka navigation properties-ka
+            ModelState.Remove(nameof(WorkoutPlan.AssignedMemberId));
+
             if (ModelState.IsValid)
             {
+                string currentTrainerId = GetCurrentUserId();
+
+                // Haddii aad IDs-ka jimicsiyada ku kaydiso ExercisesJson column sida Comma Separated String (e.g. "1,2,5")
+                if (selectedExercises != null && selectedExercises.Any())
+                {
+                    model.ExercisesJson = string.Join(",", selectedExercises);
+                }
+                else
+                {
+                    model.ExercisesJson = string.Empty;
+                }
+
                 if (model.Id == 0)
                 {
                     // Create New Plan
                     model.CreatedAt = DateTime.Now;
+
+                    if (!string.IsNullOrEmpty(currentTrainerId) && int.TryParse(currentTrainerId, out int parsedTrainerId))
+                    {
+                        model.TrainerId = parsedTrainerId;
+                    }
+
                     _context.WorkoutPlans.Add(model);
                     TempData["SuccessMessage"] = "Workout plan successfully created!";
                 }
@@ -702,6 +734,12 @@ namespace GymManagementSystem.Controllers
                         existingPlan.SessionDurationMinutes = model.SessionDurationMinutes;
                         existingPlan.AssignedMemberId = model.AssignedMemberId;
                         existingPlan.Notes = model.Notes;
+                        existingPlan.ExercisesJson = model.ExercisesJson; // Kaydi Exercise IDs string-ka
+
+                        if (!string.IsNullOrEmpty(currentTrainerId) && int.TryParse(currentTrainerId, out int parsedTrainerId))
+                        {
+                            existingPlan.TrainerId = parsedTrainerId;
+                        }
 
                         _context.WorkoutPlans.Update(existingPlan);
                         TempData["SuccessMessage"] = "Workout plan successfully updated!";
@@ -737,6 +775,7 @@ namespace GymManagementSystem.Controllers
 
             return RedirectToAction(nameof(WorkoutPlans));
         }
+
         // POST: /Trainer/AssignWorkout
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -750,6 +789,7 @@ namespace GymManagementSystem.Controllers
                 {
                     plan.Notes = notes;
                 }
+
                 _context.Notifications.Add(new Notification
                 {
                     TargetRole = "Member",
@@ -759,6 +799,7 @@ namespace GymManagementSystem.Controllers
                     IsRead = false,
                     Timestamp = DateTime.Now
                 });
+
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Workout plan successfully assigned to member!";
             }
@@ -770,6 +811,5 @@ namespace GymManagementSystem.Controllers
             return RedirectToAction(nameof(WorkoutPlans));
         }
 
-        
     }
 }

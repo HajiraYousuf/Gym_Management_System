@@ -1,19 +1,35 @@
-﻿@inject ApplicationDbContext _context
+﻿@using System.Security.Claims
+@inject ApplicationDbContext _context
 
 @{
-    // Helper function oo si dynamic ah u ogaanaysa bogga furan si uu menu-ka u active oo u ifo (Highlight)
     string GetActive(string controller, string action)
     {
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 
         bool isActive = string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
-                            string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+                        string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
 
         return isActive
             ? "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-lime-400 text-[#13250E] shadow-lg shadow-lime-400/10 transition-all"
             : "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/80 dark:text-zinc-400 hover:bg-[#1a3313] dark:hover:bg-zinc-900/60 hover:text-white dark:hover:text-zinc-200 transition-all";
     }
+
+    // Raadi Email-ka ama Username-ka user-ka soo galay si ka hufan
+    var userEmail = User.Identity?.Name ?? User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue(ClaimTypes.Name);
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    // Isku day in aad user-ka ka dhex hesho miiska UserProfiles adigoo isticmaalaya Email, Username, ama ID
+    var currentUser = _context.UserProfiles
+        .FirstOrDefault(u => (!string.IsNullOrEmpty(userEmail) && (u.Email == userEmail || u.Username == userEmail)) ||
+                             (!string.IsNullOrEmpty(userId) && u.Id == userId));
+
+    // Haddii la waayo user, ha isticmaalin magac dambe oo been abuur ah si aad u ogaato inuu ka soo dhuuqayo Database-ka
+    var displayName = currentUser?.Name ?? User.Identity?.Name ?? "Guest User";
+    var displayRole = currentUser?.Role ?? "Receptionist";
+    var displayAvatar = !string.IsNullOrEmpty(currentUser?.Avatar)
+        ? currentUser.Avatar
+        : $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(displayName)}&background=a3e635&color=000";
 }
 
 <!DOCTYPE html>
@@ -128,17 +144,17 @@
 
                     <div class="hidden sm:block w-px h-8 bg-[#1f3a17] dark:bg-zinc-800"></div>
 
-                    <!-- Profile -->
+                    <!-- Profile (Dynamic) -->
                     <a href="@Url.Action("Profile", "Shared", new { role = "Receptionist" })" class="flex items-center gap-2.5 bg-[#1b3414] dark:bg-zinc-900 border border-[#274b1e] dark:border-zinc-800 rounded-xl p-1.5 sm:px-2.5 hover:border-lime-400 hover:bg-[#224219] dark:hover:bg-zinc-850 transition-all duration-200 shrink-0 group">
                         <!-- User Avatar Dynamic -->
-                        <img src="@(ViewBag.ReceptionistAvatar ?? "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(ViewBag.ReceptionistName ?? "Mohamed Adam") + "&background=a3e635&color=000")"
+                        <img src="@displayAvatar"
                              class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-lime-400 object-cover"
                              alt="Profile">
 
-                        <!-- User Details (Magaca Kor, Role-ka Hoos) -->
+                        <!-- User Details -->
                         <div class="hidden md:block text-left">
-                            <p class="text-xs text-emerald-100 dark:text-zinc-100 font-semibold leading-tight group-hover:text-white transition-colors">@(ViewBag.ReceptionistName ?? "Mohamed Adam")</p>
-                            <span class="text-[10px] text-lime-400 leading-none font-medium">@(ViewBag.ReceptionistRole ?? "Receptionist")</span>
+                            <p class="text-xs text-emerald-100 dark:text-zinc-100 font-semibold leading-tight group-hover:text-white transition-colors">@displayName</p>
+                            <span class="text-[10px] text-lime-400 leading-none font-medium">@displayRole</span>
                         </div>
 
                         <!-- Arrow Icon -->
@@ -146,6 +162,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                     </a>
+
                 </div>
             </div>
 

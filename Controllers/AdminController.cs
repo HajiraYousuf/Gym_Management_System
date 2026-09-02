@@ -298,27 +298,36 @@ namespace GymManagementSystem.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Fadlan buuxi dhammaan meelaha waajibka ah.";
-                return RedirectToAction(nameof(Classes));
+                return RedirectToAction(nameof(Classes)); // Ama magaca view-gaaga adiga ah
             }
 
             if (model.Id == 0)
             {
-                _context.GymClasses.Add(new GymClass
+                // Ku darista Class-ka cusub
+                var newClass = new GymClass
                 {
                     Name = model.Name,
                     Category = model.Category,
+                    TrainerName = model.TrainerName,
+                    Days = model.Days,
+                    TimeSlot = model.TimeSlot,
                     DurationMinutes = model.DurationMinutes,
                     Capacity = model.Capacity,
                     Difficulty = model.Difficulty,
                     Equipment = model.Equipment,
                     IconName = string.IsNullOrWhiteSpace(model.IconName) ? "dumbbell" : model.IconName,
+                    ImageUrl = model.ImageUrl,
                     Description = model.Description,
                     Status = model.Status
-                });
+                };
+
+                _context.GymClasses.Add(newClass);
+                _context.SaveChanges();
                 TempData["Message"] = "Class-ka cusub waa la daray.";
             }
             else
             {
+                // Wax ka beddelka (Update) Class-ka jira
                 var existing = _context.GymClasses.FirstOrDefault(c => c.Id == model.Id);
                 if (existing == null)
                 {
@@ -327,20 +336,24 @@ namespace GymManagementSystem.Controllers
 
                 existing.Name = model.Name;
                 existing.Category = model.Category;
+                existing.TrainerName = model.TrainerName;
+                existing.Days = model.Days;
+                existing.TimeSlot = model.TimeSlot;
                 existing.DurationMinutes = model.DurationMinutes;
                 existing.Capacity = model.Capacity;
                 existing.Difficulty = model.Difficulty;
                 existing.Equipment = model.Equipment;
-                existing.IconName = string.IsNullOrWhiteSpace(model.IconName) ? existing.IconName : model.IconName;
+                existing.IconName = string.IsNullOrWhiteSpace(model.IconName) ? "dumbbell" : model.IconName;
+                existing.ImageUrl = model.ImageUrl;
                 existing.Description = model.Description;
                 existing.Status = model.Status;
-                TempData["Message"] = $"Class-ka \"{existing.Name}\" waa la cusboonaysiiyay.";
+
+                _context.SaveChanges();
+                TempData["Message"] = "Class-ka waa la cusboonaysiiyay.";
             }
 
-            _context.SaveChanges();
             return RedirectToAction(nameof(Classes));
         }
-
         [HttpGet]
         public IActionResult GetClass(int id)
         {

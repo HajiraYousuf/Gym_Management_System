@@ -22,10 +22,6 @@
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add New Class
             </button>
-            <button type="button" onclick="openAddScheduleModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Schedule
-            </button>
         </div>
     </div>
 
@@ -128,7 +124,7 @@
                                         <button type="button" onclick="openViewModal('@item.Name', '@item.Category', '@item.Difficulty', '@item.DurationMinutes mins', '@item.Capacity Persons', '@item.Equipment', '@item.Status', '@item.Description')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="View Details">
                                             <i data-lucide="eye" class="w-4 h-4"></i>
                                         </button>
-                                        <button type="button" onclick="openEditModal('@item.Id', '@item.Name')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Class">
+                                        <button type="button" onclick="openEditModal('@item.Id', '@item.Name', '@item.Category', '@item.TrainerName', '@item.Days', '@item.TimeSlot', '@item.DurationMinutes', '@item.Capacity', '@item.Difficulty', '@item.Equipment', '@item.IconName', '@item.ImageUrl', '@item.Description', '@item.Status')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-lime-500 hover:text-zinc-950 text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Edit Class">
                                             <i data-lucide="edit-3" class="w-4 h-4"></i>
                                         </button>
                                         <button type="button" onclick="openDeleteModal('@item.Id', '@item.Name')" class="p-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-600 dark:text-zinc-300 rounded-lg transition-all cursor-pointer" title="Delete Class">
@@ -173,33 +169,59 @@
 
         <form asp-action="SaveClass" method="POST">
             <input type="hidden" id="ClassId" name="Id" value="0" />
-            <div class="p-6 space-y-4">
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+
+                <!-- Class Name & Category -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Class Name <span class="text-lime-500">*</span></label>
-                        <input type="text" id="inputClassName" name="Name" required placeholder="e.g. CrossFit Challenge" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                        <input type="text" id="inputClassName" name="Name" required placeholder="e.g. CrossFit Challenge" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Category <span class="text-lime-500">*</span></label>
                         <select id="inputCategory" name="Category" required class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
                             <option value="">-- Select Category --</option>
-                            <option value="Strength Training">Strength Training</option>
+                            <option value="Strength">Strength</option>
+                            <option value="Cardio">Cardio</option>
+                            <option value="CrossFit">CrossFit</option>
                             <option value="Cardio & HIIT">Cardio & HIIT</option>
+                            <option value="Strength Training">Strength Training</option>
                             <option value="Yoga & Wellness">Yoga & Wellness</option>
                             <option value="Boxing & Combat">Boxing & Combat</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Trainer Name & Days -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Trainer Name</label>
+                        <input type="text" id="inputTrainerName" name="TrainerName" placeholder="e.g. John Doe" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Days</label>
+                        <input type="text" id="inputDays" name="Days" placeholder="e.g. Mon, Wed, Fri" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+                    </div>
+                </div>
+
+                <!-- TimeSlot, Duration, Capacity -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="space-y-2">
-                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Duration (Mins) <span class="text-lime-500">*</span></label>
-                        <input type="number" id="inputDuration" name="DurationMinutes" required placeholder="e.g. 60" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Time Slot</label>
+                        <input type="text" id="inputTimeSlot" name="TimeSlot" placeholder="e.g. 08:00 AM - 10:00 AM" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
                     </div>
                     <div class="space-y-2">
-                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Default Capacity <span class="text-lime-500">*</span></label>
-                        <input type="number" id="inputCapacity" name="Capacity" required placeholder="e.g. 15" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Duration (Mins) <span class="text-lime-500">*</span></label>
+                        <input type="number" id="inputDuration" name="DurationMinutes" required placeholder="e.g. 60" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
                     </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Capacity <span class="text-lime-500">*</span></label>
+                        <input type="number" id="inputCapacity" name="Capacity" required placeholder="e.g. 25" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
+                    </div>
+                </div>
+
+                <!-- Difficulty Level & Status -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Difficulty Level</label>
                         <select id="inputDifficulty" name="Difficulty" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
@@ -209,41 +231,47 @@
                             <option value="Advanced">Advanced</option>
                         </select>
                     </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Status <span class="text-lime-500">*</span></label>
+                        <select id="inputStatus" name="Status" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
                 </div>
 
+                <!-- Equipment & Icon Name -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Equipment Required</label>
-                        <input type="text" id="inputEquipment" name="Equipment" placeholder="e.g. Dumbbell, Mat, Boxing Gloves" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                        <input type="text" id="inputEquipment" name="Equipment" placeholder="e.g. Dumbbell, Mat" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Lucide Icon Name</label>
-                        <input type="text" id="inputIconName" name="IconName" placeholder="e.g. dumbbell, heart-pulse" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600" />
+                        <input type="text" id="inputIconName" name="IconName" placeholder="e.g. dumbbell, activity" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
                     </div>
                 </div>
 
+                <!-- Image URL -->
                 <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Description</label>
-                    <textarea id="inputDescription" name="Description" rows="3" placeholder="Brief details about the class..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500 placeholder-zinc-400 dark:placeholder-zinc-600"></textarea>
+                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Image URL</label>
+                    <input type="text" id="inputImageUrl" name="ImageUrl" placeholder="https://images.unsplash.com/..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500" />
                 </div>
 
+                <!-- Description -->
                 <div class="space-y-2">
-                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Status <span class="text-lime-500">*</span></label>
-                    <select id="inputStatus" name="Status" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500">
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
+                    <label class="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">Description</label>
+                    <textarea id="inputDescription" name="Description" rows="3" placeholder="Brief details about the class..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-lime-500"></textarea>
                 </div>
             </div>
 
             <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-                <button type="button" onclick="closeClassModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer">Cancel</button>
+                <button type="button" onclick="closeClassModal()" class="px-5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 transition-colors cursor-pointer">Cancel</button>
                 <button type="submit" class="px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-lime-500/10">Save Class</button>
             </div>
         </form>
     </div>
 </div>
-
 <!-- ========================================== -->
 <!-- MODAL 2: VIEW CLASS DETAILS POP-UP         -->
 <!-- ========================================== -->
@@ -352,11 +380,15 @@
         document.getElementById('ClassId').value = "0";
         document.getElementById('inputClassName').value = "";
         document.getElementById('inputCategory').value = "";
+        document.getElementById('inputTrainerName').value = "";
+        document.getElementById('inputDays').value = "";
+        document.getElementById('inputTimeSlot').value = "";
         document.getElementById('inputDuration').value = "";
         document.getElementById('inputCapacity').value = "";
         document.getElementById('inputDifficulty').value = "All Levels";
         document.getElementById('inputEquipment').value = "";
         document.getElementById('inputIconName').value = "dumbbell";
+        document.getElementById('inputImageUrl').value = "";
         document.getElementById('inputDescription').value = "";
         document.getElementById('inputStatus').value = "Active";
 
@@ -364,10 +396,22 @@
         document.body.style.overflow = 'hidden';
     }
 
-    function openEditModal(id, className) {
-        document.getElementById('modalTitle').innerText = "Edit Class: " + className;
+    function openEditModal(id, name, category, trainerName, days, timeSlot, duration, capacity, difficulty, equipment, iconName, imageUrl, description, status) {
+        document.getElementById('modalTitle').innerText = "Edit Class: " + name;
         document.getElementById('ClassId').value = id;
-        document.getElementById('inputClassName').value = className;
+        document.getElementById('inputClassName').value = name;
+        document.getElementById('inputCategory').value = category;
+        document.getElementById('inputTrainerName').value = trainerName;
+        document.getElementById('inputDays').value = days;
+        document.getElementById('inputTimeSlot').value = timeSlot;
+        document.getElementById('inputDuration').value = duration;
+        document.getElementById('inputCapacity').value = capacity;
+        document.getElementById('inputDifficulty').value = difficulty;
+        document.getElementById('inputEquipment').value = equipment;
+        document.getElementById('inputIconName').value = iconName;
+        document.getElementById('inputImageUrl').value = imageUrl;
+        document.getElementById('inputDescription').value = description;
+        document.getElementById('inputStatus').value = status;
 
         document.getElementById('classListModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';

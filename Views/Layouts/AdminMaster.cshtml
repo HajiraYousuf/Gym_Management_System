@@ -1,6 +1,5 @@
 ﻿@inject ApplicationDbContext _context
 @{
-    // Helper function oo si dynamic ah u ogaanaysa bogga furan si uu menu-ka u active oo u ifo
     var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
 
     string GetMenuClass(string path)
@@ -12,12 +11,29 @@
             : "flex items-center gap-3 px-4 py-2.5 rounded-lg text-emerald-100/90 dark:text-zinc-300 text-[13px] font-medium hover:bg-[#1d3815] dark:hover:bg-zinc-900 hover:text-lime-400 dark:hover:text-lime-400 transition";
     }
 
-    // Hel Admin-ka ku jira database-ka adoo isticmaalaya ADM-01
-    var adminUser = _context.UserProfiles.FirstOrDefault(p => p.Id == "ADM-01") ?? _context.UserProfiles.FirstOrDefault(p => p.Role == "Admin");
-    string adminId = adminUser != null ? adminUser.Id : "ADM-01";
-    string adminName = adminUser != null ? adminUser.Name : "Admin";
-}
+    string adminId = "ADM-01";
+    string adminName = "Admin";
+    int notificationCount = 0;
 
+    try
+    {
+        var adminUser = _context.UserProfiles?.FirstOrDefault(p => p.Id == "ADM-01") ?? _context.UserProfiles?.FirstOrDefault(p => p.Role == "Admin");
+        if (adminUser != null)
+        {
+            adminId = adminUser.Id;
+            adminName = adminUser.Name;
+        }
+
+        if (_context.Notifications != null)
+        {
+            notificationCount = _context.Notifications.Count(n => (n.TargetRole == "Admin" || n.TargetRole == "All") && !n.IsRead);
+        }
+    }
+    catch
+    {
+        // Haddii database-ku uusan diyaarsaneyn ama qalad dhaco, app-ku ma jabin doono ee waa uu sii shaqaynayaa
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -211,12 +227,34 @@
                     <span>Classes</span>
                 </a>
 
+                <a href="@Url.Action("ClassSchedule", "Admin")" class="@GetMenuClass("/admin/classSchedule")">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M5 11h14M5 19h14a2 2 0 002-2V7H3v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>ClassSchedule</span>
+                </a>
+
                 <!-- 5. ATTENDANCE -->
                 <a href="@Url.Action("Attendance", "Admin")" class="@GetMenuClass("/admin/attendance")">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     <span>Attendance</span>
+                </a>
+               <!-- Exercise Library-->
+                <a href="@Url.Action("ExerciseLibrary", "Admin")" class="@GetMenuClass("/admin/ExerciseLibrary")">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 7h11M6.5 17h11M3 10h3v4H3v-4zm15 0h3v4h-3v-4zM2 12h20"></path>
+                    </svg>
+                    <span>Exercise Library</span>
+                </a>
+
+                <!-- Gallery Images -->
+                <a href="@Url.Action("Gallery", "Admin")" class="@GetMenuClass("/admin/Gallery")">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Gallery</span>
                 </a>
 
                 <!-- 6. WORKOUT PLANS -->

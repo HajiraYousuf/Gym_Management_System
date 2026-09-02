@@ -125,7 +125,7 @@ namespace GymManagementSystem.Controllers
         {
             var classesQuery = _context.GymClasses.AsQueryable();
 
-            // 1. Search filter (by Class Name or Trainer Name)
+            // 1. Search filter (by Class Name, Trainer Name, or Category)
             if (!string.IsNullOrEmpty(searchString))
             {
                 classesQuery = classesQuery.Where(c => c.Name.Contains(searchString) ||
@@ -133,21 +133,26 @@ namespace GymManagementSystem.Controllers
                                                       c.Category.Contains(searchString));
             }
 
+            // 2. Date filter (Haddii uu jiro dateFilter)
+            if (!string.IsNullOrEmpty(dateFilter))
+            {
+                // U beddel nooca taariikhda haddii ay tahay DateTime ama string isbarbardhig
+                classesQuery = classesQuery.Where(c => c.TimeSlot.ToString().Contains(dateFilter));
+            }
+
             var classesList = await classesQuery.OrderBy(c => c.TimeSlot).ToListAsync();
 
-            // 2. Stat Cards Data (Dynamic calculation)
+            // 3. Stat Cards Data
             ViewBag.TotalClasses = await _context.GymClasses.CountAsync(c => c.Status == "Active");
-
-            // Tusaale ahaan tirada Bookings iyo Available seats (haddii aad leedahay jadwalka booking-ka, halkan waad ku xiri kartaa, hadda waa qiyaas ama xogta tooska ah)
             ViewBag.TotalBookings = 84;
             ViewBag.AvailableSeats = 28;
             ViewBag.FullClasses = await _context.GymClasses.CountAsync(c => c.Capacity <= 0 || c.Status == "Full");
 
             ViewBag.SearchString = searchString;
+            ViewBag.DateFilter = dateFilter; // Haddii aad View-ga ugu baahan tahay
 
             return View(classesList);
         }
-
         // 3. Dashboard
         public async Task<IActionResult> Dashboard()
         {
